@@ -162,5 +162,8 @@ cython_debug/
 # Visual Studio Code
 .vscode/
 
-# Datasets
-Datasets/
+# Data & large artifacts — data/splits/*.json is NOT ignored, it's the canonical
+# cached split and must be committed (see CLAUDE.md: "never re-split")
+data/raw/
+logs
+*.pt

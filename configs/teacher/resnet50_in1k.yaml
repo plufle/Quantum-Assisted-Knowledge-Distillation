@@ -1,0 +1,11 @@
+name: resnet50_in1k
+backbone: resnet50
+pretrained: true
+
+# Fine-tuning recipe — starting point, not yet validated against a real gate.
+# Tune once G1 (Stage 2) shows the pipeline itself is sound.
+epochs: 20
+patience: 5 # early stop on val macro-F1 plateau
+optimizer: adamw
+lr: 1.0e-4
+weight_decay: 1.0e-4

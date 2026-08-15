@@ -1,0 +1,4 @@
+name: scratch
+# hard labels only — the number every other method is measured against
+loss:
+  ce_weight: 1.0

@@ -1,0 +1,18 @@
+defaults:
+  - dataset: trashnet
+  - teacher: resnet50_in1k
+  - student: mobilenetv2_035
+  - method: scratch
+  - _self_
+
+seed: 0
+device: cuda
+run_id: ${dataset.name}__${student.name}__${method.name}__s${seed}
+output_dir: results/${run_id}
+
+hydra:
+  job:
+    chdir: false # keep cwd at repo root — all paths here are relative to it
+  output_subdir: null
+  run:
+    dir: .

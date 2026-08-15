@@ -1,0 +1,11 @@
+name: trashnet
+data_dir: data/raw/TrashNet
+num_classes: 6
+class_names: [cardboard, glass, metal, paper, plastic, trash]
+image_size: 128
+batch_size: 128 # Trap #2 — relational loss is noise below 64; accumulate if memory forces smaller
+metric: macro_f1 # primary metric — report accuracy as secondary
+split:
+  ratios: [0.70, 0.15, 0.15]
+  seed: 0
+  cache_path: data/splits/trashnet.json # never re-split once this exists

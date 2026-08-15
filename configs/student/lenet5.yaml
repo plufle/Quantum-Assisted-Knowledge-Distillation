@@ -1,0 +1,2 @@
+name: lenet5
+# ~0.07M params — capacity floor, fast dev loop

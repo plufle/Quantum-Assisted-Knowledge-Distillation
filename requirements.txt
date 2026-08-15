@@ -4,3 +4,11 @@ matplotlib
 seaborn
 scikit-learn
 jupyter
+
+# added for Stage 0 (data pipeline) — torch/torchvision needed for loaders + transforms,
+# hydra/omegaconf for the configs/ tree
+torch
+torchvision
+hydra-core
+omegaconf
+tqdm

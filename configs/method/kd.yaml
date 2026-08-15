@@ -1,0 +1,6 @@
+name: kd
+# Hinton logit KD — alpha/beta/tau are not yet decided, tune in Stage 2 (G1 gate)
+loss:
+  alpha: null # CE weight
+  beta: null # KD weight
+  tau: null # softmax temperature

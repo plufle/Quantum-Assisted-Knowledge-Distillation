@@ -1,0 +1,6 @@
+name: rkd
+# Relational KD — distance/angle loss weights not yet decided, tune in Stage 2 (G1 gate)
+loss:
+  ce_weight: null
+  distance_weight: null
+  angle_weight: null

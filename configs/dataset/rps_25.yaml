@@ -1,0 +1,11 @@
+name: rps_25
+data_dir: data/raw/Rock-Paper-Scissors
+num_classes: 3
+class_names: [paper, rock, scissors]
+image_size: 128
+batch_size: 128
+train_fraction: 0.25 # deliberately low-data — at full size KD gains disappear (CLAUDE.md)
+metric: accuracy
+split:
+  seed: 0
+  cache_path: data/splits/rps_25.json

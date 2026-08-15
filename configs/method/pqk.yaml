@@ -1,0 +1,8 @@
+name: pqk
+kernel: projected_quantum
+n_qubits: 8
+depth: 4
+lambda_: 1.0
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+device_backend: lightning.qubit # Trap #1 — never default.qubit, 50x slower

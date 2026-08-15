@@ -1,0 +1,7 @@
+name: rbf_control
+# Mandatory twin for pqk — same pipeline, RBF kernel at matched dimension.
+# Tune bandwidth with the same budget given to the quantum branch (CLAUDE.md rule).
+kernel: rbf
+bandwidth: null
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
