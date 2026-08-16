@@ -1,2 +1,9 @@
 name: lenet5
 # ~0.07M params — capacity floor, fast dev loop
+
+# Training recipe — shared across scratch/kd/rkd/... for this student (Rule #3).
+epochs: 40
+patience: 8
+optimizer: adamw
+lr: 1.0e-3
+weight_decay: 1.0e-4

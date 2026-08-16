@@ -1,3 +1,9 @@
 name: shufflenetv2_050
 width_mult: 0.5
 # ~0.4M params — cross-family control
+
+epochs: 40
+patience: 8
+optimizer: adamw
+lr: 1.0e-3
+weight_decay: 1.0e-4

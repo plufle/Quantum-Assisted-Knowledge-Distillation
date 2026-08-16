@@ -6,6 +6,10 @@ image_size: 128
 batch_size: 128
 train_fraction: 0.25 # deliberately low-data — at full size KD gains disappear (CLAUDE.md)
 metric: accuracy
+# 630 train images / batch 128 = ~5 batches/epoch — too few for a from-scratch student's
+# BatchNorm running stats to stabilize (Trap #10). Students disable running-stat tracking
+# for this dataset; the pretrained teacher is unaffected (already-good BN stats to fine-tune).
+small_batch_regime: true
 split:
   seed: 0
   cache_path: data/splits/rps_25.json

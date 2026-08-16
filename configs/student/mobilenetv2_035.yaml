@@ -1,3 +1,9 @@
 name: mobilenetv2_035
 width_mult: 0.35
 # ~0.4M params — primary edge target
+
+epochs: 40
+patience: 8
+optimizer: adamw
+lr: 1.0e-3
+weight_decay: 1.0e-4

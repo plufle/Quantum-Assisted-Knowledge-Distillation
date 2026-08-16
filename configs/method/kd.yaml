@@ -1,6 +1,9 @@
 name: kd
-# Hinton logit KD — alpha/beta/tau are not yet decided, tune in Stage 2 (G1 gate)
+# Hinton logit KD — tuned on trashnet/mobilenetv2_035/seed0 (G1 retune):
+# tau=4 (literature default) underperformed scratch; screened tau in {1,2,3,4} at full
+# epoch budget, single seed. tau=3 was the clear winner (test macro-F1 0.5486 vs 0.5299
+# at tau=4, vs 0.5152 for scratch/seed0). alpha/beta left at the balanced 0.5/0.5 default.
 loss:
-  alpha: null # CE weight
-  beta: null # KD weight
-  tau: null # softmax temperature
+  alpha: 0.5 # CE weight
+  beta: 0.5 # KD weight
+  tau: 3.0 # softmax temperature

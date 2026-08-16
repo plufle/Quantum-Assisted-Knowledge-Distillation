@@ -1,2 +1,8 @@
 name: mobilenetv3_small
 # ~1.0M params — primary edge target
+
+epochs: 40
+patience: 8
+optimizer: adamw
+lr: 1.0e-3
+weight_decay: 1.0e-4

@@ -5,6 +5,7 @@ class_names: [cardboard, glass, metal, paper, plastic, trash]
 image_size: 128
 batch_size: 128 # Trap #2 — relational loss is noise below 64; accumulate if memory forces smaller
 metric: macro_f1 # primary metric — report accuracy as secondary
+small_batch_regime: false # ~14 batches/epoch — plenty for stable BN running stats (Trap #10)
 split:
   ratios: [0.70, 0.15, 0.15]
   seed: 0

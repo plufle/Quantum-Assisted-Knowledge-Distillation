@@ -1,6 +1,6 @@
 name: rkd
-# Relational KD — distance/angle loss weights not yet decided, tune in Stage 2 (G1 gate)
+# Relational KD (Park et al. 2019) — distance/angle weights are the paper's defaults.
 loss:
-  ce_weight: null
-  distance_weight: null
-  angle_weight: null
+  ce_weight: 1.0
+  distance_weight: 25.0
+  angle_weight: 50.0

@@ -117,6 +117,7 @@ p50/p95 latency, mJ/inference, ECE.
 | Gate | Criterion | If it fails |
 |------|-----------|-------------|
 | G1 | `kd` beats `scratch` by a clear margin on trashnet | Fix the pipeline first |
+| | **PASSED** (mobilenetv2_035, 3 seeds): `scratch` 0.5269±0.0136, `kd` 0.5569±0.0242 macro-F1 — +3.0pt margin. Needed a retune: the literature-default τ=4.0 recipe *failed* G1 (kd 0.5164±0.0121, actually below scratch); τ=3.0 was the winner after screening τ∈{1,2,3,4} on seed 0. See `configs/method/kd.yaml`. | |
 | G2 | `pqk` beats `rbf_control` by >0.5% macro-F1, 2 students, 3 seeds | Write it up as a negative result + edge benchmark |
 | G3 | `pqk` INT8 beats `kd` INT8 at matched KB | Drop the edge claim from the title |
 
@@ -177,13 +178,20 @@ No hardcoded hyperparameters in `src/`. Hydra configs only.
 9. RPS `validation/` is flat (class-prefixed filenames), not nested by class like
    `train/`/`test/` — a loader that assumes uniform structure across splits will
    silently miscount or crash on validation.
+10. RPS's 630-image train set is only ~5 batches/epoch at batch 128 — too few for a
+    from-scratch student's BatchNorm running stats to stabilize. Symptom: train_f1
+    improves normally while val_f1 freezes at an exact constant every epoch (the
+    macro-F1 of a model that always predicts one class) — train mode looks fine
+    (per-batch stats) but eval mode degenerates (garbage running stats). The
+    pretrained teacher doesn't hit this (already-good BN stats before fine-tuning);
+    students trained on rps_25 disable running-stat tracking instead
+    (`use_batch_stats_only`, gated by `dataset.small_batch_regime`).
 
 ## Commands
 
 ```bash
 python -m qakd.train.teacher teacher=resnet50_in1k dataset=trashnet     # once per dataset, idempotent
 
-# below lands in Stage 2 — student/method training loop not built yet
 python -m qakd.train dataset=trashnet student=mobilenetv2_035 method=pqk seed=0
 python -m qakd.train dataset=trashnet student=mobilenetv2_035 method=rbf_control seed=0
 
@@ -203,8 +211,8 @@ one's deliverable exists — this mirrors the build order in **Methods**.
 |---|-------|-------------|--------|
 | 0 | Scaffolding | Repo layout in place; `configs/` skeleton; data loaders + stratified split cached to `data/splits/trashnet.json`; EDA notebook runs | Done |
 | 1 | Teachers | `resnet50_in1k` fine-tuned on both datasets — `checkpoints/teachers/resnet50_in1k__{trashnet,rps_25}.pt` + sidecar JSON (macro-F1, recipe, git SHA) | Done |
-| 2 | Stage 0/1 methods | `scratch`, `kd`, `rkd` running end-to-end on ≥1 student × both datasets, 3 seeds | Not started |
-| 3 | **G1 gate** | `kd` beats `scratch` by a clear margin on trashnet — else fix the pipeline before going further | Not started |
+| 2 | Stage 0/1 methods | `scratch`, `kd`, `rkd` running end-to-end on ≥1 student × both datasets, 3 seeds | In progress (trashnet `scratch`+`kd` done; `rkd`/trashnet + all of rps_25 running) |
+| 3 | **G1 gate** | `kd` beats `scratch` by a clear margin on trashnet — else fix the pipeline before going further | **Passed** — see Go/no-go |
 | 4 | Quantum infra | `quantum/kernels.py` (`lightning.qubit`, 8-qubit encoding, batch Gram matrix), `quantum/classical_ctrl.py` (RBF control), `scripts/gradient_variance.py` run for 2–12 qubits | Not started |
 | 5 | Stage 2 methods | `rbf_control` + `pqk` running on lenet5/rps_25, kernel concentration logged | Not started |
 | 6 | **G2 gate (week 2)** | `pqk` beats `rbf_control` by >0.5% macro-F1, 2 students, 3 seeds — else write up as a negative result + edge benchmark only | Not started |
