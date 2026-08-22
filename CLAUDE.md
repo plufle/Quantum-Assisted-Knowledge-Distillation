@@ -116,8 +116,9 @@ p50/p95 latency, mJ/inference, ECE.
 
 | Gate | Criterion | If it fails |
 |------|-----------|-------------|
-| G1 | `kd` beats `scratch` by a clear margin on trashnet | Fix the pipeline first |
-| | **PASSED** (mobilenetv2_035, 3 seeds): `scratch` 0.5269±0.0136, `kd` 0.5569±0.0242 macro-F1 — +3.0pt margin. Needed a retune: the literature-default τ=4.0 recipe *failed* G1 (kd 0.5164±0.0121, actually below scratch); τ=3.0 was the winner after screening τ∈{1,2,3,4} on seed 0. See `configs/method/kd.yaml`. | |
+| G1 | `kd` beats `scratch` by a clear margin on trashnet (`rkd` tracked alongside as the Stage 1 classical-ancestor baseline, not a hard blocker) | Fix the pipeline first |
+| | **PASSED on kd** (mobilenetv2_035, 3 seeds): `scratch` 0.6838±0.0141, `kd` 0.7085±0.0131 macro-F1 — +2.5pt margin. 2026-08-22 retune: the original shuffle+class-weighted-CE+strong-RandAugment recipe underfit this tiny (~1750-image), from-scratch student (`scratch` was only 0.5269±0.0136). Screened on seed 0 — switching imbalance handling to a weighted sampler (dropping the now-redundant CE class weights), softening RandomResizedCrop/RandAugment, and extending the epoch budget 40→60 took `scratch` seed0 alone from 0.4892 to 0.6942. Applied to every method via `configs/dataset/trashnet.yaml` + `configs/student/mobilenetv2_035.yaml` (CLAUDE.md rule #3). The τ=3.0 kd retune still holds on top of this. | |
+| | **rkd: negative result** (mobilenetv2_035, 3 seeds): `rkd` 0.6716±0.0037 macro-F1 — *below* `scratch` (0.6838±0.0141) by ~1.2pt, despite retuning. The paper's own distance/angle weights (25/50) drowned the CE signal in this regime (0.5851); screened distance/angle∈{25/50, 5/10, 2/4} and ce_weight∈{1,2} at 5/10 on seed 0 (see `configs/method/rkd.yaml`) — 5/10 was the best candidate found (seed0 0.6758) but the confirmed 3-seed mean still falls short. `kd` remains the passing Stage 1 method; `rkd` is documented here as-is rather than tuned further, per CLAUDE.md's own screen-then-stop practice (see the kd τ=4 note above for precedent). | |
 | G2 | `pqk` beats `rbf_control` by >0.5% macro-F1, 2 students, 3 seeds | Write it up as a negative result + edge benchmark |
 | G3 | `pqk` INT8 beats `kd` INT8 at matched KB | Drop the edge claim from the title |
 

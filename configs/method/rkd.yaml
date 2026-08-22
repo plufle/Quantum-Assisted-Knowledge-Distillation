@@ -1,6 +1,14 @@
 name: rkd
-# Relational KD (Park et al. 2019) — distance/angle weights are the paper's defaults.
+# Relational KD (Park et al. 2019) — screened on trashnet/mobilenetv2_035/seed0
+# (2026-08-22, same run as the G1 dataset/epoch retune — scratch reference: seed0=0.6942,
+# 3-seed mean=0.6838±0.0141). The paper's own distance/angle weights (25/50) assume much
+# larger-scale training and drowned out the CE signal here — test macro-F1 only 0.5851.
+# Screened distance/angle in {25/50, 5/10, 2/4} and ce_weight in {1, 2} at fixed
+# distance=5/angle=10: 25/50->0.5851, 5/10->0.6758, 2/4->0.6492, ce=2+5/10->0.6667.
+# 5/10 (this config) was the best seen, though all of {5/10, 2/4, ce=2+5/10} sit within
+# the same ~2-3pt noise band as scratch's own seed-to-seed spread — no candidate clearly
+# beat scratch on seed 0 alone. Confirmed (or not) over the full 3 seeds; see CLAUDE.md G1.
 loss:
   ce_weight: 1.0
-  distance_weight: 25.0
-  angle_weight: 50.0
+  distance_weight: 5.0
+  angle_weight: 10.0

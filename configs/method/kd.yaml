@@ -3,6 +3,9 @@ name: kd
 # tau=4 (literature default) underperformed scratch; screened tau in {1,2,3,4} at full
 # epoch budget, single seed. tau=3 was the clear winner (test macro-F1 0.5486 vs 0.5299
 # at tau=4, vs 0.5152 for scratch/seed0). alpha/beta left at the balanced 0.5/0.5 default.
+# Still the winner after the 2026-08-22 dataset/epoch-budget retune (see CLAUDE.md G1) —
+# absolute macro-F1 for both scratch and kd moved up a lot, tau=3 wasn't re-screened
+# since kd (0.7085±0.0131) already clears scratch (0.6838±0.0141) with room to spare.
 loss:
   alpha: 0.5 # CE weight
   beta: 0.5 # KD weight

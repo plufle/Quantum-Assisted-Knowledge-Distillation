@@ -97,30 +97,32 @@ else:
     st.info("No teacher checkpoints yet.")
 
 # ---------------------------------------------------------------- G1 gate
-st.header("G1 Gate — kd vs scratch on trashnet")
+st.header("G1 Gate — kd / rkd vs scratch on trashnet")
+G1_METHODS = ["scratch", "kd", "rkd"]
 g1_df = pd.DataFrame()
 if not students_df.empty:
     g1_df = students_df[
         (students_df.dataset == "trashnet")
-        & (students_df.method.isin(["scratch", "kd"]))
+        & (students_df.method.isin(G1_METHODS))
         & (students_df.student == "mobilenetv2_035")
     ]
 if not g1_df.empty:
-    agg = g1_df.groupby("method")["macro_f1"].agg(["mean", "std", "count"]).reindex(["scratch", "kd"]).reset_index()
+    agg = g1_df.groupby("method")["macro_f1"].agg(["mean", "std", "count"]).reindex(G1_METHODS).reset_index()
     st.dataframe(agg, use_container_width=True, hide_index=True)
 
     scratch_mean = agg.loc[agg.method == "scratch", "mean"]
-    kd_mean = agg.loc[agg.method == "kd", "mean"]
-    if not scratch_mean.empty and not kd_mean.empty:
-        margin = kd_mean.iloc[0] - scratch_mean.iloc[0]
-        verdict, color = ("PASSED", "green") if margin > 0 else ("FAILING", "red")
-        st.markdown(f"### Verdict: :{color}[{verdict}] — margin = {margin:+.4f} macro-F1")
+    for method in ["kd", "rkd"]:
+        method_mean = agg.loc[agg.method == method, "mean"]
+        if not scratch_mean.empty and not method_mean.empty and pd.notna(method_mean.iloc[0]):
+            margin = method_mean.iloc[0] - scratch_mean.iloc[0]
+            verdict, color = ("PASSED", "green") if margin > 0 else ("FAILING", "red")
+            st.markdown(f"### {method}: :{color}[{verdict}] — margin = {margin:+.4f} macro-F1")
 
     fig = go.Figure()
-    for method in ["scratch", "kd"]:
+    for method in G1_METHODS:
         sub = g1_df[g1_df.method == method]
         fig.add_trace(go.Box(y=sub["macro_f1"], name=method, boxpoints="all", pointpos=0))
-    fig.update_layout(title="scratch vs kd macro-F1 across 3 seeds (trashnet/mobilenetv2_035)", yaxis_title="macro-F1")
+    fig.update_layout(title="scratch vs kd vs rkd macro-F1 across 3 seeds (trashnet/mobilenetv2_035)", yaxis_title="macro-F1")
     st.plotly_chart(fig, use_container_width=True)
 else:
     st.info("Not enough data for the G1 comparison yet.")

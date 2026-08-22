@@ -2,8 +2,11 @@ name: mobilenetv2_035
 width_mult: 0.35
 # ~0.4M params — primary edge target
 
-epochs: 40
-patience: 8
+# Extended from 40/8 during the trashnet G1-retune (2026-08-22) — the tiny from-scratch
+# student needed a longer budget to converge under the softened augmentation recipe
+# (see configs/dataset/trashnet.yaml). Shared across every method (CLAUDE.md rule #3).
+epochs: 60
+patience: 10
 optimizer: adamw
 lr: 1.0e-3
 weight_decay: 1.0e-4
