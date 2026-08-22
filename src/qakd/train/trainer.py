@@ -44,6 +44,10 @@ def _balanced_class_weights(entries, num_classes, device):
     return torch.tensor(weights, dtype=torch.float32, device=device)
 
 
+def _count_params(model):
+    return sum(p.numel() for p in model.parameters())
+
+
 def _git_sha():
     try:
         return subprocess.check_output(
@@ -99,6 +103,8 @@ def train_teacher(cfg):
         model = build_teacher(
             teacher_name, num_classes=cfg.dataset.num_classes, pretrained=cfg.teacher.pretrained
         ).to(device)
+        params = _count_params(model)
+        logger.info("%s has %d parameters", teacher_name, params)
         optimizer = AdamW(model.parameters(), lr=cfg.teacher.lr, weight_decay=cfg.teacher.weight_decay)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.teacher.epochs)
 
@@ -130,6 +136,7 @@ def train_teacher(cfg):
             "dataset": dataset_name,
             "macro_f1": test_f1,
             "best_val_macro_f1": best_val_f1,
+            "params": params,
             "recipe": {
                 "epochs_ran": epoch + 1,
                 "epochs_budget": cfg.teacher.epochs,
@@ -270,6 +277,8 @@ def train_student(cfg):
 
         student_kwargs = {k: v for k, v in cfg.student.items() if k not in _STUDENT_RECIPE_KEYS}
         model = build_student(student_name, num_classes=cfg.dataset.num_classes, **student_kwargs)
+        params = _count_params(model)
+        logger.info("%s has %d parameters", student_name, params)
         if cfg.dataset.get("small_batch_regime", False):  # Trap #10
             model = use_batch_stats_only(model)
         model = model.to(device)
@@ -343,6 +352,11 @@ def train_student(cfg):
             ce_label_smoothing=ce_label_smoothing,
         )
 
+        ckpt_dir = "checkpoints/students"
+        os.makedirs(ckpt_dir, exist_ok=True)
+        ckpt_path = os.path.join(ckpt_dir, f"{run_id}.pt")
+        torch.save(model.state_dict(), ckpt_path)
+
         os.makedirs(results_dir, exist_ok=True)
         metrics = {
             "run_id": run_id,
@@ -353,6 +367,8 @@ def train_student(cfg):
             "macro_f1": test_f1,
             "top1_accuracy": test_acc,
             "best_val_macro_f1": best_val_f1,
+            "params": params,
+            "checkpoint": ckpt_path,
             "recipe": {
                 "epochs_ran": epoch + 1,
                 "epochs_budget": cfg.student.epochs,
@@ -371,7 +387,8 @@ def train_student(cfg):
         }
         with open(metrics_path, "w") as f:
             json.dump(metrics, f, indent=2)
-        logger.info("Saved results to results/%s/metrics.json (test macro-F1=%.4f)", run_id, test_f1)
+        logger.info("Saved checkpoint to %s and results to results/%s/metrics.json (test macro-F1=%.4f)",
+                    ckpt_path, run_id, test_f1)
         return metrics
     except Exception as e:
         raise CustomException(e, sys) from e

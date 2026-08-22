@@ -4,6 +4,8 @@ defaults:
   - student: mobilenetv2_035
   - method: scratch
   - _self_
+  - override hydra/job_logging: none
+  - override hydra/hydra_logging: none
 
 seed: 0
 device: cuda

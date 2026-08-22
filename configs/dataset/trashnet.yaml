@@ -9,6 +9,9 @@ small_batch_regime: false # ~14 batches/epoch — plenty for stable BN running s
 train_sampler: shuffle # use every example each epoch; imbalance is handled by balanced CE below
 class_weighted_ce: true # macro-F1 is primary, so keep minority-class pressure in the loss itself
 ce_label_smoothing: 0.0
+random_resized_crop_scale_min: 0.7 # RandomResizedCrop(scale=(this, 1.0)) — Trap #8
+randaugment_num_ops: 2
+randaugment_magnitude: 9
 split:
   ratios: [0.70, 0.15, 0.15]
   seed: 0

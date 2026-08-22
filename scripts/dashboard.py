@@ -21,7 +21,10 @@ def load_teacher_results():
     for path in sorted(glob.glob(os.path.join(REPO_ROOT, "checkpoints", "teachers", "*.json"))):
         with open(path) as f:
             rows.append(json.load(f))
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if not df.empty and "params" not in df.columns:
+        df["params"] = None
+    return df
 
 
 @st.cache_data(ttl=10)
@@ -34,6 +37,8 @@ def load_student_results():
     if not df.empty:
         df["epochs_ran"] = df["recipe"].apply(lambda r: r.get("epochs_ran"))
         df["epochs_budget"] = df["recipe"].apply(lambda r: r.get("epochs_budget"))
+        if "params" not in df.columns:
+            df["params"] = None
     return df
 
 
@@ -82,7 +87,7 @@ with col2:
 st.header("Teachers (Stage 1)")
 if not teachers_df.empty:
     st.dataframe(
-        teachers_df[["teacher", "dataset", "macro_f1", "best_val_macro_f1", "git_sha", "timestamp_utc"]],
+        teachers_df[["teacher", "dataset", "params", "macro_f1", "best_val_macro_f1", "git_sha", "timestamp_utc"]],
         use_container_width=True, hide_index=True,
     )
     fig = px.bar(teachers_df, x="dataset", y="macro_f1", color="dataset",
@@ -125,12 +130,34 @@ st.header("Student Results (Stage 2+)")
 if not students_df.empty:
     st.subheader("Aggregated — mean ± std over seeds (CLAUDE.md Rule #4)")
     agg_all = students_df.groupby(["dataset", "student", "method"]).agg(
+        params=("params", "first"),
         macro_f1_mean=("macro_f1", "mean"),
         macro_f1_std=("macro_f1", "std"),
         top1_mean=("top1_accuracy", "mean"),
         n_seeds=("seed", "count"),
     ).reset_index().sort_values(["dataset", "student", "method"])
     st.dataframe(agg_all, use_container_width=True, hide_index=True)
+
+    st.subheader("Model size — teacher vs. students")
+    size_rows = []
+    if not teachers_df.empty:
+        for _, row in teachers_df.iterrows():
+            size_rows.append({"model": f"{row['teacher']} (teacher)", "dataset": row["dataset"], "params": row["params"]})
+    for (dataset, student), _ in students_df.groupby(["dataset", "student"]):
+        student_params = students_df.loc[
+            (students_df.dataset == dataset) & (students_df.student == student), "params"
+        ].iloc[0]
+        size_rows.append({"model": student, "dataset": dataset, "params": student_params})
+    size_df = pd.DataFrame(size_rows).dropna(subset=["params"])
+    if not size_df.empty:
+        size_df["params"] = size_df["params"].astype(int)
+        fig = px.bar(
+            size_df, x="model", y="params", color="dataset", barmode="group",
+            title="Parameter count — teacher vs. students (log scale)", log_y=True,
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.info("No parameter counts recorded yet — re-run to populate `params` in metrics.json.")
 
     fig = px.bar(
         agg_all, x="method", y="macro_f1_mean", error_y="macro_f1_std", color="dataset",
@@ -139,7 +166,7 @@ if not students_df.empty:
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Raw per-seed results")
-    cols = ["run_id", "dataset", "student", "method", "seed", "macro_f1", "top1_accuracy",
+    cols = ["run_id", "dataset", "student", "method", "seed", "params", "macro_f1", "top1_accuracy",
             "best_val_macro_f1", "epochs_ran", "epochs_budget"]
     st.dataframe(
         students_df[cols].sort_values(["dataset", "student", "method", "seed"]),

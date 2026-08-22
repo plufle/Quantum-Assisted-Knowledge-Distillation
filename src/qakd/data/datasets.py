@@ -10,13 +10,18 @@ IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 
 
-def build_transforms(image_size: int, train: bool):
+def build_transforms(cfg, train: bool):
+    image_size = cfg.image_size
     if train:
-        # RandAugment + random resized crop, fixed identically across every method (Trap #8)
+        # RandAugment + random resized crop, fixed identically across every method (Trap #8).
+        # Strength is config-driven (not hardcoded here) so it can be tuned per dataset.
+        crop_scale_min = float(cfg.get("random_resized_crop_scale_min", 0.7))
+        randaugment_num_ops = int(cfg.get("randaugment_num_ops", 2))
+        randaugment_magnitude = int(cfg.get("randaugment_magnitude", 9))
         return transforms.Compose(
             [
-                transforms.RandomResizedCrop(image_size, scale=(0.7, 1.0)),
-                transforms.RandAugment(),
+                transforms.RandomResizedCrop(image_size, scale=(crop_scale_min, 1.0)),
+                transforms.RandAugment(num_ops=randaugment_num_ops, magnitude=randaugment_magnitude),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
@@ -62,9 +67,9 @@ def build_trashnet_loaders(cfg):
     split = build_trashnet_split(
         cfg.data_dir, cfg.split.cache_path, tuple(cfg.split.ratios), cfg.split.seed
     )
-    train_ds = QAKDImageDataset(cfg.data_dir, split["train"], build_transforms(cfg.image_size, train=True))
-    val_ds = QAKDImageDataset(cfg.data_dir, split["val"], build_transforms(cfg.image_size, train=False))
-    test_ds = QAKDImageDataset(cfg.data_dir, split["test"], build_transforms(cfg.image_size, train=False))
+    train_ds = QAKDImageDataset(cfg.data_dir, split["train"], build_transforms(cfg, train=True))
+    val_ds = QAKDImageDataset(cfg.data_dir, split["val"], build_transforms(cfg, train=False))
+    test_ds = QAKDImageDataset(cfg.data_dir, split["test"], build_transforms(cfg, train=False))
 
     # Trap #4: TrashNet class imbalance — keep this policy configurable so we can
     # compare balanced CE on full epochs against replacement sampling.
@@ -101,12 +106,12 @@ def build_rps25_loaders(cfg):
                 entries.append({"path": f"{subdir}/{fname}", "label": label})
         return entries
 
-    train_ds = QAKDImageDataset(cfg.data_dir, split["train"], build_transforms(cfg.image_size, train=True))
+    train_ds = QAKDImageDataset(cfg.data_dir, split["train"], build_transforms(cfg, train=True))
     val_ds = QAKDImageDataset(
-        cfg.data_dir, _folder_entries("validation"), build_transforms(cfg.image_size, train=False)
+        cfg.data_dir, _folder_entries("validation"), build_transforms(cfg, train=False)
     )
     test_ds = QAKDImageDataset(
-        cfg.data_dir, _folder_entries("test"), build_transforms(cfg.image_size, train=False)
+        cfg.data_dir, _folder_entries("test"), build_transforms(cfg, train=False)
     )
 
     train_loader = DataLoader(train_ds, batch_size=cfg.batch_size, shuffle=True)
@@ -119,6 +124,6 @@ def build_rps25_bn_calibration_loader(cfg):
     """Return the clean RPS training split used to calibrate student BatchNorm."""
     split = build_rps25_split(cfg.data_dir, cfg.split.cache_path, cfg.train_fraction, cfg.split.seed)
     dataset = QAKDImageDataset(
-        cfg.data_dir, split["train"], build_transforms(cfg.image_size, train=False)
+        cfg.data_dir, split["train"], build_transforms(cfg, train=False)
     )
     return DataLoader(dataset, batch_size=cfg.batch_size, shuffle=False)
