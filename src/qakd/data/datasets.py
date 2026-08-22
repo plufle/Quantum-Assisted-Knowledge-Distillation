@@ -66,9 +66,16 @@ def build_trashnet_loaders(cfg):
     val_ds = QAKDImageDataset(cfg.data_dir, split["val"], build_transforms(cfg.image_size, train=False))
     test_ds = QAKDImageDataset(cfg.data_dir, split["test"], build_transforms(cfg.image_size, train=False))
 
-    # Trap #4: TrashNet class imbalance — weighted sampling instead of plain shuffle
-    sampler = _class_weighted_sampler(split["train"], cfg.num_classes)
-    train_loader = DataLoader(train_ds, batch_size=cfg.batch_size, sampler=sampler)
+    # Trap #4: TrashNet class imbalance — keep this policy configurable so we can
+    # compare balanced CE on full epochs against replacement sampling.
+    train_sampler = str(cfg.get("train_sampler", "weighted"))
+    if train_sampler == "weighted":
+        sampler = _class_weighted_sampler(split["train"], cfg.num_classes)
+        train_loader = DataLoader(train_ds, batch_size=cfg.batch_size, sampler=sampler)
+    elif train_sampler == "shuffle":
+        train_loader = DataLoader(train_ds, batch_size=cfg.batch_size, shuffle=True)
+    else:
+        raise ValueError(f"Unsupported trashnet train_sampler={train_sampler!r}")
     val_loader = DataLoader(val_ds, batch_size=cfg.batch_size, shuffle=False)
     test_loader = DataLoader(test_ds, batch_size=cfg.batch_size, shuffle=False)
     return train_loader, val_loader, test_loader
@@ -106,3 +113,12 @@ def build_rps25_loaders(cfg):
     val_loader = DataLoader(val_ds, batch_size=cfg.batch_size, shuffle=False)
     test_loader = DataLoader(test_ds, batch_size=cfg.batch_size, shuffle=False)
     return train_loader, val_loader, test_loader
+
+
+def build_rps25_bn_calibration_loader(cfg):
+    """Return the clean RPS training split used to calibrate student BatchNorm."""
+    split = build_rps25_split(cfg.data_dir, cfg.split.cache_path, cfg.train_fraction, cfg.split.seed)
+    dataset = QAKDImageDataset(
+        cfg.data_dir, split["train"], build_transforms(cfg.image_size, train=False)
+    )
+    return DataLoader(dataset, batch_size=cfg.batch_size, shuffle=False)

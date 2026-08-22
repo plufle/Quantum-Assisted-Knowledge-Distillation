@@ -13,12 +13,16 @@ from torch.optim import AdamW
 
 import qakd.models.students  # noqa: F401 — registers STUDENTS entries on import
 import qakd.models.teachers  # noqa: F401 — registers TEACHERS entries on import
-from qakd.data.datasets import build_rps25_loaders, build_trashnet_loaders
+from qakd.data.datasets import (
+    build_rps25_bn_calibration_loader,
+    build_rps25_loaders,
+    build_trashnet_loaders,
+)
 from qakd.exception import CustomException
 from qakd.logger import logger
 from qakd.losses.kd import kd_loss
 from qakd.losses.rkd import rkd_loss
-from qakd.models.common import use_batch_stats_only
+from qakd.models.common import calibrate_batch_norm, use_batch_stats_only
 from qakd.models.registry import build_student, build_teacher
 from qakd.utils import set_seed
 
@@ -29,6 +33,15 @@ _LOADER_BUILDERS = {
     "trashnet": build_trashnet_loaders,
     "rps_25": build_rps25_loaders,
 }
+
+
+def _balanced_class_weights(entries, num_classes, device):
+    counts = [0] * num_classes
+    for entry in entries:
+        counts[entry["label"]] += 1
+    total = sum(counts)
+    weights = [total / (num_classes * count) if count > 0 else 0.0 for count in counts]
+    return torch.tensor(weights, dtype=torch.float32, device=device)
 
 
 def _git_sha():
@@ -139,29 +152,59 @@ def train_teacher(cfg):
         raise CustomException(e, sys) from e
 
 
-def _student_loss(method_cfg, model, teacher, images, labels):
+def _student_loss(method_cfg, model, teacher, images, labels, ce_class_weights=None, ce_label_smoothing=0.0):
     if method_cfg.name == "scratch":
         logits = model(images)
-        loss = nn.functional.cross_entropy(logits, labels)
+        loss = nn.functional.cross_entropy(
+            logits,
+            labels,
+            weight=ce_class_weights,
+            label_smoothing=ce_label_smoothing,
+        )
     elif method_cfg.name == "kd":
         logits = model(images)
         with torch.no_grad():
             teacher_logits = teacher(images)
-        loss = kd_loss(logits, teacher_logits, labels, method_cfg.loss.alpha, method_cfg.loss.beta, method_cfg.loss.tau)
+        loss = kd_loss(
+            logits,
+            teacher_logits,
+            labels,
+            method_cfg.loss.alpha,
+            method_cfg.loss.beta,
+            method_cfg.loss.tau,
+            ce_class_weights=ce_class_weights,
+            ce_label_smoothing=ce_label_smoothing,
+        )
     elif method_cfg.name == "rkd":
         logits, student_feats = model(images, return_feats=True)
         with torch.no_grad():
             _, teacher_feats = teacher(images, return_feats=True)
         loss = rkd_loss(
-            student_feats[-1], teacher_feats[-1], logits, labels,
-            method_cfg.loss.ce_weight, method_cfg.loss.distance_weight, method_cfg.loss.angle_weight,
+            student_feats[-1],
+            teacher_feats[-1],
+            logits,
+            labels,
+            method_cfg.loss.ce_weight,
+            method_cfg.loss.distance_weight,
+            method_cfg.loss.angle_weight,
+            ce_class_weights=ce_class_weights,
+            ce_label_smoothing=ce_label_smoothing,
         )
     else:
         raise ValueError(f"Stage 2 doesn't implement method={method_cfg.name!r} (pqk/rbf_control land in Stage 5)")
     return logits, loss
 
 
-def _run_student_epoch(model, teacher, loader, device, method_cfg, optimizer=None):
+def _run_student_epoch(
+    model,
+    teacher,
+    loader,
+    device,
+    method_cfg,
+    optimizer=None,
+    ce_class_weights=None,
+    ce_label_smoothing=0.0,
+):
     train_mode = optimizer is not None
     model.train(train_mode)
     all_preds, all_labels = [], []
@@ -169,7 +212,15 @@ def _run_student_epoch(model, teacher, loader, device, method_cfg, optimizer=Non
     for images, labels in loader:
         images, labels = images.to(device), labels.to(device)
         with torch.set_grad_enabled(train_mode):
-            logits, loss = _student_loss(method_cfg, model, teacher, images, labels)
+            logits, loss = _student_loss(
+                method_cfg,
+                model,
+                teacher,
+                images,
+                labels,
+                ce_class_weights=ce_class_weights,
+                ce_label_smoothing=ce_label_smoothing,
+            )
             if train_mode:
                 optimizer.zero_grad()
                 loss.backward()
@@ -205,6 +256,17 @@ def train_student(cfg):
 
         build_loaders = _LOADER_BUILDERS[dataset_name]
         train_loader, val_loader, test_loader = build_loaders(cfg.dataset)
+        bn_calibration_loader = (
+            build_rps25_bn_calibration_loader(cfg.dataset)
+            if cfg.dataset.get("small_batch_regime", False)
+            else None
+        )
+        ce_class_weights = None
+        if cfg.dataset.get("class_weighted_ce", False):
+            ce_class_weights = _balanced_class_weights(
+                train_loader.dataset.entries, cfg.dataset.num_classes, device
+            )
+        ce_label_smoothing = float(cfg.dataset.get("ce_label_smoothing", 0.0))
 
         student_kwargs = {k: v for k, v in cfg.student.items() if k not in _STUDENT_RECIPE_KEYS}
         model = build_student(student_name, num_classes=cfg.dataset.num_classes, **student_kwargs)
@@ -233,9 +295,28 @@ def train_student(cfg):
         best_val_f1, best_state, epochs_without_improvement = -1.0, None, 0
         for epoch in range(cfg.student.epochs):
             train_loss, train_f1, train_acc = _run_student_epoch(
-                model, teacher, train_loader, device, cfg.method, optimizer
+                model,
+                teacher,
+                train_loader,
+                device,
+                cfg.method,
+                optimizer,
+                ce_class_weights=ce_class_weights,
+                ce_label_smoothing=ce_label_smoothing,
             )
-            val_loss, val_f1, val_acc = _run_student_epoch(model, teacher, val_loader, device, cfg.method)
+            if bn_calibration_loader is not None:
+                calibrate_batch_norm(model, bn_calibration_loader, device)
+            val_loss, val_f1, val_acc = _run_student_epoch(
+                model,
+                teacher,
+                val_loader,
+                device,
+                cfg.method,
+                ce_class_weights=ce_class_weights,
+                ce_label_smoothing=ce_label_smoothing,
+            )
+            if bn_calibration_loader is not None:
+                use_batch_stats_only(model)
             scheduler.step()
             logger.info(
                 "[%s] epoch %d/%d train_loss=%.4f train_f1=%.4f val_loss=%.4f val_f1=%.4f",
@@ -250,7 +331,17 @@ def train_student(cfg):
                     break
 
         model.load_state_dict(best_state)
-        _, test_f1, test_acc = _run_student_epoch(model, teacher, test_loader, device, cfg.method)
+        if bn_calibration_loader is not None:
+            calibrate_batch_norm(model, bn_calibration_loader, device)
+        _, test_f1, test_acc = _run_student_epoch(
+            model,
+            teacher,
+            test_loader,
+            device,
+            cfg.method,
+            ce_class_weights=ce_class_weights,
+            ce_label_smoothing=ce_label_smoothing,
+        )
 
         os.makedirs(results_dir, exist_ok=True)
         metrics = {
@@ -270,6 +361,9 @@ def train_student(cfg):
                 "lr": cfg.student.lr,
                 "weight_decay": cfg.student.weight_decay,
                 "batch_size": cfg.dataset.batch_size,
+                "batch_norm_calibrated": bn_calibration_loader is not None,
+                "class_weighted_ce": ce_class_weights is not None,
+                "ce_label_smoothing": ce_label_smoothing,
                 "method_loss": OmegaConf.to_container(cfg.method.loss) if "loss" in cfg.method else None,
             },
             "git_sha": _git_sha(),

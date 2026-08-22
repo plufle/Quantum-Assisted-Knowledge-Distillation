@@ -61,18 +61,6 @@ Opens at http://localhost:8501. Reads live from `results/*/metrics.json` and
 Shows per-run and aggregated (mean±std) results, plus the G1/G2/G3 go/no-go gate
 verdicts computed directly from the data.
 
-### 4. Reset + re-run the full student sweep
-
-```powershell
-.\scripts\reset_and_train_students.ps1
-```
-
-**Destructive** — clears `logs/` and `results/` (student run outputs only; teacher
-checkpoints and cached data splits are untouched), then re-runs the full student sweep
-end to end. Read the script header before running it. Takes a while on CPU — each
-(dataset, method, seed) combination is a full training run (tens of minutes apiece for
-`trashnet`/`kd`/`rkd`, given the extra teacher forward pass per batch).
-
 ## Current status
 
 See the **Progress** table in [CLAUDE.md](CLAUDE.md) for the authoritative, up-to-date

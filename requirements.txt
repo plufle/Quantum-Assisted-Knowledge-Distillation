@@ -4,7 +4,8 @@ matplotlib
 seaborn
 scikit-learn
 jupyter
-
+plotly
+streamlit
 # added for Stage 0 (data pipeline) — torch/torchvision needed for loaders + transforms,
 # hydra/omegaconf for the configs/ tree
 torch

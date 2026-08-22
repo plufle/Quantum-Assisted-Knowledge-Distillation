@@ -10,6 +10,9 @@ metric: accuracy
 # BatchNorm running stats to stabilize (Trap #10). Students disable running-stat tracking
 # for this dataset; the pretrained teacher is unaffected (already-good BN stats to fine-tune).
 small_batch_regime: true
+train_sampler: shuffle
+class_weighted_ce: false
+ce_label_smoothing: 0.0
 split:
   seed: 0
   cache_path: data/splits/rps_25.json
