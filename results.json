@@ -1,0 +1,1527 @@
+{
+  "teachers": [
+    {
+      "teacher": "resnet50_in1k",
+      "dataset": "rps_25",
+      "macro_f1": 0.9068513731468594,
+      "best_val_macro_f1": 0.9696342305037957,
+      "recipe": {
+        "epochs_ran": 11,
+        "epochs_budget": 20,
+        "patience": 5,
+        "optimizer": "adamw",
+        "lr": 0.0001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "seed": 0,
+        "pretrained": true
+      },
+      "git_sha": "cc912a4ffb8efa94a50acc2499e210a2ab1781c9",
+      "timestamp_utc": "2026-08-15T13:24:56.903585+00:00"
+    },
+    {
+      "teacher": "resnet50_in1k",
+      "dataset": "trashnet",
+      "macro_f1": 0.8761489037738789,
+      "best_val_macro_f1": 0.9022218351055514,
+      "recipe": {
+        "epochs_ran": 20,
+        "epochs_budget": 20,
+        "patience": 5,
+        "optimizer": "adamw",
+        "lr": 0.0001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "seed": 0,
+        "pretrained": true
+      },
+      "git_sha": "cc912a4ffb8efa94a50acc2499e210a2ab1781c9",
+      "timestamp_utc": "2026-08-15T13:19:26.789449+00:00"
+    }
+  ],
+  "students": [
+    {
+      "run_id": "rps_25__lenet5__kd__s0",
+      "dataset": "rps_25",
+      "student": "lenet5",
+      "method": "kd",
+      "seed": 0,
+      "macro_f1": 0.6388115856575598,
+      "top1_accuracy": 0.6344086021505376,
+      "best_val_macro_f1": 0.7487179487179487,
+      "params": 34395,
+      "checkpoint": "checkpoints/students\\rps_25__lenet5__kd__s0.pt",
+      "recipe": {
+        "epochs_ran": 33,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 0.5
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T07:26:12.671037+00:00"
+    },
+    {
+      "run_id": "rps_25__lenet5__kd__s1",
+      "dataset": "rps_25",
+      "student": "lenet5",
+      "method": "kd",
+      "seed": 1,
+      "macro_f1": 0.6626399322886588,
+      "top1_accuracy": 0.6666666666666666,
+      "best_val_macro_f1": 0.8146464646464647,
+      "params": 34395,
+      "checkpoint": "checkpoints/students\\rps_25__lenet5__kd__s1.pt",
+      "recipe": {
+        "epochs_ran": 38,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:28:26.051988+00:00"
+    },
+    {
+      "run_id": "rps_25__lenet5__kd__s2",
+      "dataset": "rps_25",
+      "student": "lenet5",
+      "method": "kd",
+      "seed": 2,
+      "macro_f1": 0.6490358345932469,
+      "top1_accuracy": 0.6559139784946236,
+      "best_val_macro_f1": 0.8770653907496012,
+      "params": 34395,
+      "checkpoint": "checkpoints/students\\rps_25__lenet5__kd__s2.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T06:05:23.352791+00:00"
+    },
+    {
+      "run_id": "rps_25__lenet5__scratch__s0",
+      "dataset": "rps_25",
+      "student": "lenet5",
+      "method": "scratch",
+      "seed": 0,
+      "macro_f1": 0.5564459408903853,
+      "top1_accuracy": 0.5564516129032258,
+      "best_val_macro_f1": 0.7505523066926575,
+      "params": 34395,
+      "checkpoint": "checkpoints/students\\rps_25__lenet5__scratch__s0.pt",
+      "recipe": {
+        "epochs_ran": 40,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T03:40:56.319847+00:00"
+    },
+    {
+      "run_id": "rps_25__lenet5__scratch__s1",
+      "dataset": "rps_25",
+      "student": "lenet5",
+      "method": "scratch",
+      "seed": 1,
+      "macro_f1": 0.7053871573277789,
+      "top1_accuracy": 0.6989247311827957,
+      "best_val_macro_f1": 0.8146464646464647,
+      "params": 34395,
+      "checkpoint": "checkpoints/students\\rps_25__lenet5__scratch__s1.pt",
+      "recipe": {
+        "epochs_ran": 39,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:10:04.683239+00:00"
+    },
+    {
+      "run_id": "rps_25__lenet5__scratch__s2",
+      "dataset": "rps_25",
+      "student": "lenet5",
+      "method": "scratch",
+      "seed": 2,
+      "macro_f1": 0.7673329259536157,
+      "top1_accuracy": 0.771505376344086,
+      "best_val_macro_f1": 0.8782828282828282,
+      "params": 34395,
+      "checkpoint": "checkpoints/students\\rps_25__lenet5__scratch__s2.pt",
+      "recipe": {
+        "epochs_ran": 46,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:34:36.711046+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__kd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 0,
+      "macro_f1": 0.7932541370727365,
+      "top1_accuracy": 0.7983870967741935,
+      "best_val_macro_f1": 0.842232392575642,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__kd__s0.pt",
+      "recipe": {
+        "epochs_ran": 37,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T10:45:51.510471+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__kd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 1,
+      "macro_f1": 0.7195300598107021,
+      "top1_accuracy": 0.7311827956989247,
+      "best_val_macro_f1": 0.7959401709401709,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__kd__s1.pt",
+      "recipe": {
+        "epochs_ran": 48,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T11:09:23.110438+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__kd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 2,
+      "macro_f1": 0.617911222013558,
+      "top1_accuracy": 0.6263440860215054,
+      "best_val_macro_f1": 0.6968766001024065,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__kd__s2.pt",
+      "recipe": {
+        "epochs_ran": 28,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T11:22:49.417887+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rkd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 0,
+      "macro_f1": 0.7543383556702462,
+      "top1_accuracy": 0.760752688172043,
+      "best_val_macro_f1": 0.9085858585858585,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__rkd__s0.pt",
+      "recipe": {
+        "epochs_ran": 52,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T11:48:12.523080+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rkd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 1,
+      "macro_f1": 0.776654170949473,
+      "top1_accuracy": 0.782258064516129,
+      "best_val_macro_f1": 0.842232392575642,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__rkd__s1.pt",
+      "recipe": {
+        "epochs_ran": 47,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T12:14:14.373990+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rkd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 2,
+      "macro_f1": 0.6789110032362459,
+      "top1_accuracy": 0.6908602150537635,
+      "best_val_macro_f1": 0.8361859794084858,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__rkd__s2.pt",
+      "recipe": {
+        "epochs_ran": 56,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T12:46:44.047171+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__scratch__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 0,
+      "macro_f1": 0.7007021716135827,
+      "top1_accuracy": 0.7150537634408602,
+      "best_val_macro_f1": 0.7440257648953302,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__scratch__s0.pt",
+      "recipe": {
+        "epochs_ran": 45,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T09:58:07.733772+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__scratch__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 1,
+      "macro_f1": 0.693216758462125,
+      "top1_accuracy": 0.7043010752688172,
+      "best_val_macro_f1": 0.8753623188405797,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__scratch__s1.pt",
+      "recipe": {
+        "epochs_ran": 45,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T10:10:44.517544+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__scratch__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 2,
+      "macro_f1": 0.7371129181700349,
+      "top1_accuracy": 0.760752688172043,
+      "best_val_macro_f1": 0.842232392575642,
+      "params": 399971,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv2_035__scratch__s2.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T10:26:41.357599+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__kd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 0,
+      "macro_f1": 0.8959488553896598,
+      "top1_accuracy": 0.9005376344086021,
+      "best_val_macro_f1": 0.9073684210526315,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__kd__s0.pt",
+      "recipe": {
+        "epochs_ran": 31,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T04:04:38.133458+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__kd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 1,
+      "macro_f1": 0.7286486780250536,
+      "top1_accuracy": 0.7580645161290323,
+      "best_val_macro_f1": 0.8714331723027375,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__kd__s1.pt",
+      "recipe": {
+        "epochs_ran": 22,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:06:44.052883+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__kd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 2,
+      "macro_f1": 0.8641964202604936,
+      "top1_accuracy": 0.8709677419354839,
+      "best_val_macro_f1": 0.8746438746438746,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__kd__s2.pt",
+      "recipe": {
+        "epochs_ran": 23,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:59:27.830215+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rkd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 0,
+      "macro_f1": 0.9024551877117969,
+      "top1_accuracy": 0.9059139784946236,
+      "best_val_macro_f1": 0.9388888888888888,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__rkd__s0.pt",
+      "recipe": {
+        "epochs_ran": 35,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T04:32:47.068524+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rkd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 1,
+      "macro_f1": 0.8348239253390916,
+      "top1_accuracy": 0.8440860215053764,
+      "best_val_macro_f1": 0.8452380952380952,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__rkd__s1.pt",
+      "recipe": {
+        "epochs_ran": 30,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:28:58.235433+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rkd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 2,
+      "macro_f1": 0.8100560043488705,
+      "top1_accuracy": 0.8279569892473119,
+      "best_val_macro_f1": 0.8746438746438746,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__rkd__s2.pt",
+      "recipe": {
+        "epochs_ran": 28,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T06:25:48.857120+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__scratch__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 0,
+      "macro_f1": 0.8587874015365284,
+      "top1_accuracy": 0.8682795698924731,
+      "best_val_macro_f1": 0.9388888888888888,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__scratch__s0.pt",
+      "recipe": {
+        "epochs_ran": 29,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T03:39:07.304526+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__scratch__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 1,
+      "macro_f1": 0.831305310422458,
+      "top1_accuracy": 0.8360215053763441,
+      "best_val_macro_f1": 0.9376811594202898,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__scratch__s1.pt",
+      "recipe": {
+        "epochs_ran": 19,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T04:51:29.306226+00:00"
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__scratch__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 2,
+      "macro_f1": 0.7569899309079072,
+      "top1_accuracy": 0.7795698924731183,
+      "best_val_macro_f1": 0.8746438746438746,
+      "params": 928739,
+      "checkpoint": "checkpoints/students\\rps_25__mobilenetv3_small__scratch__s2.pt",
+      "recipe": {
+        "epochs_ran": 19,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:37:05.893367+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__kd__s0",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "kd",
+      "seed": 0,
+      "macro_f1": 0.4022399489747477,
+      "top1_accuracy": 0.40789473684210525,
+      "best_val_macro_f1": 0.42411546185605387,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__kd__s0.pt",
+      "recipe": {
+        "epochs_ran": 16,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T07:38:36.712041+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__rkd__s0",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "rkd",
+      "seed": 0,
+      "macro_f1": 0.5749492689981621,
+      "top1_accuracy": 0.5973684210526315,
+      "best_val_macro_f1": 0.5913494422310671,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__rkd__s0.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 1.0,
+          "angle_weight": 2.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T07:14:18.395420+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__rkd__s1",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "rkd",
+      "seed": 1,
+      "macro_f1": 0.5945712512235152,
+      "top1_accuracy": 0.618421052631579,
+      "best_val_macro_f1": 0.613644270956326,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__rkd__s1.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 1.0,
+          "angle_weight": 2.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T08:11:28.055910+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__rkd__s2",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "rkd",
+      "seed": 2,
+      "macro_f1": 0.5637286290260893,
+      "top1_accuracy": 0.5763157894736842,
+      "best_val_macro_f1": 0.6030315087414144,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__rkd__s2.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 1.0,
+          "angle_weight": 2.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T08:57:43.002332+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__scratch__s0",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "scratch",
+      "seed": 0,
+      "macro_f1": 0.54410839802235,
+      "top1_accuracy": 0.5578947368421052,
+      "best_val_macro_f1": 0.5468444984348096,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__scratch__s0.pt",
+      "recipe": {
+        "epochs_ran": 55,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T05:12:34.850678+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__scratch__s1",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "scratch",
+      "seed": 1,
+      "macro_f1": 0.5047882487046645,
+      "top1_accuracy": 0.5157894736842106,
+      "best_val_macro_f1": 0.544589382950553,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__scratch__s1.pt",
+      "recipe": {
+        "epochs_ran": 42,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T07:28:57.568010+00:00"
+    },
+    {
+      "run_id": "trashnet__lenet5__scratch__s2",
+      "dataset": "trashnet",
+      "student": "lenet5",
+      "method": "scratch",
+      "seed": 2,
+      "macro_f1": 0.5368462554097153,
+      "top1_accuracy": 0.55,
+      "best_val_macro_f1": 0.5714164159638911,
+      "params": 34590,
+      "checkpoint": "checkpoints/students\\trashnet__lenet5__scratch__s2.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 12,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-29T08:18:41.573555+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__kd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 0,
+      "macro_f1": 0.7100665223269821,
+      "top1_accuracy": 0.7236842105263158,
+      "best_val_macro_f1": 0.7162094322372359,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__kd__s0.pt",
+      "recipe": {
+        "epochs_ran": 57,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T03:34:36.617778+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__kd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 1,
+      "macro_f1": 0.7206524825388558,
+      "top1_accuracy": 0.7342105263157894,
+      "best_val_macro_f1": 0.6964596620914879,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__kd__s1.pt",
+      "recipe": {
+        "epochs_ran": 51,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T04:17:18.878994+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__kd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 2,
+      "macro_f1": 0.6947130201385426,
+      "top1_accuracy": 0.7157894736842105,
+      "best_val_macro_f1": 0.7314312473947747,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__kd__s2.pt",
+      "recipe": {
+        "epochs_ran": 57,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T05:05:43.586735+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rkd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 0,
+      "macro_f1": 0.6758008093446516,
+      "top1_accuracy": 0.6894736842105263,
+      "best_val_macro_f1": 0.7070016881776796,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__rkd__s0.pt",
+      "recipe": {
+        "epochs_ran": 57,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T10:47:35.479017+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rkd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 1,
+      "macro_f1": 0.6701657559066551,
+      "top1_accuracy": 0.6842105263157895,
+      "best_val_macro_f1": 0.6755303858347385,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__rkd__s1.pt",
+      "recipe": {
+        "epochs_ran": 51,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T10:30:59.429474+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rkd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 2,
+      "macro_f1": 0.6687007091225602,
+      "top1_accuracy": 0.6842105263157895,
+      "best_val_macro_f1": 0.6739730195633613,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__rkd__s2.pt",
+      "recipe": {
+        "epochs_ran": 48,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T11:25:22.854151+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__scratch__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 0,
+      "macro_f1": 0.6941559976943005,
+      "top1_accuracy": 0.7105263157894737,
+      "best_val_macro_f1": 0.7028596069949832,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__scratch__s0.pt",
+      "recipe": {
+        "epochs_ran": 60,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T02:11:20.148365+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__scratch__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 1,
+      "macro_f1": 0.6893250647980915,
+      "top1_accuracy": 0.7078947368421052,
+      "best_val_macro_f1": 0.6941021484395457,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__scratch__s1.pt",
+      "recipe": {
+        "epochs_ran": 54,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T02:30:10.730881+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__scratch__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 2,
+      "macro_f1": 0.6678385325623668,
+      "top1_accuracy": 0.6736842105263158,
+      "best_val_macro_f1": 0.659205767576465,
+      "params": 403814,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__scratch__s2.pt",
+      "recipe": {
+        "epochs_ran": 50,
+        "epochs_budget": 60,
+        "patience": 10,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": false,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "d642030f6732917ff00e37a969eecef834df91e8",
+      "timestamp_utc": "2026-08-22T02:47:03.433669+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__kd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 0,
+      "macro_f1": 0.7239217335090199,
+      "top1_accuracy": 0.7421052631578947,
+      "best_val_macro_f1": 0.7538000902661904,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__kd__s0.pt",
+      "recipe": {
+        "epochs_ran": 38,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T08:32:44.244839+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__kd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 1,
+      "macro_f1": 0.7554333344051737,
+      "top1_accuracy": 0.7763157894736842,
+      "best_val_macro_f1": 0.7374367622018344,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__kd__s1.pt",
+      "recipe": {
+        "epochs_ran": 37,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T10:28:45.506273+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__kd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 2,
+      "macro_f1": 0.7179255736839515,
+      "top1_accuracy": 0.7394736842105263,
+      "best_val_macro_f1": 0.7232052970829846,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__kd__s2.pt",
+      "recipe": {
+        "epochs_ran": 40,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 3.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T12:27:33.600173+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rkd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 0,
+      "macro_f1": 0.7126802775796585,
+      "top1_accuracy": 0.7289473684210527,
+      "best_val_macro_f1": 0.7173980913286117,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__rkd__s0.pt",
+      "recipe": {
+        "epochs_ran": 39,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T09:25:21.945019+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rkd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 1,
+      "macro_f1": 0.7186780466520267,
+      "top1_accuracy": 0.7421052631578947,
+      "best_val_macro_f1": 0.7634665850088983,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__rkd__s1.pt",
+      "recipe": {
+        "epochs_ran": 36,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T11:17:13.792025+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rkd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 2,
+      "macro_f1": 0.715179746911903,
+      "top1_accuracy": 0.7368421052631579,
+      "best_val_macro_f1": 0.7044538765336684,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__rkd__s2.pt",
+      "recipe": {
+        "epochs_ran": 31,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0,
+          "distance_weight": 5.0,
+          "angle_weight": 10.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T13:01:35.077058+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__scratch__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 0,
+      "macro_f1": 0.7118576146581611,
+      "top1_accuracy": 0.7315789473684211,
+      "best_val_macro_f1": 0.7293279569864163,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__scratch__s0.pt",
+      "recipe": {
+        "epochs_ran": 34,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T07:43:35.278371+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__scratch__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 1,
+      "macro_f1": 0.7412270917340423,
+      "top1_accuracy": 0.7631578947368421,
+      "best_val_macro_f1": 0.747232096737481,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__scratch__s1.pt",
+      "recipe": {
+        "epochs_ran": 40,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T09:45:42.233614+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__scratch__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 2,
+      "macro_f1": 0.7176241544867009,
+      "top1_accuracy": 0.7394736842105263,
+      "best_val_macro_f1": 0.7525316745247089,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__scratch__s2.pt",
+      "recipe": {
+        "epochs_ran": 39,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "ce_weight": 1.0
+        }
+      },
+      "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
+      "timestamp_utc": "2026-08-23T11:36:53.357403+00:00"
+    }
+  ]
+}

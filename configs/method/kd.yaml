@@ -1,4 +1,8 @@
 name: kd
+# tau=3 is tuned for trashnet's 6-class problem and does NOT transfer to rps_25's 3-class
+# one (tau=3 was a tie with scratch, tau=1 clearly won there — see `kd_rps25.yaml`, the
+# G1-rps gate in CLAUDE.md's Go/no-go section, and Trap #11). Use `method=kd_rps25` for
+# rps_25 runs.
 # Hinton logit KD — tuned on trashnet/mobilenetv2_035/seed0 (G1 retune):
 # tau=4 (literature default) underperformed scratch; screened tau in {1,2,3,4} at full
 # epoch budget, single seed. tau=3 was the clear winner (test macro-F1 0.5486 vs 0.5299

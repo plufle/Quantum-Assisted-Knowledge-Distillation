@@ -1,0 +1,22 @@
+name: rkd
+# lenet5-specific variant of rkd.yaml — `name: rkd` is deliberate (keeps run_id and
+# results labeled as method=rkd), only the config-group selector differs.
+#
+# At rkd.yaml's mobilenetv2_035-tuned weights (distance=5, angle=10), rkd was a genuine
+# training failure on lenet5 (2026-08-29): train_f1 itself stayed near-random (~0.05-0.11)
+# for the whole run, not just eval — LeNet5 is ~35K params, far smaller than the models
+# these weights were tuned for, so the relational loss terms drowned out CE entirely.
+# Screened distance/angle=1.0/2.0 (5x softer than rkd.yaml): fixed seed0 completely
+# (macro_f1 0.1157->0.4974, edging out scratch's 0.4955). Confirmed over 3 seeds
+# (2026-08-29): s0=0.4974, s1=0.4601, s2=0.1109 -> mean 0.3562+/-0.2132. Still unstable —
+# seed2 got stuck in the same slow-loss-plateau basin seeds 0/1 also passed through early
+# (train_loss ~1.85 for ~10 epochs) but didn't escape before patience(8) triggered early
+# stopping; seeds 0/1 needed ~11-15 epochs in that basin before breaking free. A longer
+# patience might fix this but would require re-confirming scratch/kd too (CLAUDE.md rule
+# #3 — patience is a shared student-level setting). Not pursued further; reported as an
+# honest instability rather than a clean pass. lenet5 is a capacity-floor/dev-loop model,
+# not gate-critical.
+loss:
+  ce_weight: 1.0
+  distance_weight: 1.0
+  angle_weight: 2.0

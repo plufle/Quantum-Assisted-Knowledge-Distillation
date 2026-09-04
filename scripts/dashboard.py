@@ -1,7 +1,7 @@
 """QAKD results dashboard. Run with: streamlit run scripts/dashboard.py
-Reads directly from results/*/metrics.json and checkpoints/teachers/*.json —
-no separate data store, so it always reflects the actual immutable run outputs."""
-import glob
+Reads from the single consolidated results.json (repo root) instead of scanning
+results/*/metrics.json + checkpoints/teachers/*.json individually — regenerate it
+after training with: python scripts/aggregate_results.py"""
 import json
 import os
 
@@ -13,15 +13,20 @@ import streamlit as st
 st.set_page_config(page_title="QAKD Results Dashboard", layout="wide")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RESULTS_JSON_PATH = os.path.join(REPO_ROOT, "results.json")
+
+
+@st.cache_data(ttl=10)
+def load_results_json():
+    if not os.path.exists(RESULTS_JSON_PATH):
+        return {"teachers": [], "students": []}
+    with open(RESULTS_JSON_PATH) as f:
+        return json.load(f)
 
 
 @st.cache_data(ttl=10)
 def load_teacher_results():
-    rows = []
-    for path in sorted(glob.glob(os.path.join(REPO_ROOT, "checkpoints", "teachers", "*.json"))):
-        with open(path) as f:
-            rows.append(json.load(f))
-    df = pd.DataFrame(rows)
+    df = pd.DataFrame(load_results_json()["teachers"])
     if not df.empty and "params" not in df.columns:
         df["params"] = None
     return df
@@ -29,11 +34,7 @@ def load_teacher_results():
 
 @st.cache_data(ttl=10)
 def load_student_results():
-    rows = []
-    for path in sorted(glob.glob(os.path.join(REPO_ROOT, "results", "*", "metrics.json"))):
-        with open(path) as f:
-            rows.append(json.load(f))
-    df = pd.DataFrame(rows)
+    df = pd.DataFrame(load_results_json()["students"])
     if not df.empty:
         df["epochs_ran"] = df["recipe"].apply(lambda r: r.get("epochs_ran"))
         df["epochs_budget"] = df["recipe"].apply(lambda r: r.get("epochs_budget"))
@@ -45,11 +46,14 @@ def load_student_results():
 teachers_df = load_teacher_results()
 students_df = load_student_results()
 
+if not os.path.exists(RESULTS_JSON_PATH):
+    st.warning("results.json not found — run `python scripts/aggregate_results.py` first.")
+
 st.title("QAKD — Results Dashboard")
 st.caption("Quantum-Assisted Knowledge Distillation for Lightweight Edge Classification")
 
 # ---------------------------------------------------------------- Progress
-st.header("Progress against the 95-run plan")
+st.header("Progress against the 83-run plan")
 
 
 def _count_block(df, dataset, students, methods):
@@ -67,8 +71,6 @@ progress = pd.DataFrame([
      "Done": _count_block(students_df, "trashnet", ["mobilenetv2_035", "mobilenetv3_small", "lenet5"], ALL_METHODS)},
     {"Block": "Confirmation (rps_25)", "Planned": 24,
      "Done": _count_block(students_df, "rps_25", ["mobilenetv2_035", "mobilenetv3_small"], NO_RKD)},
-    {"Block": "Cross-family (shufflenetv2)", "Planned": 12,
-     "Done": _count_block(students_df, "trashnet", ["shufflenetv2_050"], NO_RKD)},
     {"Block": "Quantum ablation", "Planned": 12, "Done": 0},
 ])
 progress["Remaining"] = progress["Planned"] - progress["Done"]
@@ -96,18 +98,31 @@ if not teachers_df.empty:
 else:
     st.info("No teacher checkpoints yet.")
 
-# ---------------------------------------------------------------- G1 gate
-st.header("G1 Gate — kd / rkd vs scratch on trashnet")
+# ---------------------------------------------------------------- G1-style gates
 G1_METHODS = ["scratch", "kd", "rkd"]
-g1_df = pd.DataFrame()
-if not students_df.empty:
-    g1_df = students_df[
-        (students_df.dataset == "trashnet")
+G1_CELLS = (
+    [("trashnet", s, "macro_f1") for s in ["mobilenetv2_035", "mobilenetv3_small", "lenet5"]]
+    + [("rps_25", s, "top1_accuracy") for s in ["mobilenetv2_035", "mobilenetv3_small", "lenet5"]]
+)
+
+
+def _gate_df(dataset, student):
+    if students_df.empty:
+        return pd.DataFrame()
+    return students_df[
+        (students_df.dataset == dataset)
         & (students_df.method.isin(G1_METHODS))
-        & (students_df.student == "mobilenetv2_035")
+        & (students_df.student == student)
     ]
-if not g1_df.empty:
-    agg = g1_df.groupby("method")["macro_f1"].agg(["mean", "std", "count"]).reindex(G1_METHODS).reset_index()
+
+
+def render_gate_detail(dataset, student, metric_col):
+    gate_df = _gate_df(dataset, student)
+    if gate_df.empty:
+        st.info("Not enough data for this comparison yet.")
+        return
+
+    agg = gate_df.groupby("method")[metric_col].agg(["mean", "std", "count"]).reindex(G1_METHODS).reset_index()
     st.dataframe(agg, use_container_width=True, hide_index=True)
 
     scratch_mean = agg.loc[agg.method == "scratch", "mean"]
@@ -116,16 +131,58 @@ if not g1_df.empty:
         if not scratch_mean.empty and not method_mean.empty and pd.notna(method_mean.iloc[0]):
             margin = method_mean.iloc[0] - scratch_mean.iloc[0]
             verdict, color = ("PASSED", "green") if margin > 0 else ("FAILING", "red")
-            st.markdown(f"### {method}: :{color}[{verdict}] — margin = {margin:+.4f} macro-F1")
+            st.markdown(f"**{method}**: :{color}[{verdict}] — margin = {margin:+.4f} {metric_col}")
 
     fig = go.Figure()
     for method in G1_METHODS:
-        sub = g1_df[g1_df.method == method]
-        fig.add_trace(go.Box(y=sub["macro_f1"], name=method, boxpoints="all", pointpos=0))
-    fig.update_layout(title="scratch vs kd vs rkd macro-F1 across 3 seeds (trashnet/mobilenetv2_035)", yaxis_title="macro-F1")
+        sub = gate_df[gate_df.method == method]
+        fig.add_trace(go.Box(y=sub[metric_col], name=method, boxpoints="all", pointpos=0))
+    fig.update_layout(title=f"scratch vs kd vs rkd — {metric_col} across seeds ({dataset}/{student})",
+                       yaxis_title=metric_col)
     st.plotly_chart(fig, use_container_width=True)
-else:
-    st.info("Not enough data for the G1 comparison yet.")
+
+
+def build_g1_summary():
+    rows = []
+    for dataset, student, metric_col in G1_CELLS:
+        gate_df = _gate_df(dataset, student)
+        row = {"dataset": dataset, "student": student, "metric": metric_col,
+               "scratch": None, "winner": "—", "margin": None, "verdict": "no data"}
+        if not gate_df.empty:
+            means = gate_df.groupby("method")[metric_col].mean()
+            if "scratch" in means:
+                row["scratch"] = means["scratch"]
+                candidates = {m: means[m] - means["scratch"] for m in ["kd", "rkd"] if m in means}
+                if candidates:
+                    best_method = max(candidates, key=candidates.get)
+                    best_margin = candidates[best_method]
+                    row["winner"] = best_method
+                    row["margin"] = best_margin
+                    row["verdict"] = "PASS" if best_margin > 0 else "OPEN"
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+st.header("G1 Gate — kd / rkd vs scratch, every student × both datasets")
+st.caption("macro-F1 on trashnet, accuracy on rps_25 (per dataset config) — best of kd/rkd vs scratch")
+
+summary_df = build_g1_summary()
+
+
+def _style_verdict(val):
+    return {"PASS": "background-color: #1a4d2e; color: #d4f5dd",
+            "OPEN": "background-color: #4d1a1a; color: #f5d4d4"}.get(val, "")
+
+
+st.dataframe(
+    summary_df.style.map(_style_verdict, subset=["verdict"])
+    .format({"scratch": "{:.4f}", "margin": "{:+.4f}"}, na_rep="—"),
+    use_container_width=True, hide_index=True,
+)
+
+for dataset, student, metric_col in G1_CELLS:
+    with st.expander(f"{dataset} / {student} — detail"):
+        render_gate_detail(dataset, student, metric_col)
 
 # ---------------------------------------------------------------- All results
 st.header("Student Results (Stage 2+)")
@@ -177,4 +234,5 @@ if not students_df.empty:
 else:
     st.info("No student results yet.")
 
-st.caption(f"Reading live from `{REPO_ROOT}` — cached 10s; rerun/refresh to pick up new runs.")
+st.caption(f"Reading from `{RESULTS_JSON_PATH}` — cached 10s. "
+           f"Run `python scripts/aggregate_results.py` after training, then refresh to pick up new runs.")

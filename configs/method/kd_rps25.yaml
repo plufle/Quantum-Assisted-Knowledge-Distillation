@@ -1,0 +1,14 @@
+name: kd
+# rps_25-specific variant of kd.yaml — the `name: kd` here is deliberate (keeps run_id
+# and results labeled as method=kd), only the config-group selector differs.
+#
+# Screened on rps_25/mobilenetv2_035/seed0 (2026-08-23), after fixing the val_loss
+# checkpoint-selection bug (Trap #11): trashnet's tau=3 tied scratch (0.7097 vs 0.7151
+# test top1_accuracy) rather than clearly beating it. rps_25 is only 3 classes vs
+# trashnet's 6, so its logits carry a much sharper natural distribution — screened
+# tau in {3, 2, 1}: tau=3->0.7097, tau=2->0.6801 (worse), tau=1->0.7984 (clear winner,
+# +8.3pt over scratch). alpha/beta left at the balanced 0.5/0.5 default.
+loss:
+  alpha: 0.5 # CE weight
+  beta: 0.5 # KD weight
+  tau: 1.0 # softmax temperature — sharper than trashnet's tau=3 (fewer classes)

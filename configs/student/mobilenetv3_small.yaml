@@ -6,3 +6,12 @@ patience: 8
 optimizer: adamw
 lr: 1.0e-3
 weight_decay: 1.0e-4
+# 2026-08-23: from-scratch on trashnet, val_f1 stayed pinned at ~0.02-0.06 (uniform-guess
+# level) and val_loss flat at ~ln(6) for the entire run while train_f1 climbed normally
+# to 0.67 — eval-mode BatchNorm never produced valid predictions, unlike mobilenetv2_035
+# on the same data/batch-count. Root cause: MobileNetV3-Small's Hardswish/Hardsigmoid
+# (SE-block) activations are known to destabilize BN running-stat estimation from random
+# init, independent of batches/epoch (mobilenetv2x0.35 actually has *more* BN layers and
+# wider channels, yet trains fine). Reuses the Trap #10 fix (batch-stats-only + a
+# dedicated calibration pass before eval), extended in trainer.py to trigger per-student.
+force_batch_stats_only: true

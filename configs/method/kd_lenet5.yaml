@@ -1,0 +1,15 @@
+name: kd
+# lenet5-specific variant of kd.yaml — `name: kd` is deliberate (keeps run_id and
+# results labeled as method=kd), only the config-group selector differs.
+#
+# Screened on trashnet/lenet5/seed0 (2026-08-29): the mobilenetv2_035-tuned tau=3
+# underperforms scratch badly here (macro_f1 0.4102-0.4022 vs scratch's 0.4875-0.5441
+# across the 40- and 60-epoch budgets — extending epochs widened the gap, since kd
+# early-stopped at epoch16 while scratch kept improving to epoch55). LeNet5 is ~35K
+# params, far smaller than the models tau=3 was tuned for. Screened tau in {3, 2, 1}:
+# tau=3->0.4102, tau=1->0.4118 (no better), tau=2->0.4846 (clear winner, nearly matching
+# scratch's old 40-epoch mean of 0.4875). alpha/beta left at the balanced 0.5/0.5 default.
+loss:
+  alpha: 0.5 # CE weight
+  beta: 0.5 # KD weight
+  tau: 2.0 # softmax temperature — between trashnet's tau=3 and rps_25's tau=1

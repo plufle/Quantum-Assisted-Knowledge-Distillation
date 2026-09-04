@@ -1,0 +1,20 @@
+name: kd
+# lenet5-on-rps_25-specific variant — neither kd_rps25.yaml's tau=1 (tuned for
+# mobilenetv2_035) nor kd_lenet5.yaml's tau=2 (tuned for trashnet) fixed lenet5's gap
+# here: kd_rps25 mean was 0.6372+/-0.0330, trailing scratch's noisy 0.6764+/-0.1084.
+#
+# Screened on rps_25/lenet5/seed0 (2026-08-29): tau=0.5 scored 0.6388 vs tau=1.0's
+# 0.5999 on the same seed (+3.9pt) — consistent with a pattern of sharper temperatures
+# helping smaller-capacity models on this 3-class problem (trashnet needs tau=3,
+# rps_25/mobilenetv2_035 needs tau=1, lenet5/rps_25 needs tau=0.5). alpha/beta=0.3/0.7
+# (heavier distillation) was also tried and was worse (0.5760) — left at balanced 0.5/0.5.
+# Confirmed over 3 seeds (2026-08-29): 0.6388/0.6626/0.6490 -> mean 0.6523+/-0.0164 acc.
+# Better than tau=1's 0.6372+/-0.0330 (higher mean, tighter variance) but still trails
+# scratch's own noisy 0.6764+/-0.1084 (seeds 0.5564/0.7054/0.7673). After 5 kd variants
+# (tau in {3,2,1,0.5}, alpha/beta 0.3/0.7) and 2 rkd weight scales, this remains an open/
+# inconclusive cell — reported as-is per CLAUDE.md's screen-then-stop practice, not
+# tuned further. Kept as the best kd candidate found.
+loss:
+  alpha: 0.5 # CE weight
+  beta: 0.5 # KD weight
+  tau: 0.5 # softmax temperature — sharper than kd_rps25's tau=1

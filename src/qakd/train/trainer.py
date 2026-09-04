@@ -14,7 +14,7 @@ from torch.optim import AdamW
 import qakd.models.students  # noqa: F401 — registers STUDENTS entries on import
 import qakd.models.teachers  # noqa: F401 — registers TEACHERS entries on import
 from qakd.data.datasets import (
-    build_rps25_bn_calibration_loader,
+    build_bn_calibration_loader,
     build_rps25_loaders,
     build_trashnet_loaders,
 )
@@ -27,7 +27,9 @@ from qakd.models.registry import build_student, build_teacher
 from qakd.utils import set_seed
 
 # Config keys on `cfg.student` that are training recipe, not model constructor kwargs.
-_STUDENT_RECIPE_KEYS = {"name", "epochs", "patience", "optimizer", "lr", "weight_decay"}
+_STUDENT_RECIPE_KEYS = {
+    "name", "epochs", "patience", "optimizer", "lr", "weight_decay", "force_batch_stats_only",
+}
 
 _LOADER_BUILDERS = {
     "trashnet": build_trashnet_loaders,
@@ -263,10 +265,16 @@ def train_student(cfg):
 
         build_loaders = _LOADER_BUILDERS[dataset_name]
         train_loader, val_loader, test_loader = build_loaders(cfg.dataset)
+        # Trap #10 originally covered only rps_25's small_batch_regime (too few batches/epoch
+        # to stabilize BatchNorm running stats). `force_batch_stats_only` extends the same
+        # fix to specific students that show the identical eval-mode collapse elsewhere —
+        # e.g. mobilenetv3_small on trashnet, whose Hardswish/Hardsigmoid (SE-block) gates
+        # produce unstable BN statistics from random init regardless of batch count.
+        needs_batch_stats_only = cfg.dataset.get("small_batch_regime", False) or cfg.student.get(
+            "force_batch_stats_only", False
+        )
         bn_calibration_loader = (
-            build_rps25_bn_calibration_loader(cfg.dataset)
-            if cfg.dataset.get("small_batch_regime", False)
-            else None
+            build_bn_calibration_loader(cfg.dataset, train_loader) if needs_batch_stats_only else None
         )
         ce_class_weights = None
         if cfg.dataset.get("class_weighted_ce", False):
@@ -279,7 +287,7 @@ def train_student(cfg):
         model = build_student(student_name, num_classes=cfg.dataset.num_classes, **student_kwargs)
         params = _count_params(model)
         logger.info("%s has %d parameters", student_name, params)
-        if cfg.dataset.get("small_batch_regime", False):  # Trap #10
+        if needs_batch_stats_only:  # Trap #10
             model = use_batch_stats_only(model)
         model = model.to(device)
 
@@ -301,6 +309,15 @@ def train_student(cfg):
         optimizer = AdamW(model.parameters(), lr=cfg.student.lr, weight_decay=cfg.student.weight_decay)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg.student.epochs)
 
+        # Trap #11: rps_25's validation split is only 33 images (11/class) — val_f1 moves
+        # in ~3pt steps and swings wildly epoch to epoch (observed: 0.53->0.31->0.64->0.82
+        # ->0.73 while val_loss fell smoothly and monotonically the whole time), so
+        # selecting the best checkpoint by val_f1 picks a lucky spike rather than the most
+        # converged model and generalizes badly to the real (372-image) test split.
+        # val_loss is continuous and far less noisy on tiny samples, so use it for
+        # checkpoint selection in this regime instead.
+        select_by_loss = cfg.dataset.get("small_batch_regime", False)
+        best_selection_score = float("inf") if select_by_loss else -1.0
         best_val_f1, best_state, epochs_without_improvement = -1.0, None, 0
         for epoch in range(cfg.student.epochs):
             train_loss, train_f1, train_acc = _run_student_epoch(
@@ -331,7 +348,10 @@ def train_student(cfg):
                 "[%s] epoch %d/%d train_loss=%.4f train_f1=%.4f val_loss=%.4f val_f1=%.4f",
                 run_id, epoch + 1, cfg.student.epochs, train_loss, train_f1, val_loss, val_f1,
             )
-            if val_f1 > best_val_f1:
+            current_score = val_loss if select_by_loss else val_f1
+            is_better = current_score < best_selection_score if select_by_loss else current_score > best_selection_score
+            if is_better:
+                best_selection_score = current_score
                 best_val_f1, best_state, epochs_without_improvement = val_f1, copy.deepcopy(model.state_dict()), 0
             else:
                 epochs_without_improvement += 1

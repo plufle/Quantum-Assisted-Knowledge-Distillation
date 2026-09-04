@@ -120,10 +120,10 @@ def build_rps25_loaders(cfg):
     return train_loader, val_loader, test_loader
 
 
-def build_rps25_bn_calibration_loader(cfg):
-    """Return the clean RPS training split used to calibrate student BatchNorm."""
-    split = build_rps25_split(cfg.data_dir, cfg.split.cache_path, cfg.train_fraction, cfg.split.seed)
-    dataset = QAKDImageDataset(
-        cfg.data_dir, split["train"], build_transforms(cfg, train=False)
-    )
-    return DataLoader(dataset, batch_size=cfg.batch_size, shuffle=False)
+def build_bn_calibration_loader(cfg, train_loader):
+    """Return a clean (unaugmented, unshuffled) view of the training split used to
+    calibrate a student's BatchNorm running stats with one deterministic pass. Built
+    from `train_loader`'s own dataset so it works for any dataset, not just rps_25."""
+    train_ds = train_loader.dataset
+    clean_ds = QAKDImageDataset(train_ds.root_dir, train_ds.entries, build_transforms(cfg, train=False))
+    return DataLoader(clean_ds, batch_size=cfg.batch_size, shuffle=False)

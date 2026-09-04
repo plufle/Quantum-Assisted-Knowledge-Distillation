@@ -12,6 +12,15 @@ metric: accuracy
 small_batch_regime: true
 train_sampler: shuffle
 class_weighted_ce: false
+# 2026-08-23: kd's 3-seed variance on rps_25 was huge (+/-0.0867) — seed2 crashed to
+# 0.6263 test acc (below scratch's own seed2 of 0.7608). ce_label_smoothing=0.1 fixed
+# that seed in isolation (0.6263->0.7285), but applied dataset-wide (required by
+# CLAUDE.md rule #3) it was a net negative: scratch dropped 0.7267±0.0300->0.6470±0.0663
+# (worse AND more variable), rkd dropped 0.7446±0.0478->0.6434±0.0567, and kd's own
+# absolute numbers barely moved (0.7186±0.0867->0.7052±0.0831, variance still huge). kd
+# only looked like it "passed" against the label-smoothed scratch because scratch got
+# weaker, not because kd improved — reverted. See CLAUDE.md's G1-rps gate for the
+# (unchanged) original numbers.
 ce_label_smoothing: 0.0
 random_resized_crop_scale_min: 0.7 # RandomResizedCrop(scale=(this, 1.0)) — Trap #8
 randaugment_num_ops: 2

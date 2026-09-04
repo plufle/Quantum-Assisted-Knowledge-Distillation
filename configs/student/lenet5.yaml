@@ -2,8 +2,12 @@ name: lenet5
 # ~0.07M params — capacity floor, fast dev loop
 
 # Training recipe — shared across scratch/kd/rkd/... for this student (Rule #3).
-epochs: 40
-patience: 8
+# 2026-08-29: extended 40->60 / 8->12 (lenet5 only, doesn't touch other students or the
+# dataset config) — rkd's seed2 was still climbing (train_f1=0.45, val_f1=0.4264) when
+# it hit the old 40-epoch cap even with patience=20, so the missing ingredient was total
+# training time, not just patience. See configs/method/rkd_lenet5.yaml.
+epochs: 60
+patience: 12
 optimizer: adamw
 lr: 1.0e-3
 weight_decay: 1.0e-4
