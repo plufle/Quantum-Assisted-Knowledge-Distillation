@@ -1,0 +1,33 @@
+{
+  "run_id": "rps_25__lenet5__rbf_control__s2",
+  "dataset": "rps_25",
+  "student": "lenet5",
+  "method": "rbf_control",
+  "seed": 2,
+  "macro_f1": 0.6877620407608167,
+  "top1_accuracy": 0.6935483870967742,
+  "best_val_macro_f1": 0.8424476650563607,
+  "params": 34395,
+  "checkpoint": "checkpoints/students\\rps_25__lenet5__rbf_control__s2.pt",
+  "kernel_offdiag_student": 0.6058885057767233,
+  "kernel_offdiag_teacher": 0.6013327439626058,
+  "recipe": {
+    "epochs_ran": 57,
+    "epochs_budget": 60,
+    "patience": 12,
+    "optimizer": "adamw",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "batch_norm_calibrated": true,
+    "class_weighted_ce": false,
+    "ce_label_smoothing": 0.0,
+    "method_loss": {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "tau": 0.5
+    }
+  },
+  "git_sha": "be35969b8a520ff73136bc8ddcef528a2b95aa81",
+  "timestamp_utc": "2026-09-04T04:40:07.735150+00:00"
+}

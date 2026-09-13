@@ -1,0 +1,33 @@
+{
+  "run_id": "trashnet__mobilenetv2_035__rbf_control__s1",
+  "dataset": "trashnet",
+  "student": "mobilenetv2_035",
+  "method": "rbf_control",
+  "seed": 1,
+  "macro_f1": 0.6577314229365134,
+  "top1_accuracy": 0.6763157894736842,
+  "best_val_macro_f1": 0.6689212464320663,
+  "params": 403814,
+  "checkpoint": "checkpoints/students\\trashnet__mobilenetv2_035__rbf_control__s1.pt",
+  "kernel_offdiag_student": 0.6303594509760538,
+  "kernel_offdiag_teacher": 0.6271270910898844,
+  "recipe": {
+    "epochs_ran": 50,
+    "epochs_budget": 60,
+    "patience": 10,
+    "optimizer": "adamw",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "batch_norm_calibrated": false,
+    "class_weighted_ce": false,
+    "ce_label_smoothing": 0.0,
+    "method_loss": {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "tau": 0.5
+    }
+  },
+  "git_sha": "be35969b8a520ff73136bc8ddcef528a2b95aa81",
+  "timestamp_utc": "2026-09-04T04:50:53.755017+00:00"
+}

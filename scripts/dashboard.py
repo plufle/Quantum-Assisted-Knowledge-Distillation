@@ -65,6 +65,17 @@ def _count_block(df, dataset, students, methods):
 ALL_METHODS = ["scratch", "kd", "rkd", "rbf_control", "pqk"]
 NO_RKD = ["scratch", "kd", "rbf_control", "pqk"]
 
+in_plan_done = (
+    len(teachers_df)
+    + _count_block(students_df, "trashnet", ["mobilenetv2_035", "mobilenetv3_small", "lenet5"], ALL_METHODS)
+    + _count_block(students_df, "rps_25", ["mobilenetv2_035", "mobilenetv3_small"], NO_RKD)
+)
+# Some runs are real, gate-relevant work (G1-rps's rkd tracking, G2's lenet5/rps_25 prep)
+# that CLAUDE.md's own 83-run grid deliberately excludes (confirmation drops rkd and
+# lenet5 by design — see Experiments). Without this row they'd silently vanish from the
+# total instead of just falling outside the formal plan's scope.
+extra_done = len(teachers_df) + len(students_df) - in_plan_done
+
 progress = pd.DataFrame([
     {"Block": "Teachers", "Planned": 2, "Done": len(teachers_df)},
     {"Block": "Main (trashnet)", "Planned": 45,
@@ -72,14 +83,17 @@ progress = pd.DataFrame([
     {"Block": "Confirmation (rps_25)", "Planned": 24,
      "Done": _count_block(students_df, "rps_25", ["mobilenetv2_035", "mobilenetv3_small"], NO_RKD)},
     {"Block": "Quantum ablation", "Planned": 12, "Done": 0},
+    {"Block": "Extra (outside 83-run grid)", "Planned": None, "Done": extra_done},
 ])
 progress["Remaining"] = progress["Planned"] - progress["Done"]
 
-total_done, total_planned = int(progress["Done"].sum()), int(progress["Planned"].sum())
+in_plan_planned = int(progress["Planned"].sum(skipna=True))
+total_done_actual = len(teachers_df) + len(students_df)
 
 col1, col2 = st.columns([1, 2])
 with col1:
-    st.metric("Total runs completed", f"{total_done} / {total_planned}", f"{total_done / total_planned:.0%}")
+    st.metric("83-run plan completed", f"{in_plan_done} / {in_plan_planned}", f"{in_plan_done / in_plan_planned:.0%}")
+    st.metric("Total runs completed (incl. extra)", total_done_actual)
     st.dataframe(progress, use_container_width=True, hide_index=True)
 with col2:
     fig = px.bar(progress, x="Block", y=["Done", "Remaining"], title="Runs by block", barmode="stack")
@@ -183,6 +197,105 @@ st.dataframe(
 for dataset, student, metric_col in G1_CELLS:
     with st.expander(f"{dataset} / {student} — detail"):
         render_gate_detail(dataset, student, metric_col)
+
+# ---------------------------------------------------------------- G2 gate
+# G2's criterion is macro-F1 for both datasets (unlike G1, which follows each dataset's
+# own metric), so this section is macro-F1 throughout.
+st.header("G2 Gate — pqk vs rbf_control (its mandatory matched twin)")
+st.caption("Criterion: pqk beats rbf_control by >0.5pt macro-F1, on 2 students × 3 seeds. "
+           "`scratch` shown for context — beating the twin is the gate, but trailing scratch matters.")
+
+G2_MARGIN = 0.005
+
+
+def _g2_pairs():
+    if students_df.empty:
+        return []
+    have = students_df[students_df.method.isin(["pqk", "rbf_control"])]
+    return sorted({(r.dataset, r.student) for r in have.itertuples()})
+
+
+def _seed_map(dataset, student, method):
+    sub = students_df[(students_df.dataset == dataset) & (students_df.student == student)
+                      & (students_df.method == method)]
+    return {int(r.seed): r.macro_f1 for r in sub.itertuples()}
+
+
+def build_g2_summary():
+    rows = []
+    for dataset, student in _g2_pairs():
+        pqk, rbf = _seed_map(dataset, student, "pqk"), _seed_map(dataset, student, "rbf_control")
+        shared = sorted(set(pqk) & set(rbf))
+        scratch = list(_seed_map(dataset, student, "scratch").values())
+        row = {"dataset": dataset, "student": student, "seeds": len(shared),
+               "rbf_control": None, "pqk": None, "margin": None,
+               "paired_wins": f"{sum(1 for s in shared if pqk[s] > rbf[s])}/{len(shared)}" if shared else "—",
+               "scratch": pd.Series(scratch).mean() if scratch else None, "verdict": "no data"}
+        if shared:
+            p = pd.Series([pqk[s] for s in shared])
+            r = pd.Series([rbf[s] for s in shared])
+            row["rbf_control"], row["pqk"] = r.mean(), p.mean()
+            row["margin"] = p.mean() - r.mean()
+            if len(shared) < 3:
+                row["verdict"] = f"PARTIAL ({len(shared)}/3 seeds)"
+            elif row["margin"] > G2_MARGIN:
+                # A mean margin with a seed loss isn't a clean pass — flag it honestly.
+                row["verdict"] = "PASS" if all(pqk[s] > rbf[s] for s in shared) else "PASS (mean only)"
+            else:
+                row["verdict"] = "FAIL"
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+g2_df = build_g2_summary()
+if g2_df.empty:
+    st.info("No pqk / rbf_control runs yet.")
+else:
+    def _style_g2(val):
+        if not isinstance(val, str):
+            return ""
+        if val == "PASS":
+            return "background-color: #1a4d2e; color: #d4f5dd"
+        if val.startswith("PASS"):
+            return "background-color: #4d431a; color: #f5eed4"   # mean-only: amber, not green
+        if val.startswith("PARTIAL"):
+            return "background-color: #24405c; color: #d4e6f5"
+        if val == "FAIL":
+            return "background-color: #4d1a1a; color: #f5d4d4"
+        return ""
+
+    st.dataframe(
+        g2_df.style.map(_style_g2, subset=["verdict"]).format(
+            {"rbf_control": "{:.4f}", "pqk": "{:.4f}", "margin": "{:+.4f}", "scratch": "{:.4f}"}, na_rep="—"),
+        use_container_width=True, hide_index=True,
+    )
+    n_complete = int((g2_df.seeds >= 3).sum())
+    st.caption(f"G2 needs 2 students at 3 seeds — {n_complete} complete. "
+               "'PASS (mean only)' = margin clears the bar on means but pqk loses at least one seed.")
+
+    for dataset, student in _g2_pairs():
+        with st.expander(f"{dataset} / {student} — per-seed detail"):
+            pqk, rbf = _seed_map(dataset, student, "pqk"), _seed_map(dataset, student, "rbf_control")
+            shared = sorted(set(pqk) & set(rbf))
+            if not shared:
+                st.info("No matched seeds yet.")
+                continue
+            detail = pd.DataFrame([
+                {"seed": s, "rbf_control": rbf[s], "pqk": pqk[s], "diff": pqk[s] - rbf[s]} for s in shared
+            ])
+            st.dataframe(detail.style.format({"rbf_control": "{:.4f}", "pqk": "{:.4f}", "diff": "{:+.4f}"}),
+                         use_container_width=True, hide_index=True)
+            if len(shared) > 1:
+                diffs = detail["diff"]
+                st.markdown(f"paired diff **{diffs.mean():+.4f} ± {diffs.std():.4f}** "
+                            f"— {'std exceeds mean, not significant at this n' if diffs.std() > abs(diffs.mean()) else 'mean exceeds std'}")
+            fig = go.Figure()
+            for method in ["scratch", "rbf_control", "pqk"]:
+                vals = list(_seed_map(dataset, student, method).values())
+                if vals:
+                    fig.add_trace(go.Box(y=vals, name=method, boxpoints="all", pointpos=0))
+            fig.update_layout(title=f"macro-F1 across seeds ({dataset}/{student})", yaxis_title="macro_f1")
+            st.plotly_chart(fig, use_container_width=True)
 
 # ---------------------------------------------------------------- All results
 st.header("Student Results (Stage 2+)")

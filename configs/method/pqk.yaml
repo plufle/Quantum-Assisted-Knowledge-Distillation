@@ -6,3 +6,8 @@ lambda_: 1.0
 gamma_loss_weight: 1.0
 gamma_ramp_epochs: 10
 device_backend: lightning.qubit # Trap #1 — never default.qubit, 50x slower
+# Matches rbf_control's loss block exactly (Rule #2: matched pipeline/budget twin).
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5

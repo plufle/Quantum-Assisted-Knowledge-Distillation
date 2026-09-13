@@ -107,6 +107,16 @@ methods × 3 seeds (24) + rps_25 1 student × 4 methods × 3 seeds (12) + ablati
 **Cost:** ~2.5k images at 128×128 with a pretrained backbone → 10–20 min per run.
 Full plan ≈ 20–25 GPU-hours. A weekend on one RTX 3060.
 
+**Actuals (rule #5, `python scripts/training_cost.py` — recovers per-run wall-clock from
+log timestamps, so it covers every run retroactively):** as of 2026-09-05, kept results
+cost **27.1 GPU-hours + 2.8 simulator-hours**, with another **19.2 hours discarded** to
+re-runs after pipeline fixes (Trap #13 the expensive one) — 49.1 hours total. The 20–25
+GPU-hour estimate above was optimistic by roughly 2×, and that is *before* the sweep is
+complete; budget for re-runs, not just the grid. Per-epoch, comparing the same seed under
+the same load, `pqk` costs ~19.4 s/epoch vs `rbf_control`'s ~15.4 — the quantum simulator
+adds only ~26% at 8 qubits/depth 4. The teacher forward pass, not the circuit, is the
+bottleneck (`scratch` runs the same pair at 2.5–7.5 s/epoch).
+
 Metrics: macro-F1 (primary, trashnet), top-1, params, INT8 KB, MACs,
 p50/p95 latency, mJ/inference, ECE.
 
@@ -124,6 +134,11 @@ p50/p95 latency, mJ/inference, ECE.
 | | **mobilenetv3_small, rps_25 (3 seeds)**: `scratch` 0.8157±0.0527, `kd` 0.8432±0.0752 (+1.5pt), `rkd` 0.8593±0.0412 (+3.1pt, cleaner margin — PASSED). Clean win for both methods — this student has plenty of capacity for the small-data regime. | |
 | | **lenet5, rps_25 (3 seeds) — INCONCLUSIVE**: `scratch` 0.6764±0.1084 (highly seed-variable: 0.5564/0.7054/0.7673), best `kd` found (`kd_lenet5_rps25.yaml`, τ=0.5) 0.6523±0.0164 — tighter variance but still short. Tried 5 kd variants (τ∈{3,2,1,0.5}, alpha/beta 0.3/0.7) and `rkd` at 2 weight scales (default 5/10: 0.3297; lenet5's lighter 1/2, which fixed trashnet: 0.1889, *worse* — the trashnet fix doesn't transfer). Not resolved; reported honestly per CLAUDE.md's screen-then-stop practice rather than tuned further. | |
 | G2 | `pqk` beats `rbf_control` by >0.5% macro-F1, 2 students, 3 seeds | Write it up as a negative result + edge benchmark |
+| | ⚠️ **The two 2026-09-04 rows below are SUPERSEDED** — every number in them was produced by the pre-Trap-#13 pipeline (trainable teacher-side projection) and is not comparable to anything after 2026-09-05. Kept for the record of what was built, not for their numbers. Raw results archived in `archive_prefix_kernel/`. | |
+| | **rbf_control infra built and validated (2026-09-04)**: `losses/pqk.py` (`KernelProjectionHead`, trace-normalized Gram alignment loss, gamma ramp, Trap #3 concentration check — kernel-agnostic, shared with `pqk` once it lands) + `quantum/classical_ctrl.py` (RBF Gram matrix, median-heuristic bandwidth). Wired into `trainer.py`: per-side projection heads sized from a real batch (dims differ per architecture, e.g. lenet5's 64 vs resnet50's 2048), trained jointly with the student. Found and fixed a real bug in the same pass — the gamma ramp (0→1 over 10 epochs) was corrupting `small_batch_regime`'s val_loss-based checkpoint selection (Trap #11): val_loss rose every epoch purely because gamma was still ramping, not because the model got worse, so the *first*, least-trained epoch always looked best (rps_25/lenet5 test macro-F1 0.1667 — a random-guess collapse). Fixed by scoring validation at a fixed `gamma_max` regardless of the epoch's ramped training gamma. Kernel concentration (Trap #3) is healthy everywhere tried — off-diagonal K_ij ~0.55-0.63, nowhere near the 0.05 vacuous floor. **rbf_control baseline, lenet5/rps_25 (3 seeds, post-fix)**: macro-F1 0.5892±0.1524 (seeds 0.4136/0.6661/0.6878) — this is the number `pqk` needs to beat by >0.5pt once Stage 4's quantum kernel lands. **rbf_control baseline, trashnet/mobilenetv2_035 (3 seeds)**: macro-F1 0.6672±0.0082 (seeds 0.6713/0.6577/0.6725) — tight variance, sits just below `scratch` (0.6838±0.0141) and `kd` (0.7085±0.0131), the second reference number `pqk` needs to beat by >0.5pt for G2's "2 students" requirement. | |
+| | **Quantum infra built (2026-09-04)**: `quantum/kernels.py` — a fixed (non-trainable), `depth`-layer data-re-uploading feature map (RY(angle) per qubit + a CNOT entangling ring, repeated `depth` times) on `lightning.qubit`, extracting each sample's single-qubit Bloch vectors (⟨X⟩,⟨Y⟩,⟨Z⟩ per qubit) via expectation values only — never the full 2^n statevector, which is what makes `diff_method="adjoint"` valid at all (adjoint doesn't support `qml.state()`) and keeps the kernel classically tractable (CLAUDE.md's "projected" in projected quantum kernel). `pqk_gram_matrix` builds `K_ij = exp(-λ·Σ_q‖ρ_q(x_i)-ρ_q(x_j)‖²_F)` from these Bloch vectors using the identity Σ_q‖ρ_q(x_i)-ρ_q(x_j)‖²_F = 0.5·‖bloch(x_i)-bloch(x_j)‖² (single-qubit density matrices ρ=½(I+r·σ), trace(σ_aσ_b)=2δ_ab). Benchmarked batch=128 (Trap #2) on 8 qubits: ~0.27s forward+backward with broadcasting — adds a few minutes per 60-epoch run, not hours. **Barren-plateau check (Trap #7, `scripts/gradient_variance.py`)**: swept n_qubits∈{2,4,6,8,10,12} at depth=4, 100 random-angle samples each, measuring variance of d⟨Z_0⟩/d(angle_0) — variance stayed flat (0.75-1.5) with no exponential decay, so `n_qubits=8` is safe at this depth/entanglement/observable-locality (shallow circuits with local observables are known to resist barren plateaus even as qubit count grows). `pqk` wired into `trainer.py` (`_kernel_loss_and_stats`) and smoke-tested on lenet5/rps_25/seed0 — kernel concentration ~0.94-1.0 offdiag (Trap #3 clear), loss/F1 move sensibly. 3-seed `pqk` vs `rbf_control` comparison (the actual G2 gate) not yet run. | |
+| | **G2, first matched pair — lenet5/rps_25, 3 seeds, post-Trap-#13 pipeline (2026-09-05)**. Both twins re-run from scratch on the fixed pipeline (rule #2 — a pipeline change invalidates both, not just `pqk`). macro-F1: `pqk` **0.6375±0.0699** vs `rbf_control` **0.5377±0.2020** → **+9.98pt on means**, clearing G2's ">0.5% macro-F1" bar on this student. **But it is not a clean pass, for three reasons.** (a) Paired by seed, `pqk` wins only 2/3 (seed0 +0.2456, seed1 +0.0985, seed2 −0.0446); the paired difference is +0.0998±0.1451, std larger than the mean — suggestive, not significant at n=3. (b) G2 requires **2 students**; only this one is complete. (c) Most important: on rps_25's *own* primary metric (top-1, per its dataset config) neither kernel method beats plain `scratch` — `scratch` 0.6756±0.1094, `pqk` 0.6425±0.0582, `rbf_control` 0.5842±0.1525. So `pqk` beats the twin it is *required* to beat while both still trail the no-teacher baseline on this pair, which is consistent with lenet5/rps_25 already being logged as INCONCLUSIVE at G1. **The one robust signal is variance, not mean**: `pqk` is the tightest of all four methods here (top-1 std 0.058 vs `scratch` 0.109, `rbf_control` 0.153, and `kd`'s 0.0164-to-0.108 range) — on a pair whose defining problem is seed noise, the quantum kernel behaves like a variance-reducing regularizer even where it doesn't raise the mean. That is the claim the data currently supports; a mean-performance win is not. | |
+| | **G2, second pair — trashnet/mobilenetv2_035, 2 of 3 seeds, post-Trap-#13 (2026-09-05)**. macro-F1: `pqk` **0.6959±0.0061** vs `rbf_control` **0.6678±0.0126** → **+2.81pt**, and unlike the rps pair `pqk` wins **both** seeds outright (s0 +0.0413, s1 +0.0149) with the tighter variance again. Against the frozen Stage-1 numbers on this pair (`scratch` 0.6838±0.0141, `kd` 0.7085±0.0131): `pqk` **beats `scratch` by +1.2pt** — the first time either kernel method has cleared the no-teacher baseline — while still trailing `kd` by 1.3pt, and `rbf_control` (0.6678) sits below `scratch`. So on the primary dataset with the primary edge target, the quantum kernel is doing real work that its matched classical twin is not. **Seed 2 was not run** (see cost note below), so this pair is 2/3 and cannot close the gate. **G2 remains OPEN**: it needs 2 students × 3 seeds; we have one student at 3 seeds passing on means only (loses a seed), and one student at 2 seeds passing cleanly. The honest read across both pairs is consistent — `pqk` reliably beats the twin it is required to beat, and reliably has lower seed variance, but it has not yet beaten `kd` anywhere. *Process note:* seed 2 was lost to an orchestration bug of mine, not to the science — a queue script skipped a seed only when **both** twins had results, so when `rbf_control` s1 finished before `pqk` s1 it relaunched the pair, running a duplicate `pqk` s1 concurrently for ~3h. Skip checks must be per-run, not per-pair. | |
 | G3 | `pqk` INT8 beats `kd` INT8 at matched KB | Drop the edge claim from the title |
 
 **Run G2 in week 2** on lenet5/rps_25. Costs a few hours and tells you if the project
@@ -208,6 +223,38 @@ No hardcoded hyperparameters in `src/`. Hydra configs only.
     selection uses val_loss instead of val_f1 whenever `dataset.small_batch_regime` is
     set (`trainer.py`, gated the same way as Trap #10's BN fix) — loss is continuous and
     far less noisy on a 33-image sample.
+12. Trap #11's val_loss fix breaks again once a loss term has a training-time ramp
+    (`rbf_control`/`pqk`'s gamma, ramped 0→`gamma_loss_weight` over `gamma_ramp_epochs`):
+    comparing val_loss across epochs while its own weighting is still changing means the
+    *ramp*, not the model, drives val_loss up every epoch — the least-trained checkpoint
+    (epoch 1) always looks best. Symptom on rps_25/lenet5/`rbf_control`: val_loss rose
+    monotonically every single epoch despite val_f1 recovering to 0.52 by epoch 13, and
+    the selected checkpoint scored test macro-F1 0.1667 (a random-guess collapse). Fix:
+    score the validation pass at a fixed `gamma_max`, not the epoch's ramped `gamma`
+    (`trainer.py`) — the ramp still applies to the training-time gradient step, it just
+    can't be allowed to contaminate the metric used to compare checkpoints across epochs.
+13. **Mutual collapse is a global optimum of the kernel-alignment loss** if the
+    teacher-side projection head is trainable. `‖K̃_t − K̃_s‖²_F` is driven to *exactly*
+    zero by collapsing both projections to constant maps: every Gram entry goes to 1,
+    trace-normalization makes both matrices identical, loss = 0, and the student has
+    learned nothing. Discovered 2026-09-05 from `pqk`'s logged concentration —
+    `kernel_offdiag_student=0.9953, teacher=0.9864` at test time. The teacher backbone is
+    frozen and its features genuinely vary, so a teacher-side off-diagonal of 0.986 can
+    only mean its projection head had collapsed to a near-constant map (for reference,
+    random spread-out angles at λ=1 give off-diagonal mean 0.37, std 0.16). Fix: the
+    teacher-side projection is fixed at random init, excluded from the optimizer, and
+    evaluated under `no_grad` — a random linear map preserves the teacher's relational
+    structure well enough to be the target kernel (the same thing `rkd` does with raw
+    teacher features), and freezing it is what keeps that target non-degenerate.
+    Two things made this easy to miss: (a) Trap #3's check only guarded the *low* end
+    (`K_ij < 0.05`, "every pair looks unique") and was blind to the saturated end
+    (`K_ij → 1`, "every pair looks alike") — equally vacuous, now warned on at >0.95;
+    (b) `rbf_control` is *immune* to the saturation symptom because its median-heuristic
+    bandwidth rescales to the data spread every batch, pinning off-diagonal ≈0.60 no
+    matter how collapsed the projection is. So the classical twin looked perfectly
+    healthy while sharing the identical latent flaw. Per rule #2 the twins must share a
+    pipeline, so fixing this invalidates *both* methods' earlier numbers, not just
+    `pqk`'s — pre-fix results archived under `archive_prefix_kernel/`.
 
 ## Commands
 
@@ -235,9 +282,9 @@ one's deliverable exists — this mirrors the build order in **Methods**.
 | 1 | Teachers | `resnet50_in1k` fine-tuned on both datasets — `checkpoints/teachers/resnet50_in1k__{trashnet,rps_25}.pt` + sidecar JSON (macro-F1, recipe, git SHA) | Done |
 | 2 | Stage 0/1 methods | `scratch`, `kd`, `rkd` running end-to-end on ≥1 student × both datasets, 3 seeds | **Done** — frozen (2026-08-29): all 3 students × both datasets confirmed over 3 seeds; see Go/no-go |
 | 3 | **G1 gate** | `kd` beats `scratch` by a clear margin on trashnet — else fix the pipeline before going further | **Passed** — see Go/no-go |
-| 4 | Quantum infra | `quantum/kernels.py` (`lightning.qubit`, 8-qubit encoding, batch Gram matrix), `quantum/classical_ctrl.py` (RBF control), `scripts/gradient_variance.py` run for 2–12 qubits | Not started |
-| 5 | Stage 2 methods | `rbf_control` + `pqk` running on lenet5/rps_25, kernel concentration logged | Not started |
-| 6 | **G2 gate (week 2)** | `pqk` beats `rbf_control` by >0.5% macro-F1, 2 students, 3 seeds — else write up as a negative result + edge benchmark only | Not started |
+| 4 | Quantum infra | `quantum/kernels.py` (`lightning.qubit`, 8-qubit encoding, batch Gram matrix), `quantum/classical_ctrl.py` (RBF control), `scripts/gradient_variance.py` run for 2–12 qubits | **Done** (2026-09-04) — see Go/no-go |
+| 5 | Stage 2 methods | `rbf_control` + `pqk` running on lenet5/rps_25, kernel concentration logged | **Done** (2026-09-05) — both methods run end-to-end on the post-Trap-#13 pipeline, concentration logged and now range-checked at both ends |
+| 6 | **G2 gate (week 2)** | `pqk` beats `rbf_control` by >0.5% macro-F1, 2 students, 3 seeds — else write up as a negative result + edge benchmark only | **OPEN** — lenet5/rps_25 complete at 3 seeds (+9.98pt, but mean-only: loses 1 seed); trashnet/mobilenetv2_035 at 2/3 seeds (+2.81pt, wins both, and beats `scratch`). Needs trashnet **seed 2** to close. See Go/no-go |
 | 7 | Full sweep | Remaining runs from the 83-run grid (or the 44-run minimum-viable set) — `results/{run_id}/`, immutable | Not started |
 | 8 | Deploy pipeline | `deploy/export.py` (ONNX opset 17) + `deploy/purity_check.py` + TFLite INT8 per-channel + parity check | Not started |
 | 9 | **G3 gate** | `pqk` INT8 beats `kd` INT8 at matched KB — else drop the edge claim from the title | Not started |

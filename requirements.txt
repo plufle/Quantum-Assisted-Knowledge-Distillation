@@ -13,3 +13,7 @@ torchvision
 hydra-core
 omegaconf
 tqdm
+# added for Stage 4 (quantum infra) — pqk's projected quantum kernel (Trap #1: always
+# lightning.qubit, never default.qubit)
+pennylane
+pennylane-lightning

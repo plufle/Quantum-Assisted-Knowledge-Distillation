@@ -1,7 +1,15 @@
 name: rbf_control
 # Mandatory twin for pqk — same pipeline, RBF kernel at matched dimension.
-# Tune bandwidth with the same budget given to the quantum branch (CLAUDE.md rule).
+# Tune bandwidth with the same budget given to the quantum branch (CLAUDE.md rule #2).
 kernel: rbf
-bandwidth: null
+bandwidth: null # null -> per-batch median-heuristic bandwidth (quantum/classical_ctrl.py)
+n_qubits: 8 # projection dimension — matched to pqk's n_qubits for a fair comparison
 gamma_loss_weight: 1.0
 gamma_ramp_epochs: 10
+# CE+KL base loss reuses kd_lenet5_rps25's tuned tau=0.5 — G2's first target pair per
+# CLAUDE.md ("Run G2 in week 2 on lenet5/rps_25"). rbf_control/pqk test whether a
+# kernel-alignment term on top of that already-tuned KD baseline helps further.
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5
