@@ -1,0 +1,35 @@
+name: pqk_adaptive
+# pqk with a per-batch median-heuristic lambda instead of a fixed one. Unlike the
+# kd_rps25/kd_lenet5 variants (which reuse `name: kd` because they *replace* the
+# canonical config for that pair), this one carries its own name so its run_ids are
+# distinct and both calibrations coexist in results/ for a side-by-side comparison —
+# the fixed-lambda pqk numbers are the G2 record and must not be overwritten.
+# Its matched control (rule #2) is the existing, LOCKED `rbf_control` run for the same
+# pair: identical pipeline, identical tau, only the kernel differs.
+#
+# Why this exists (2026-09-14): the full-grid G2 result had `pqk` losing to its twin on
+# 4 of 6 pairs, and the diagnostic showed the twins were never matched on kernel
+# sharpness. `rbf_control` recalibrates its bandwidth per batch (median heuristic), so
+# its kernel concentration sits at 0.572-0.624 on every pair; `pqk`'s fixed lambda=1 let
+# concentration drift 0.404-0.631 (4.4x the spread) — the quantum kernel was running at
+# a different operating point on every pair, uncontrolled. `lambda_: null` applies the
+# exact classical analogue (lambda = 0.5/median(d^2), giving K = exp(-0.5) at the median
+# distance), which pins concentration to ~0.59 regardless of feature scale.
+#
+# This is an equalization, not a tuning win: it removes an asymmetry that favoured the
+# control. Per CLAUDE.md ("tune its bandwidth with the same budget you gave the quantum
+# branch") the calibration budget is supposed to be symmetric. `rbf_control` is LOCKED —
+# untouched by this change, so the baseline cannot drift.
+kernel: projected_quantum
+n_qubits: 8
+depth: 4
+lambda_: null # null -> per-batch median heuristic (quantum/kernels.py)
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+device_backend: lightning.qubit # Trap #1
+# tau stays at the locked 0.5 shared with rbf_control — tuning the CE+KL temperature for
+# pqk alone would unmatch the twins on a term that has nothing to do with the kernel.
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5

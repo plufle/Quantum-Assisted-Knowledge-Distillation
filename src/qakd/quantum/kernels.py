@@ -57,7 +57,26 @@ def pqk_gram_matrix(angles, n_qubits, depth, lambda_, device_backend="lightning.
     rho_q(x_j)||_F^2 reduces to 0.5 * ||bloch(x_i) - bloch(x_j)||^2 (trace(sigma_a
     sigma_b) = 2*delta_ab), so the exponentially-large statevector never needs to be
     formed — the classical Bloch-vector distance is exactly the quantity CLAUDE.md's
-    formula calls for."""
+    formula calls for.
+
+    `lambda_=None` selects a per-batch median heuristic instead of a fixed value. This
+    exists to remove a structural asymmetry with `rbf_control`: the classical twin has
+    always recalibrated its bandwidth to each batch (median heuristic), pinning its
+    kernel concentration to ~0.60 on every pair, while a fixed lambda let pqk's
+    concentration drift over 0.40-0.63 across pairs — i.e. the two "matched" twins were
+    not matched on kernel sharpness at all. The scaling below mirrors the classical
+    formula exactly (K = exp(-0.5) at the median distance), so both branches sit in the
+    same operating range and the comparison isolates the kernel, not its calibration."""
     features = bloch_vectors(angles, n_qubits, depth, device_backend)
     dists_sq = 0.5 * torch.cdist(features, features, p=2).pow(2)
+    if lambda_ is None:
+        lambda_ = _median_heuristic_lambda(dists_sq)
     return torch.exp(-lambda_ * dists_sq)
+
+
+def _median_heuristic_lambda(dists_sq):
+    """lambda = 0.5 / median(off-diagonal d^2), the exact analogue of `rbf_control`'s
+    bandwidth = sqrt(median(d^2)) with K = exp(-d^2 / 2*bandwidth^2)."""
+    n = dists_sq.size(0)
+    off_diag = dists_sq[~torch.eye(n, dtype=torch.bool, device=dists_sq.device)]
+    return 0.5 / off_diag.median().clamp(min=1e-12)

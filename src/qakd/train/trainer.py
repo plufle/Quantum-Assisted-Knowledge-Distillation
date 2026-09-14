@@ -29,7 +29,10 @@ from qakd.quantum.classical_ctrl import rbf_gram_matrix
 from qakd.quantum.kernels import pqk_gram_matrix
 from qakd.utils import set_seed
 
-_KERNEL_METHODS = {"rbf_control", "pqk"}
+# A method is a kernel method iff its config declares a `kernel` — keyed off the field,
+# not a name list, so `method.name=...` can be overridden freely for hyperparameter
+# screens without the run_id colliding with the frozen canonical runs.
+_KERNEL_METHODS = {"rbf_control", "pqk", "pqk_adaptive"}  # informational only
 
 # Config keys on `cfg.student` that are training recipe, not model constructor kwargs.
 _STUDENT_RECIPE_KEYS = {
@@ -256,7 +259,7 @@ def _student_loss(
             ce_class_weights=ce_class_weights,
             ce_label_smoothing=ce_label_smoothing,
         )
-    elif method_cfg.name in _KERNEL_METHODS:
+    elif method_cfg.get("kernel") is not None:
         logits, student_feats = model(images, return_feats=True)
         with torch.no_grad():
             teacher_logits, teacher_feats = teacher(images, return_feats=True)
@@ -395,7 +398,7 @@ def train_student(cfg):
 
         kernel_modules = None
         trainable_params = list(model.parameters())
-        if method_name in _KERNEL_METHODS:
+        if cfg.method.get("kernel") is not None:
             # Projection heads map each side's own penultimate feature dim down to
             # `n_qubits` (CLAUDE.md Loss) — dims differ per architecture (e.g. lenet5's
             # 64 vs resnet50's 2048), so infer them from one real batch rather than
