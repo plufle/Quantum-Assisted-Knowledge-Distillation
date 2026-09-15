@@ -401,6 +401,55 @@ st.info(
     "'no quantum speedup claimed' framing."
 )
 
+# ---------------------------------------------------------------- Still to do
+st.header("Still to be done")
+
+d1, d2 = st.columns(2)
+with d1:
+    st.subheader("1. `pqk_zz` — two-body correlators")
+    st.markdown(
+        "The current kernel measures only single-qubit ⟨X⟩,⟨Y⟩,⟨Z⟩ — which is exactly what "
+        "discards the correlations entanglement creates. Measured: mean Bloch length |r| falls "
+        "0.541 → 0.384 → 0.313 as qubits go 4 → 8 → 12, so each qubit's marginal carries *less* "
+        "signal as the circuit grows (this is why raising `n_qubits` made results worse, not "
+        "better). Adding the n(n−1)/2 ⟨Z_iZ_j⟩ correlators restores the two-body information: "
+        "at 8 qubits the feature goes 24 → 52 dims and effective dimensionality 8.90 → 10.92, "
+        "for ~25% more simulator time, still polynomially many observables.\n\n"
+        "**Seed-0 status — pair-dependent, in opposite directions.** On trashnet/mobilenetv3_small "
+        "(the pair that failed five other configs) it scored **0.7312**, clearing both `scratch` "
+        "(+0.0076) and `rbf_control` (+0.0161). But on rps_25/mobilenetv2_035 it *regressed* to "
+        "0.6330 (−0.0774 vs `scratch`).\n\n"
+        "**Not yet a result.** Seed 0 runs optimistic on trashnet/mobilenetv3_small by ~+0.027 "
+        "(fixed λ scored 0.6998 at s0 vs 0.6733 over 3 seeds). The +0.0076 margin sits *inside* "
+        "that bias, so the 3-seed mean may well land back under `scratch`. Seeds 1–2 are running; "
+        "nothing should be claimed until they land."
+    )
+with d2:
+    st.subheader("2. INT8 quantization (Stage 8 / G3)")
+    st.markdown(
+        "Not started. Quantization is **not a method** — it is an evaluation step applied to every "
+        "final checkpoint, so each model gets an fp32 and an INT8 row.\n\n"
+        "**The fp32 ranking above may not survive it.** Quantization error is not uniform across "
+        "training objectives: different losses produce different weight and activation "
+        "distributions, and a 2pt fp32 lead can vanish at 8 bits.\n\n"
+        "**And the effect is architecture-dependent — the same axis that decides G2.** Both edge "
+        "students are depthwise-separable, which Trap #5 flags as needing per-channel "
+        "quantization (per-tensor \"will cost points and look like a method failure\"). "
+        "`mobilenetv3_small` is the more fragile of the two: Hardswish has a wide dynamic range and "
+        "SE blocks apply sensitive multiplications, so it should degrade more than "
+        "`mobilenetv2_035`. That is the *same* architectural split that separates where the kernel "
+        "methods work from where they fail — so INT8 could either compound the existing gap or "
+        "reverse it, and the two effects will be hard to disentangle unless both are reported.\n\n"
+        "**One testable prediction.** `pqk`'s single robust property is the lowest seed-to-seed "
+        "variance of any method. Regularised models usually have tighter weight distributions, "
+        "which quantize more cleanly — so `pqk` may lose *less* going fp32 → INT8 than `kd` does. "
+        "That is precisely what G3 asks (`pqk` INT8 vs `kd` INT8 at matched KB), and it is the one "
+        "route by which a negative fp32 result could still yield a positive deployment finding. "
+        "Hypothesis from the variance data, not a measurement."
+    )
+
+# ---------------------------------------------------------------- All results
+
 # ---------------------------------------------------------------- All results
 st.header("Student Results (Stage 2+)")
 if not students_df.empty:

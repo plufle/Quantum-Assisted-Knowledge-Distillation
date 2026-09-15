@@ -1,0 +1,10 @@
+name: mobilenetv2_050
+width_mult: 0.50
+# Capacity probe added 2026-09-14 — same recipe as mobilenetv2_035 so the only thing that
+# changes across the width sweep is parameter count (CLAUDE.md rule #3 in spirit: the
+# comparison is only meaningful if data, optimizer and epoch budget are held fixed).
+epochs: 60
+patience: 10
+optimizer: adamw
+lr: 1.0e-3
+weight_decay: 1.0e-4
