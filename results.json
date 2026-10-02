@@ -3087,6 +3087,72 @@
       "timestamp_utc": "2026-09-14T03:57:10.857773+00:00"
     },
     {
+      "run_id": "trashnet__mobilenetv3_small__pqk_adaptive__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk_adaptive",
+      "seed": 1,
+      "macro_f1": 0.7215629385446384,
+      "top1_accuracy": 0.7368421052631579,
+      "best_val_macro_f1": 0.7370949678001701,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__pqk_adaptive__s1.pt",
+      "kernel_offdiag_student": 0.6190592050552368,
+      "kernel_offdiag_teacher": 0.596299946308136,
+      "recipe": {
+        "epochs_ran": 40,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 0.5
+        }
+      },
+      "git_sha": "b89cfbd6d8d2e358b2fcc27b676d469a8e670350",
+      "timestamp_utc": "2026-10-02T07:20:51.048710+00:00"
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk_adaptive__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk_adaptive",
+      "seed": 2,
+      "macro_f1": 0.7256914070561562,
+      "top1_accuracy": 0.7421052631578947,
+      "best_val_macro_f1": 0.7391696493317935,
+      "params": 930470,
+      "checkpoint": "checkpoints/students\\trashnet__mobilenetv3_small__pqk_adaptive__s2.pt",
+      "kernel_offdiag_student": 0.6010163625081381,
+      "kernel_offdiag_teacher": 0.5868191123008728,
+      "recipe": {
+        "epochs_ran": 40,
+        "epochs_budget": 40,
+        "patience": 8,
+        "optimizer": "adamw",
+        "lr": 0.001,
+        "weight_decay": 0.0001,
+        "batch_size": 128,
+        "batch_norm_calibrated": true,
+        "class_weighted_ce": false,
+        "ce_label_smoothing": 0.0,
+        "method_loss": {
+          "alpha": 0.5,
+          "beta": 0.5,
+          "tau": 0.5
+        }
+      },
+      "git_sha": "b89cfbd6d8d2e358b2fcc27b676d469a8e670350",
+      "timestamp_utc": "2026-10-02T08:09:36.389597+00:00"
+    },
+    {
       "run_id": "trashnet__mobilenetv3_small__pqk_d2__s0",
       "dataset": "trashnet",
       "student": "mobilenetv3_small",

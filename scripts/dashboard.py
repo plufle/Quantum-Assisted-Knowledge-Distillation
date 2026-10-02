@@ -52,7 +52,10 @@ students_df = load_student_results()
 #   * hyperparameter screens (pqk_adaptive / pqk_t3 / pqk_g05 / pqk_g20 / pqk_d2) — the
 #     lambda/tau/gamma tuning trail. Only the canonical final methods are reported.
 # Filtering once here keeps progress, G1, G2, tables and charts mutually consistent.
-EXCLUDED_STUDENTS = ["lenet5"]
+# lenet5: retired from the reported experiment.
+# mobilenetv2_050/060: the capacity-vs-architecture width probe, stopped at 1/3 seeds —
+# too incomplete to report, kept on disk for whenever that question is picked up again.
+EXCLUDED_STUDENTS = ["lenet5", "mobilenetv2_050", "mobilenetv2_060"]
 FINAL_METHODS = ["scratch", "kd", "rkd", "rbf_control", "pqk"]
 
 # Which pqk calibration is the *reported* one for each pair. Selected by seed-0 screen and
@@ -61,9 +64,16 @@ FINAL_METHODS = ["scratch", "kd", "rkd", "rbf_control", "pqk"]
 # so a re-run would be bit-identical, and copying files would mean overwriting the
 # fixed-lambda G2 record and hand-editing metrics.json (results/ is immutable).
 # The rendered tables carry a `pqk_config` column so the substitution is never silent.
+# Selection rule: the calibration with the higher 3-seed mean *validation* macro-F1, never
+# test. rps_25/mobilenetv2_035 -> adaptive (val 0.7975 vs 0.7805). rps_25/mobilenetv3_small
+# -> fixed (val 0.9065 vs 0.8736) — it was previously set to adaptive off a seed-0 *test*
+# screen, which was wrong by both criteria. trashnet/mobilenetv3_small -> adaptive (val
+# 0.7366 vs 0.7248, 3 seeds each, added 2026-10-02). trashnet/mobilenetv2_035 has adaptive
+# at n=1 only, so its 3-seed fixed-lambda runs stand. rps_25's val split is 33 images, so
+# treat the rps_25 choices as weak.
 PQK_CONFIG = {
     ("rps_25", "mobilenetv2_035"): "pqk_adaptive",
-    ("rps_25", "mobilenetv3_small"): "pqk_adaptive",
+    ("trashnet", "mobilenetv3_small"): "pqk_adaptive",
 }
 DEFAULT_PQK = "pqk"
 _PQK_LABEL = {"pqk": "fixed λ=1.0", "pqk_adaptive": "adaptive λ (median heuristic)"}
@@ -419,10 +429,16 @@ with d1:
         "(the pair that failed five other configs) it scored **0.7312**, clearing both `scratch` "
         "(+0.0076) and `rbf_control` (+0.0161). But on rps_25/mobilenetv2_035 it *regressed* to "
         "0.6330 (−0.0774 vs `scratch`).\n\n"
-        "**Not yet a result.** Seed 0 runs optimistic on trashnet/mobilenetv3_small by ~+0.027 "
-        "(fixed λ scored 0.6998 at s0 vs 0.6733 over 3 seeds). The +0.0076 margin sits *inside* "
-        "that bias, so the 3-seed mean may well land back under `scratch`. Seeds 1–2 are running; "
-        "nothing should be claimed until they land."
+        "**3-seed result: FAIL.** trashnet/mobilenetv3_small came in at 0.7092 ± 0.0327 — below "
+        "`scratch` (0.7236) and `rbf_control` (0.7152). The seed-0 margin was optimism, as predicted.\n\n"
+        "**Confound resolved (2026-10-02) — ZZ adds nothing.** `pqk_zz` changed λ to adaptive *and* "
+        "added ZZ. Paired against `pqk_adaptive` on the same 3 seeds: ZZ − adaptive = **−0.0092 ± "
+        "0.0372**, ZZ wins 1/3. The earlier gain over fixed λ was entirely the calibration fix "
+        "(adaptive − fixed = +0.0452 paired). Correlators are not worth carrying forward as-is.\n\n"
+        "**Remaining note.** The circuit uses "
+        "only RY and CNOT, so the state stays real and every ⟨Y⟩ is exactly zero: the features are "
+        "16 active coordinates (not 24), 44 with ZZ (not 52). Next control: a matched *classical* "
+        "nonlinear feature map of the same width, to test whether any gain is quantum-specific."
     )
 with d2:
     st.subheader("2. INT8 quantization (Stage 8 / G3)")

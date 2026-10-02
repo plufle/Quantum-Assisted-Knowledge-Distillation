@@ -1,0 +1,32 @@
+name: pqk_zz
+# pqk with two-body <Z_i Z_j> correlators added to the measured observables, on top of
+# the adaptive-lambda calibration. Own name so its run_ids stay distinct from the frozen
+# canonical pqk record. Matched control (rule #2) is the same LOCKED `rbf_control` run.
+#
+# Motivation (2026-09-14), measured rather than assumed. The single-qubit-only kernel
+# reads 3n marginals, which is exactly what discards the correlations entanglement
+# creates — and those marginals get *less* informative as the circuit grows: mean Bloch
+# length |r| falls 0.541 (4 qubits) -> 0.384 (8) -> 0.313 (12), i.e. each reduced state
+# drifts toward maximally mixed. That is textbook exponential concentration, and it is
+# why raising n_qubits made things worse, not better (effective-dim ratio fell 1.40 at
+# n=4 to 0.87 at n=12).
+#
+# Adding the n(n-1)/2 ZZ correlators puts the two-body information back: at n=8 the
+# feature goes 24 -> 52 dims, effective dimensionality 8.90 -> 10.92, expansion ratio
+# 1.11 -> 1.36, for ~25% more simulator time. Still polynomially many observables, so
+# the kernel remains classically tractable — the whole point of a *projected* kernel.
+# Note this does NOT improve geometry preservation (corr(pre,post) 0.130 -> 0.099); it
+# is a richer map, not a better-conditioned one, so it is an open question whether the
+# extra capacity converts into accuracy.
+kernel: projected_quantum
+n_qubits: 8
+depth: 4
+lambda_: null # adaptive median heuristic, matching rbf_control's calibration
+include_zz: true
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+device_backend: lightning.qubit # Trap #1
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5 # locked, shared with rbf_control — tuning it would unmatch the twins

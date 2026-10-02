@@ -18,6 +18,11 @@ def _feature_map(angles, n_qubits, depth):
     CNOT entangling ring] (CLAUDE.md pqk: n_qubits=8, depth=4). Fixed and non-trainable
     — only the classical projection layer upstream of this is trained; `depth` controls
     how entangled (and how expressive/potentially barren — Trap #7) the embedding is."""
+    # NOTE: RY and CNOT are both real matrices, so starting from |0..0> the state keeps real
+    # amplitudes and every <Y_q> is identically zero (verified: max |<Y>| = 0.0). The measured
+    # XYZ feature therefore has 2n active coordinates, not 3n (16 at 8 qubits; 44, not 52, with
+    # ZZ). Left as-is so frozen results stay bit-reproducible — the zero columns add nothing to
+    # any distance or median — but adding a phase gate (e.g. RZ) would be needed to use them.
     for _ in range(depth):
         for i in range(n_qubits):
             qml.RY(angles[:, i], wires=i)
@@ -25,31 +30,41 @@ def _feature_map(angles, n_qubits, depth):
             qml.CNOT(wires=[i, i + 1])
 
 
-def _build_qnode(n_qubits, depth, device_backend):
+def _build_qnode(n_qubits, depth, device_backend, include_zz=False):
     dev = _get_device(n_qubits, device_backend)
 
     def circuit(angles):
         _feature_map(angles, n_qubits, depth)
-        return [qml.expval(o(i)) for i in range(n_qubits) for o in (qml.PauliX, qml.PauliY, qml.PauliZ)]
+        obs = [o(i) for i in range(n_qubits) for o in (qml.PauliX, qml.PauliY, qml.PauliZ)]
+        if include_zz:
+            # Two-body <Z_i Z_j>. Single-qubit marginals discard exactly the correlations
+            # entanglement creates — and the more qubits/depth, the more the reduced states
+            # drift toward maximally mixed (measured: mean |r| 0.541 at 4 qubits -> 0.313 at
+            # 12), draining the signal a purely single-qubit kernel reads. These n(n-1)/2
+            # correlators put that information back while staying polynomial, so the kernel
+            # is still classically tractable (the point of a *projected* quantum kernel).
+            obs += [qml.PauliZ(i) @ qml.PauliZ(j)
+                    for i in range(n_qubits) for j in range(i + 1, n_qubits)]
+        return [qml.expval(o) for o in obs]
 
     return qml.QNode(circuit, dev, interface="torch", diff_method="adjoint")
 
 
-def bloch_vectors(angles, n_qubits, depth, device_backend="lightning.qubit"):
+def bloch_vectors(angles, n_qubits, depth, device_backend="lightning.qubit", include_zz=False):
     """Runs a batch of `n_qubits` angles through the fixed quantum feature map and
     returns each sample's single-qubit reduced-density-matrix Bloch vectors, flattened
     to [batch, 3*n_qubits] (<X_q>, <Y_q>, <Z_q> per qubit) — the classically-tractable
     'projected' feature behind the projected quantum kernel (CLAUDE.md Loss). Computing
     only expectation values (never the full 2^n statevector) is what keeps this
     poly-time classically and lets `diff_method=adjoint` work at all."""
-    key = (n_qubits, depth, device_backend)
+    key = (n_qubits, depth, device_backend, include_zz)
     if key not in _QNODE_CACHE:
-        _QNODE_CACHE[key] = _build_qnode(n_qubits, depth, device_backend)
+        _QNODE_CACHE[key] = _build_qnode(n_qubits, depth, device_backend, include_zz)
     qnode = _QNODE_CACHE[key]
     return torch.stack(qnode(angles), dim=-1)
 
 
-def pqk_gram_matrix(angles, n_qubits, depth, lambda_, device_backend="lightning.qubit"):
+def pqk_gram_matrix(angles, n_qubits, depth, lambda_, device_backend="lightning.qubit", include_zz=False):
     """Projected quantum kernel Gram matrix (CLAUDE.md Loss):
     K_ij = exp(-lambda * sum_q ||rho_q(x_i) - rho_q(x_j)||_F^2).
 
@@ -67,7 +82,7 @@ def pqk_gram_matrix(angles, n_qubits, depth, lambda_, device_backend="lightning.
     not matched on kernel sharpness at all. The scaling below mirrors the classical
     formula exactly (K = exp(-0.5) at the median distance), so both branches sit in the
     same operating range and the comparison isolates the kernel, not its calibration."""
-    features = bloch_vectors(angles, n_qubits, depth, device_backend)
+    features = bloch_vectors(angles, n_qubits, depth, device_backend, include_zz)
     dists_sq = 0.5 * torch.cdist(features, features, p=2).pow(2)
     if lambda_ is None:
         lambda_ = _median_heuristic_lambda(dists_sq)

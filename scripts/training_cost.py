@@ -25,8 +25,15 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LINE_RE = re.compile(
     r"\[ (?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d+ \].*?\[(?P<run_id>[\w.]+__[\w.]+__[\w.]+__s\d+)\] epoch (?P<epoch>\d+)/"
 )
-# pqk is the only method whose forward pass runs a quantum-circuit simulator.
-SIMULATOR_METHODS = {"pqk"}
+# Every pqk variant (pqk, pqk_adaptive, pqk_zz, and the pqk_t3/g05/g20/d2 screens) runs the
+# circuit simulator in its forward pass — matched by prefix so new variants are not silently
+# counted as classical. NOTE: this splits runs by *type*, not by resource. A PQK run's hours
+# include the CNN forward/backward and the frozen teacher, so "PQK-run hours" is an upper
+# bound on simulator time, not a measurement of it. Separating the two needs the kernel call
+# timed inside trainer.py. As a rough guide, same-seed same-load comparison put the circuit at
+# ~26% of a pqk epoch (19.4 vs 15.4 s/epoch against rbf_control).
+def _is_simulator_method(method):
+    return method.startswith("pqk")
 
 
 def parse_blocks():
@@ -75,7 +82,7 @@ def main():
     rows = []
     for run_id, runs in sorted(by_run.items()):
         method = run_id.split("__")[2]
-        is_sim = method in SIMULATOR_METHODS
+        is_sim = _is_simulator_method(method)
         for i, (start, end, epochs) in enumerate(runs):
             h = _hours(start, end)
             if is_sim:
@@ -95,14 +102,16 @@ def main():
 
     discarded = (total_gpu + total_sim) - (kept_gpu + kept_sim)
     print()
-    print("Cost of kept results   — GPU-hours %.2f | simulator-hours %.2f | total %.2f"
+    print("Cost of kept results   — classical-run hours %.2f | PQK-run hours %.2f | total %.2f"
           % (kept_gpu, kept_sim, kept_gpu + kept_sim))
-    print("Total incl. discarded  — GPU-hours %.2f | simulator-hours %.2f | total %.2f"
+    print("Total incl. discarded  — classical-run hours %.2f | PQK-run hours %.2f | total %.2f"
           % (total_gpu, total_sim, total_gpu + total_sim))
+    print("PQK-run hours include CNN + teacher compute; est. simulator share ~26%% -> ~%.2f h kept"
+          % (kept_sim * 0.26))
     print("Discarded (re-runs after pipeline fixes): %.2f hours" % discarded)
     print()
     print("Note: runs executed in parallel, so these are compute-hours consumed, not elapsed "
-          "wall-clock. simulator-hours = pqk runs (lightning.qubit in the forward pass).")
+          "wall-clock. PQK-run hours = all pqk* variants (lightning.qubit in the forward pass).")
 
 
 if __name__ == "__main__":

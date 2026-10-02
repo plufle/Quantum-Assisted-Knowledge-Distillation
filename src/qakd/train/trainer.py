@@ -193,12 +193,15 @@ def _kernel_loss_and_stats(method_cfg, kernel_modules, student_feats, teacher_fe
         student_gram = rbf_gram_matrix(student_proj, bandwidth)
         teacher_gram = rbf_gram_matrix(teacher_proj, bandwidth)
     elif method_cfg.kernel == "projected_quantum":
+        include_zz = method_cfg.get("include_zz", False)
         student_gram = pqk_gram_matrix(
-            student_proj, method_cfg.n_qubits, method_cfg.depth, method_cfg.lambda_, method_cfg.device_backend
+            student_proj, method_cfg.n_qubits, method_cfg.depth, method_cfg.lambda_,
+            method_cfg.device_backend, include_zz,
         )
         with torch.no_grad():
             teacher_gram = pqk_gram_matrix(
-                teacher_proj, method_cfg.n_qubits, method_cfg.depth, method_cfg.lambda_, method_cfg.device_backend
+                teacher_proj, method_cfg.n_qubits, method_cfg.depth, method_cfg.lambda_,
+                method_cfg.device_backend, include_zz,
             )
     else:
         raise ValueError(f"Unknown kernel={method_cfg.kernel!r}")
