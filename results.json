@@ -3662,5 +3662,4132 @@
       "git_sha": "58269e80ae7b20283e875bf3f73e5be9c50bbec8",
       "timestamp_utc": "2026-08-23T11:36:53.357403+00:00"
     }
+  ],
+  "deploy": [
+    {
+      "run_id": "rps_25__mobilenetv2_035__kd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7932541370727365,
+        "top1_accuracy": 0.7983870967741935
+      },
+      "fp32": {
+        "macro_f1": 0.7932541370727365,
+        "top1_accuracy": 0.7983870967741935
+      },
+      "int8": {
+        "macro_f1": 0.8291077795053434,
+        "top1_accuracy": 0.8333333333333334
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.035853642432606914,
+        "top1_accuracy": 0.034946236559139865
+      },
+      "int8_fp32_argmax_agreement": 0.9220430107526881,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 7.867813110351562e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 67.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__kd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7195300598107021,
+        "top1_accuracy": 0.7311827956989247
+      },
+      "fp32": {
+        "macro_f1": 0.7195300598107021,
+        "top1_accuracy": 0.7311827956989247
+      },
+      "int8": {
+        "macro_f1": 0.6755269915296233,
+        "top1_accuracy": 0.6908602150537635
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.044003068281078805,
+        "top1_accuracy": -0.040322580645161255
+      },
+      "int8_fp32_argmax_agreement": 0.9005376344086021,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 2.753734588623047e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__kd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.617911222013558,
+        "top1_accuracy": 0.6263440860215054
+      },
+      "fp32": {
+        "macro_f1": 0.617911222013558,
+        "top1_accuracy": 0.6263440860215054
+      },
+      "int8": {
+        "macro_f1": 0.6246747942446582,
+        "top1_accuracy": 0.6370967741935484
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.0067635722311002455,
+        "top1_accuracy": 0.010752688172043001
+      },
+      "int8_fp32_argmax_agreement": 0.8360215053763441,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 9.5367431640625e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 59.0,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__pqk__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "pqk",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.6724849252938626,
+        "top1_accuracy": 0.6827956989247311
+      },
+      "fp32": {
+        "macro_f1": 0.6724849252938626,
+        "top1_accuracy": 0.6827956989247311
+      },
+      "int8": {
+        "macro_f1": 0.6679477930125416,
+        "top1_accuracy": 0.6801075268817204
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.004537132281321021,
+        "top1_accuracy": -0.0026881720430107503
+      },
+      "int8_fp32_argmax_agreement": 0.9005376344086021,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 4.8160552978515625e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__pqk__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "pqk",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6747800982021279,
+        "top1_accuracy": 0.6908602150537635
+      },
+      "fp32": {
+        "macro_f1": 0.6747800982021279,
+        "top1_accuracy": 0.6908602150537635
+      },
+      "int8": {
+        "macro_f1": 0.7168282462720849,
+        "top1_accuracy": 0.7311827956989247
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.04204814806995694,
+        "top1_accuracy": 0.040322580645161255
+      },
+      "int8_fp32_argmax_agreement": 0.8844086021505376,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 3.4868717193603516e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.3,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__pqk__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "pqk",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6200987293647464,
+        "top1_accuracy": 0.6559139784946236
+      },
+      "fp32": {
+        "macro_f1": 0.6200987293647464,
+        "top1_accuracy": 0.6559139784946236
+      },
+      "int8": {
+        "macro_f1": 0.6370757684952132,
+        "top1_accuracy": 0.6693548387096774
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.016977039130466776,
+        "top1_accuracy": 0.013440860215053752
+      },
+      "int8_fp32_argmax_agreement": 0.9381720430107527,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 3.5762786865234375e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__pqk_adaptive__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "pqk_adaptive",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7152605565299965,
+        "top1_accuracy": 0.728494623655914
+      },
+      "fp32": {
+        "macro_f1": 0.7152605565299965,
+        "top1_accuracy": 0.728494623655914
+      },
+      "int8": {
+        "macro_f1": 0.7340245852882203,
+        "top1_accuracy": 0.7446236559139785
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.018764028758223805,
+        "top1_accuracy": 0.016129032258064502
+      },
+      "int8_fp32_argmax_agreement": 0.8763440860215054,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 6.008148193359375e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.6,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__pqk_adaptive__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "pqk_adaptive",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7421012966989978,
+        "top1_accuracy": 0.75
+      },
+      "fp32": {
+        "macro_f1": 0.7421012966989978,
+        "top1_accuracy": 0.75
+      },
+      "int8": {
+        "macro_f1": 0.7900188166883951,
+        "top1_accuracy": 0.7956989247311828
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.047917519989397306,
+        "top1_accuracy": 0.045698924731182755
+      },
+      "int8_fp32_argmax_agreement": 0.9032258064516129,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 3.0376017093658447e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__pqk_adaptive__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "pqk_adaptive",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.681604374284586,
+        "top1_accuracy": 0.7123655913978495
+      },
+      "fp32": {
+        "macro_f1": 0.681604374284586,
+        "top1_accuracy": 0.7123655913978495
+      },
+      "int8": {
+        "macro_f1": 0.6817035989590279,
+        "top1_accuracy": 0.7123655913978495
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 9.922467444190008e-05,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.956989247311828,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 4.172325134277344e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rbf_control__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rbf_control",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7246216247441737,
+        "top1_accuracy": 0.7419354838709677
+      },
+      "fp32": {
+        "macro_f1": 0.7246216247441737,
+        "top1_accuracy": 0.7419354838709677
+      },
+      "int8": {
+        "macro_f1": 0.7226069915145547,
+        "top1_accuracy": 0.739247311827957
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.002014633229619034,
+        "top1_accuracy": -0.0026881720430107503
+      },
+      "int8_fp32_argmax_agreement": 0.9032258064516129,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 0.0001289844512939453,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.1,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rbf_control__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rbf_control",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6119463759944873,
+        "top1_accuracy": 0.6344086021505376
+      },
+      "fp32": {
+        "macro_f1": 0.6119463759944873,
+        "top1_accuracy": 0.6344086021505376
+      },
+      "int8": {
+        "macro_f1": 0.6700067046581895,
+        "top1_accuracy": 0.6854838709677419
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.05806032866370214,
+        "top1_accuracy": 0.051075268817204256
+      },
+      "int8_fp32_argmax_agreement": 0.8279569892473119,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 4.100799560546875e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rbf_control__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rbf_control",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.7148286468286468,
+        "top1_accuracy": 0.728494623655914
+      },
+      "fp32": {
+        "macro_f1": 0.7148286468286468,
+        "top1_accuracy": 0.728494623655914
+      },
+      "int8": {
+        "macro_f1": 0.686946244185311,
+        "top1_accuracy": 0.7043010752688172
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.027882402643335746,
+        "top1_accuracy": -0.024193548387096753
+      },
+      "int8_fp32_argmax_agreement": 0.9139784946236559,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 4.6312808990478516e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.3,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rkd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7543383556702462,
+        "top1_accuracy": 0.760752688172043
+      },
+      "fp32": {
+        "macro_f1": 0.7543383556702462,
+        "top1_accuracy": 0.760752688172043
+      },
+      "int8": {
+        "macro_f1": 0.786893315018315,
+        "top1_accuracy": 0.793010752688172
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.032554959348068846,
+        "top1_accuracy": 0.032258064516129004
+      },
+      "int8_fp32_argmax_agreement": 0.9112903225806451,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 5.1021575927734375e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rkd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.776654170949473,
+        "top1_accuracy": 0.782258064516129
+      },
+      "fp32": {
+        "macro_f1": 0.776654170949473,
+        "top1_accuracy": 0.782258064516129
+      },
+      "int8": {
+        "macro_f1": 0.795956106608323,
+        "top1_accuracy": 0.8010752688172043
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.019301935658850078,
+        "top1_accuracy": 0.018817204301075252
+      },
+      "int8_fp32_argmax_agreement": 0.9166666666666666,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 4.0531158447265625e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.6,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__rkd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6789110032362459,
+        "top1_accuracy": 0.6908602150537635
+      },
+      "fp32": {
+        "macro_f1": 0.6789110032362459,
+        "top1_accuracy": 0.6908602150537635
+      },
+      "int8": {
+        "macro_f1": 0.6881385248863273,
+        "top1_accuracy": 0.6989247311827957
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.00922752165008145,
+        "top1_accuracy": 0.008064516129032251
+      },
+      "int8_fp32_argmax_agreement": 0.9247311827956989,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 8.07046890258789e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__scratch__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7007021716135827,
+        "top1_accuracy": 0.7150537634408602
+      },
+      "fp32": {
+        "macro_f1": 0.7007021716135827,
+        "top1_accuracy": 0.7150537634408602
+      },
+      "int8": {
+        "macro_f1": 0.7128523567654749,
+        "top1_accuracy": 0.728494623655914
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.012150185151892146,
+        "top1_accuracy": 0.013440860215053752
+      },
+      "int8_fp32_argmax_agreement": 0.9489247311827957,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 4.1365623474121094e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__scratch__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.693216758462125,
+        "top1_accuracy": 0.7043010752688172
+      },
+      "fp32": {
+        "macro_f1": 0.693216758462125,
+        "top1_accuracy": 0.7043010752688172
+      },
+      "int8": {
+        "macro_f1": 0.7176614880107725,
+        "top1_accuracy": 0.728494623655914
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.024444729548647404,
+        "top1_accuracy": 0.024193548387096753
+      },
+      "int8_fp32_argmax_agreement": 0.9005376344086021,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 3.260374069213867e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.8,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv2_035__scratch__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.7371129181700349,
+        "top1_accuracy": 0.760752688172043
+      },
+      "fp32": {
+        "macro_f1": 0.7371129181700349,
+        "top1_accuracy": 0.760752688172043
+      },
+      "int8": {
+        "macro_f1": 0.7353405847814969,
+        "top1_accuracy": 0.7553763440860215
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.0017723333885379944,
+        "top1_accuracy": -0.005376344086021501
+      },
+      "int8_fp32_argmax_agreement": 0.946236559139785,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 3.3542513847351074e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 604.1171875,
+        "n_calibration": 256
+      },
+      "params": 399971,
+      "seconds": 58.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__kd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.8959488553896598,
+        "top1_accuracy": 0.9005376344086021
+      },
+      "fp32": {
+        "macro_f1": 0.8959488553896598,
+        "top1_accuracy": 0.9005376344086021
+      },
+      "int8": {
+        "macro_f1": 0.8782707811834025,
+        "top1_accuracy": 0.8844086021505376
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.017678074206257333,
+        "top1_accuracy": -0.016129032258064502
+      },
+      "int8_fp32_argmax_agreement": 0.956989247311828,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 6.586313247680664e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.8,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__kd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7286486780250536,
+        "top1_accuracy": 0.7580645161290323
+      },
+      "fp32": {
+        "macro_f1": 0.7286486780250536,
+        "top1_accuracy": 0.7580645161290323
+      },
+      "int8": {
+        "macro_f1": 0.7467015593084213,
+        "top1_accuracy": 0.7688172043010753
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.018052881283367683,
+        "top1_accuracy": 0.010752688172043001
+      },
+      "int8_fp32_argmax_agreement": 0.9543010752688172,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 6.67572021484375e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__kd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.8641964202604936,
+        "top1_accuracy": 0.8709677419354839
+      },
+      "fp32": {
+        "macro_f1": 0.8641964202604936,
+        "top1_accuracy": 0.8709677419354839
+      },
+      "int8": {
+        "macro_f1": 0.8698613667034719,
+        "top1_accuracy": 0.8763440860215054
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.005664946442978325,
+        "top1_accuracy": 0.005376344086021501
+      },
+      "int8_fp32_argmax_agreement": 0.9838709677419355,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 4.887580871582031e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__pqk__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "pqk",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.781222769333561,
+        "top1_accuracy": 0.8064516129032258
+      },
+      "fp32": {
+        "macro_f1": 0.781222769333561,
+        "top1_accuracy": 0.8064516129032258
+      },
+      "int8": {
+        "macro_f1": 0.7837170466036446,
+        "top1_accuracy": 0.8064516129032258
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.002494277270083556,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.9596774193548387,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 5.364418029785156e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__pqk__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "pqk",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.8290180259618297,
+        "top1_accuracy": 0.8360215053763441
+      },
+      "fp32": {
+        "macro_f1": 0.8290180259618297,
+        "top1_accuracy": 0.8360215053763441
+      },
+      "int8": {
+        "macro_f1": 0.8505396560498214,
+        "top1_accuracy": 0.8548387096774194
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.021521630087991683,
+        "top1_accuracy": 0.018817204301075252
+      },
+      "int8_fp32_argmax_agreement": 0.9596774193548387,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 5.7220458984375e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.6,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__pqk__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "pqk",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.909995157207736,
+        "top1_accuracy": 0.9112903225806451
+      },
+      "fp32": {
+        "macro_f1": 0.909995157207736,
+        "top1_accuracy": 0.9112903225806451
+      },
+      "int8": {
+        "macro_f1": 0.9086814938447348,
+        "top1_accuracy": 0.9086021505376344
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.0013136633630012051,
+        "top1_accuracy": -0.0026881720430107503
+      },
+      "int8_fp32_argmax_agreement": 0.9650537634408602,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.033348083496094e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rbf_control__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rbf_control",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.9592354645413069,
+        "top1_accuracy": 0.9596774193548387
+      },
+      "fp32": {
+        "macro_f1": 0.9592354645413069,
+        "top1_accuracy": 0.9596774193548387
+      },
+      "int8": {
+        "macro_f1": 0.8583797155225726,
+        "top1_accuracy": 0.8655913978494624
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.10085574901873429,
+        "top1_accuracy": -0.09408602150537637
+      },
+      "int8_fp32_argmax_agreement": 0.9005376344086021,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.808208465576172e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 63.0,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rbf_control__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rbf_control",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.8656972376086521,
+        "top1_accuracy": 0.8736559139784946
+      },
+      "fp32": {
+        "macro_f1": 0.8656972376086521,
+        "top1_accuracy": 0.8736559139784946
+      },
+      "int8": {
+        "macro_f1": 0.8818601672396906,
+        "top1_accuracy": 0.8870967741935484
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.016162929631038492,
+        "top1_accuracy": 0.013440860215053752
+      },
+      "int8_fp32_argmax_agreement": 0.9758064516129032,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.987022399902344e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.6,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rbf_control__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rbf_control",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.8381793816166855,
+        "top1_accuracy": 0.8440860215053764
+      },
+      "fp32": {
+        "macro_f1": 0.8381793816166855,
+        "top1_accuracy": 0.8440860215053764
+      },
+      "int8": {
+        "macro_f1": 0.8221259400751736,
+        "top1_accuracy": 0.8306451612903226
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.016053441541511893,
+        "top1_accuracy": -0.013440860215053752
+      },
+      "int8_fp32_argmax_agreement": 0.9731182795698925,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 4.0531158447265625e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.8,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rkd__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.9024551877117969,
+        "top1_accuracy": 0.9059139784946236
+      },
+      "fp32": {
+        "macro_f1": 0.9024551877117969,
+        "top1_accuracy": 0.9059139784946236
+      },
+      "int8": {
+        "macro_f1": 0.902522846970509,
+        "top1_accuracy": 0.9059139784946236
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 6.765925871210499e-05,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.9919354838709677,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.830560207366943e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 63.2,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rkd__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.8348239253390916,
+        "top1_accuracy": 0.8440860215053764
+      },
+      "fp32": {
+        "macro_f1": 0.8348239253390916,
+        "top1_accuracy": 0.8440860215053764
+      },
+      "int8": {
+        "macro_f1": 0.8226465968280662,
+        "top1_accuracy": 0.8360215053763441
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.012177328511025376,
+        "top1_accuracy": -0.008064516129032251
+      },
+      "int8_fp32_argmax_agreement": 0.9435483870967742,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 9.417533874511719e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 63.2,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__rkd__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.8100560043488705,
+        "top1_accuracy": 0.8279569892473119
+      },
+      "fp32": {
+        "macro_f1": 0.8100560043488705,
+        "top1_accuracy": 0.8279569892473119
+      },
+      "int8": {
+        "macro_f1": 0.8040621266427718,
+        "top1_accuracy": 0.8225806451612904
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.005993877706098716,
+        "top1_accuracy": -0.005376344086021501
+      },
+      "int8_fp32_argmax_agreement": 0.9811827956989247,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.748603820800781e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 63.2,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__scratch__s0",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.8587874015365284,
+        "top1_accuracy": 0.8682795698924731
+      },
+      "fp32": {
+        "macro_f1": 0.8587874015365284,
+        "top1_accuracy": 0.8682795698924731
+      },
+      "int8": {
+        "macro_f1": 0.8904020459088472,
+        "top1_accuracy": 0.8951612903225806
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.031614644372318756,
+        "top1_accuracy": 0.026881720430107503
+      },
+      "int8_fp32_argmax_agreement": 0.9489247311827957,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.0281801223754883e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 63.0,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__scratch__s1",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.831305310422458,
+        "top1_accuracy": 0.8360215053763441
+      },
+      "fp32": {
+        "macro_f1": 0.831305310422458,
+        "top1_accuracy": 0.8360215053763441
+      },
+      "int8": {
+        "macro_f1": 0.8267246597317545,
+        "top1_accuracy": 0.8306451612903226
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.004580650690703569,
+        "top1_accuracy": -0.005376344086021501
+      },
+      "int8_fp32_argmax_agreement": 0.9596774193548387,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 8.821487426757812e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 62.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "rps_25__mobilenetv3_small__scratch__s2",
+      "dataset": "rps_25",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.7569899309079072,
+        "top1_accuracy": 0.7795698924731183
+      },
+      "fp32": {
+        "macro_f1": 0.7569899309079072,
+        "top1_accuracy": 0.7795698924731183
+      },
+      "int8": {
+        "macro_f1": 0.7608226429050227,
+        "top1_accuracy": 0.7795698924731183
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.0038327119971154344,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.9623655913978495,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 5.125999450683594e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1179.4609375,
+        "n_calibration": 256
+      },
+      "params": 928739,
+      "seconds": 63.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__kd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7100665223269821,
+        "top1_accuracy": 0.7236842105263158
+      },
+      "fp32": {
+        "macro_f1": 0.7100665223269821,
+        "top1_accuracy": 0.7236842105263158
+      },
+      "int8": {
+        "macro_f1": 0.7040455267914284,
+        "top1_accuracy": 0.718421052631579
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.006020995535553686,
+        "top1_accuracy": -0.0052631578947368585
+      },
+      "int8_fp32_argmax_agreement": 0.9368421052631579,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.8596649169921875e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 65.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__kd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7206524825388558,
+        "top1_accuracy": 0.7342105263157894
+      },
+      "fp32": {
+        "macro_f1": 0.7206524825388558,
+        "top1_accuracy": 0.7342105263157894
+      },
+      "int8": {
+        "macro_f1": 0.7076406761494966,
+        "top1_accuracy": 0.718421052631579
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.013011806389359282,
+        "top1_accuracy": -0.015789473684210464
+      },
+      "int8_fp32_argmax_agreement": 0.9552631578947368,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.919269561767578e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.8,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__kd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "kd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6947130201385426,
+        "top1_accuracy": 0.7157894736842105
+      },
+      "fp32": {
+        "macro_f1": 0.6947130201385426,
+        "top1_accuracy": 0.7157894736842105
+      },
+      "int8": {
+        "macro_f1": 0.6965100423547274,
+        "top1_accuracy": 0.7289473684210527
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.0017970222161847182,
+        "top1_accuracy": 0.013157894736842146
+      },
+      "int8_fp32_argmax_agreement": 0.9263157894736842,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 2.1696090698242188e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__pqk__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "pqk",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7001834850014809,
+        "top1_accuracy": 0.7210526315789474
+      },
+      "fp32": {
+        "macro_f1": 0.7001834850014809,
+        "top1_accuracy": 0.7210526315789474
+      },
+      "int8": {
+        "macro_f1": 0.7139253460407707,
+        "top1_accuracy": 0.7289473684210527
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.013741861039289871,
+        "top1_accuracy": 0.007894736842105288
+      },
+      "int8_fp32_argmax_agreement": 0.9210526315789473,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.436471939086914e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.3,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__pqk__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "pqk",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6915985619319391,
+        "top1_accuracy": 0.7131578947368421
+      },
+      "fp32": {
+        "macro_f1": 0.6915985619319391,
+        "top1_accuracy": 0.7131578947368421
+      },
+      "int8": {
+        "macro_f1": 0.7114685232031369,
+        "top1_accuracy": 0.7236842105263158
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.019869961271197778,
+        "top1_accuracy": 0.010526315789473717
+      },
+      "int8_fp32_argmax_agreement": 0.9105263157894737,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.6927719116210938e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__pqk__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "pqk",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6896630070272796,
+        "top1_accuracy": 0.7078947368421052
+      },
+      "fp32": {
+        "macro_f1": 0.6896630070272796,
+        "top1_accuracy": 0.7078947368421052
+      },
+      "int8": {
+        "macro_f1": 0.6947279232160656,
+        "top1_accuracy": 0.718421052631579
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.005064916188786017,
+        "top1_accuracy": 0.010526315789473717
+      },
+      "int8_fp32_argmax_agreement": 0.9131578947368421,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.6808509826660156e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 59.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rbf_control__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rbf_control",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.6589201442379143,
+        "top1_accuracy": 0.6789473684210526
+      },
+      "fp32": {
+        "macro_f1": 0.6589201442379143,
+        "top1_accuracy": 0.6789473684210526
+      },
+      "int8": {
+        "macro_f1": 0.6424467478695287,
+        "top1_accuracy": 0.6631578947368421
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.01647339636838563,
+        "top1_accuracy": -0.015789473684210575
+      },
+      "int8_fp32_argmax_agreement": 0.9289473684210526,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.9311904907226562e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 60.1,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rbf_control__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rbf_control",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6767156360719137,
+        "top1_accuracy": 0.7026315789473684
+      },
+      "fp32": {
+        "macro_f1": 0.6767156360719137,
+        "top1_accuracy": 0.7026315789473684
+      },
+      "int8": {
+        "macro_f1": 0.667795082942277,
+        "top1_accuracy": 0.6947368421052632
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.008920553129636688,
+        "top1_accuracy": -0.007894736842105177
+      },
+      "int8_fp32_argmax_agreement": 0.9447368421052632,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.7642974853515625e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 59.0,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rbf_control__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rbf_control",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6768065268065269,
+        "top1_accuracy": 0.6947368421052632
+      },
+      "fp32": {
+        "macro_f1": 0.6768065268065269,
+        "top1_accuracy": 0.6947368421052632
+      },
+      "int8": {
+        "macro_f1": 0.6628977776834506,
+        "top1_accuracy": 0.6842105263157895
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.01390874912307627,
+        "top1_accuracy": -0.010526315789473717
+      },
+      "int8_fp32_argmax_agreement": 0.9078947368421053,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.1920928955078125e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rkd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.6758008093446516,
+        "top1_accuracy": 0.6894736842105263
+      },
+      "fp32": {
+        "macro_f1": 0.6758008093446516,
+        "top1_accuracy": 0.6894736842105263
+      },
+      "int8": {
+        "macro_f1": 0.6728503302059884,
+        "top1_accuracy": 0.6868421052631579
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.002950479138663198,
+        "top1_accuracy": -0.0026315789473684292
+      },
+      "int8_fp32_argmax_agreement": 0.9131578947368421,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 3.55839729309082e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.1,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rkd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6701657559066551,
+        "top1_accuracy": 0.6842105263157895
+      },
+      "fp32": {
+        "macro_f1": 0.6701657559066551,
+        "top1_accuracy": 0.6842105263157895
+      },
+      "int8": {
+        "macro_f1": 0.6659091861402516,
+        "top1_accuracy": 0.6789473684210526
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.0042565697664034285,
+        "top1_accuracy": -0.0052631578947368585
+      },
+      "int8_fp32_argmax_agreement": 0.9263157894736842,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.7881393432617188e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.2,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__rkd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "rkd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6687007091225602,
+        "top1_accuracy": 0.6842105263157895
+      },
+      "fp32": {
+        "macro_f1": 0.6687007091225602,
+        "top1_accuracy": 0.6842105263157895
+      },
+      "int8": {
+        "macro_f1": 0.6597192815424243,
+        "top1_accuracy": 0.6789473684210526
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.00898142758013587,
+        "top1_accuracy": -0.0052631578947368585
+      },
+      "int8_fp32_argmax_agreement": 0.9315789473684211,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.5974044799804688e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.4,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__scratch__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.6941559976943005,
+        "top1_accuracy": 0.7105263157894737
+      },
+      "fp32": {
+        "macro_f1": 0.6941559976943005,
+        "top1_accuracy": 0.7105263157894737
+      },
+      "int8": {
+        "macro_f1": 0.7095626635056741,
+        "top1_accuracy": 0.7263157894736842
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.015406665811373621,
+        "top1_accuracy": 0.015789473684210575
+      },
+      "int8_fp32_argmax_agreement": 0.9289473684210526,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.4543533325195312e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__scratch__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6893250647980915,
+        "top1_accuracy": 0.7078947368421052
+      },
+      "fp32": {
+        "macro_f1": 0.6893250647980915,
+        "top1_accuracy": 0.7078947368421052
+      },
+      "int8": {
+        "macro_f1": 0.69426760955802,
+        "top1_accuracy": 0.7052631578947368
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.004942544759928502,
+        "top1_accuracy": -0.0026315789473684292
+      },
+      "int8_fp32_argmax_agreement": 0.9236842105263158,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.3172626495361328e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 58.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv2_035__scratch__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv2_035",
+      "method": "scratch",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6678385325623668,
+        "top1_accuracy": 0.6736842105263158
+      },
+      "fp32": {
+        "macro_f1": 0.6678385325623668,
+        "top1_accuracy": 0.6736842105263158
+      },
+      "int8": {
+        "macro_f1": 0.6623872704793486,
+        "top1_accuracy": 0.6631578947368421
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.00545126208301816,
+        "top1_accuracy": -0.010526315789473717
+      },
+      "int8_fp32_argmax_agreement": 0.9,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Clip",
+          "Constant",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool"
+        ],
+        "max_abs_logit_diff": 1.4662742614746094e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 35,
+          "DEPTHWISE_CONV_2D": 17,
+          "ADD": 10,
+          "MEAN": 1,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 607.9453125,
+        "n_calibration": 256
+      },
+      "params": 403814,
+      "seconds": 59.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__kd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7239217335090199,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "fp32": {
+        "macro_f1": 0.7239217335090199,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "int8": {
+        "macro_f1": 0.7219115731418775,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.0020101603671424106,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.9631578947368421,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.5482306480407715e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 69.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__kd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7554333344051737,
+        "top1_accuracy": 0.7763157894736842
+      },
+      "fp32": {
+        "macro_f1": 0.7554333344051737,
+        "top1_accuracy": 0.7763157894736842
+      },
+      "int8": {
+        "macro_f1": 0.7424382236924565,
+        "top1_accuracy": 0.7631578947368421
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.012995110712717195,
+        "top1_accuracy": -0.013157894736842035
+      },
+      "int8_fp32_argmax_agreement": 0.9342105263157895,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.4066696166992188e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__kd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "kd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.7179255736839515,
+        "top1_accuracy": 0.7394736842105263
+      },
+      "fp32": {
+        "macro_f1": 0.7179255736839515,
+        "top1_accuracy": 0.7394736842105263
+      },
+      "int8": {
+        "macro_f1": 0.7088022901241292,
+        "top1_accuracy": 0.7315789473684211
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.009123283559822282,
+        "top1_accuracy": -0.007894736842105177
+      },
+      "int8_fp32_argmax_agreement": 0.9552631578947368,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.1086463928222656e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.1,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.6997664665930511,
+        "top1_accuracy": 0.7210526315789474
+      },
+      "fp32": {
+        "macro_f1": 0.6997664665930511,
+        "top1_accuracy": 0.7210526315789474
+      },
+      "int8": {
+        "macro_f1": 0.7233583879492403,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.02359192135618926,
+        "top1_accuracy": 0.021052631578947323
+      },
+      "int8_fp32_argmax_agreement": 0.9421052631578948,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.152557373046875e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.0,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.6649224399187526,
+        "top1_accuracy": 0.6815789473684211
+      },
+      "fp32": {
+        "macro_f1": 0.6649224399187526,
+        "top1_accuracy": 0.6815789473684211
+      },
+      "int8": {
+        "macro_f1": 0.6683989544466239,
+        "top1_accuracy": 0.6842105263157895
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.003476514527871344,
+        "top1_accuracy": 0.0026315789473684292
+      },
+      "int8_fp32_argmax_agreement": 0.9552631578947368,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.621246337890625e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6551059704935321,
+        "top1_accuracy": 0.6736842105263158
+      },
+      "fp32": {
+        "macro_f1": 0.6551059704935321,
+        "top1_accuracy": 0.6736842105263158
+      },
+      "int8": {
+        "macro_f1": 0.6587710784976061,
+        "top1_accuracy": 0.6763157894736842
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.003665108004073936,
+        "top1_accuracy": 0.0026315789473684292
+      },
+      "int8_fp32_argmax_agreement": 0.9157894736842105,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 6.079673767089844e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.2,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk_adaptive__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk_adaptive",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7080623862393504,
+        "top1_accuracy": 0.7263157894736842
+      },
+      "fp32": {
+        "macro_f1": 0.7080623862393504,
+        "top1_accuracy": 0.7263157894736842
+      },
+      "int8": {
+        "macro_f1": 0.7156335430910161,
+        "top1_accuracy": 0.7394736842105263
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.007571156851665761,
+        "top1_accuracy": 0.013157894736842035
+      },
+      "int8_fp32_argmax_agreement": 0.9394736842105263,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.1205673217773438e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.6,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk_adaptive__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk_adaptive",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7215629385446384,
+        "top1_accuracy": 0.7368421052631579
+      },
+      "fp32": {
+        "macro_f1": 0.7215629385446384,
+        "top1_accuracy": 0.7368421052631579
+      },
+      "int8": {
+        "macro_f1": 0.7013541492771275,
+        "top1_accuracy": 0.718421052631579
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.020208789267510907,
+        "top1_accuracy": -0.018421052631578894
+      },
+      "int8_fp32_argmax_agreement": 0.95,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 1.0013580322265625e-05,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.2,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__pqk_adaptive__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "pqk_adaptive",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.7256914070561562,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "fp32": {
+        "macro_f1": 0.7256914070561562,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "int8": {
+        "macro_f1": 0.7061945747052659,
+        "top1_accuracy": 0.7210526315789474
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.01949683235089028,
+        "top1_accuracy": -0.021052631578947323
+      },
+      "int8_fp32_argmax_agreement": 0.9605263157894737,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 8.106231689453125e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rbf_control__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rbf_control",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.6952644151705281,
+        "top1_accuracy": 0.7078947368421052
+      },
+      "fp32": {
+        "macro_f1": 0.6952644151705281,
+        "top1_accuracy": 0.7078947368421052
+      },
+      "int8": {
+        "macro_f1": 0.7141648151033787,
+        "top1_accuracy": 0.7263157894736842
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.018900399932850642,
+        "top1_accuracy": 0.018421052631579005
+      },
+      "int8_fp32_argmax_agreement": 0.9210526315789473,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 8.58306884765625e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rbf_control__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rbf_control",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.757589938525684,
+        "top1_accuracy": 0.7763157894736842
+      },
+      "fp32": {
+        "macro_f1": 0.757589938525684,
+        "top1_accuracy": 0.7763157894736842
+      },
+      "int8": {
+        "macro_f1": 0.7588210057906233,
+        "top1_accuracy": 0.7763157894736842
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.0012310672649392673,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.95,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 6.67572021484375e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rbf_control__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rbf_control",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.6926119292150755,
+        "top1_accuracy": 0.7052631578947368
+      },
+      "fp32": {
+        "macro_f1": 0.6926119292150755,
+        "top1_accuracy": 0.7052631578947368
+      },
+      "int8": {
+        "macro_f1": 0.7078454338728312,
+        "top1_accuracy": 0.7263157894736842
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.015233504657755637,
+        "top1_accuracy": 0.021052631578947434
+      },
+      "int8_fp32_argmax_agreement": 0.9552631578947368,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.62939453125e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rkd__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7126802775796585,
+        "top1_accuracy": 0.7289473684210527
+      },
+      "fp32": {
+        "macro_f1": 0.7126802775796585,
+        "top1_accuracy": 0.7289473684210527
+      },
+      "int8": {
+        "macro_f1": 0.7143189677248422,
+        "top1_accuracy": 0.7289473684210527
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.0016386901451836966,
+        "top1_accuracy": 0.0
+      },
+      "int8_fp32_argmax_agreement": 0.9315789473684211,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 9.298324584960938e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.8,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rkd__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7186780466520267,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "fp32": {
+        "macro_f1": 0.7186780466520267,
+        "top1_accuracy": 0.7421052631578947
+      },
+      "int8": {
+        "macro_f1": 0.728526658222486,
+        "top1_accuracy": 0.75
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.009848611570459243,
+        "top1_accuracy": 0.007894736842105288
+      },
+      "int8_fp32_argmax_agreement": 0.9473684210526315,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 9.059906005859375e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.6,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__rkd__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "rkd",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.715179746911903,
+        "top1_accuracy": 0.7368421052631579
+      },
+      "fp32": {
+        "macro_f1": 0.715179746911903,
+        "top1_accuracy": 0.7368421052631579
+      },
+      "int8": {
+        "macro_f1": 0.7124867640904435,
+        "top1_accuracy": 0.7315789473684211
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.0026929828214594664,
+        "top1_accuracy": -0.0052631578947367474
+      },
+      "int8_fp32_argmax_agreement": 0.9605263157894737,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 5.841255187988281e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.9,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__scratch__s0",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 0,
+      "recorded": {
+        "macro_f1": 0.7118576146581611,
+        "top1_accuracy": 0.7315789473684211
+      },
+      "fp32": {
+        "macro_f1": 0.7118576146581611,
+        "top1_accuracy": 0.7315789473684211
+      },
+      "int8": {
+        "macro_f1": 0.6939362677159022,
+        "top1_accuracy": 0.7157894736842105
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.017921346942258887,
+        "top1_accuracy": -0.015789473684210575
+      },
+      "int8_fp32_argmax_agreement": 0.9342105263157895,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 8.58306884765625e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 63.7,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__scratch__s1",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 1,
+      "recorded": {
+        "macro_f1": 0.7412270917340423,
+        "top1_accuracy": 0.7631578947368421
+      },
+      "fp32": {
+        "macro_f1": 0.7412270917340423,
+        "top1_accuracy": 0.7631578947368421
+      },
+      "int8": {
+        "macro_f1": 0.7380218064370935,
+        "top1_accuracy": 0.7605263157894737
+      },
+      "int8_minus_fp32": {
+        "macro_f1": -0.0032052852969488566,
+        "top1_accuracy": -0.0026315789473684292
+      },
+      "int8_fp32_argmax_agreement": 0.9605263157894737,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 8.106231689453125e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 64.5,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    },
+    {
+      "run_id": "trashnet__mobilenetv3_small__scratch__s2",
+      "dataset": "trashnet",
+      "student": "mobilenetv3_small",
+      "method": "scratch",
+      "seed": 2,
+      "recorded": {
+        "macro_f1": 0.7176241544867009,
+        "top1_accuracy": 0.7394736842105263
+      },
+      "fp32": {
+        "macro_f1": 0.7176241544867009,
+        "top1_accuracy": 0.7394736842105263
+      },
+      "int8": {
+        "macro_f1": 0.7273116124878908,
+        "top1_accuracy": 0.7473684210526316
+      },
+      "int8_minus_fp32": {
+        "macro_f1": 0.009687458001189864,
+        "top1_accuracy": 0.007894736842105288
+      },
+      "int8_fp32_argmax_agreement": 0.9631578947368421,
+      "onnx": {
+        "opset": 17,
+        "ops": [
+          "Add",
+          "Conv",
+          "Flatten",
+          "Gemm",
+          "GlobalAveragePool",
+          "HardSigmoid",
+          "HardSwish",
+          "Mul",
+          "Relu"
+        ],
+        "max_abs_logit_diff": 7.152557373046875e-06,
+        "argmax_agreement": 1.0
+      },
+      "tflite": {
+        "ops": {
+          "PAD": 5,
+          "CONV_2D": 41,
+          "HARD_SWISH": 18,
+          "DEPTHWISE_CONV_2D": 11,
+          "MEAN": 10,
+          "RELU_0_TO_1": 9,
+          "MUL": 9,
+          "ADD": 6,
+          "FULLY_CONNECTED": 1
+        },
+        "n_conv": 52,
+        "fully_integer": true,
+        "per_channel": true,
+        "size_kb": 1181.234375,
+        "n_calibration": 256
+      },
+      "params": 930470,
+      "seconds": 64.0,
+      "versions": {
+        "torch": "2.13.0+cpu",
+        "onnx": "1.20.1",
+        "onnx2tf": "2.6.9"
+      }
+    }
   ]
 }

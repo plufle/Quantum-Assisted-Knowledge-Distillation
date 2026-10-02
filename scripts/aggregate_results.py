@@ -24,11 +24,19 @@ def build():
         with open(path) as f:
             students.append(json.load(f))
 
-    return {"teachers": teachers, "students": students}
+    # Stage 8: fp32/INT8 reports from qakd.deploy.export. exports/ itself is gitignored
+    # (binary ONNX/TFLite), so the small JSON summaries are carried here for the dashboard.
+    deploy = []
+    for path in sorted(glob.glob(os.path.join(REPO_ROOT, "exports", "*", "deploy.json"))):
+        with open(path) as f:
+            deploy.append(json.load(f))
+
+    return {"teachers": teachers, "students": students, "deploy": deploy}
 
 
 if __name__ == "__main__":
     data = build()
     with open(OUTPUT_PATH, "w") as f:
         json.dump(data, f, indent=2)
-    print(f"Wrote {len(data['teachers'])} teacher(s) and {len(data['students'])} student run(s) to {OUTPUT_PATH}")
+    print(f"Wrote {len(data['teachers'])} teacher(s), {len(data['students'])} student run(s) and "
+          f"{len(data['deploy'])} INT8 export(s) to {OUTPUT_PATH}")

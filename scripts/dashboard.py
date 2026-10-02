@@ -368,6 +368,70 @@ else:
             fig.update_layout(title=f"macro-F1 across seeds ({dataset}/{student})", yaxis_title="macro_f1")
             st.plotly_chart(fig, use_container_width=True)
 
+# ---------------------------------------------------------------- G3 / INT8
+st.header("G3 Gate — INT8 deployment: pqk vs kd at matched size")
+_deploy = pd.DataFrame(load_results_json().get("deploy", []))
+if _deploy.empty:
+    st.info("No INT8 exports yet — run `python scripts/export_all.py`, then `aggregate_results.py`.")
+else:
+    _deploy = _deploy[_deploy.student.isin(STUDENTS)].copy()
+    _deploy["fp32_f1"] = _deploy.fp32.apply(lambda d: d["macro_f1"])
+    _deploy["int8_f1"] = _deploy.int8.apply(lambda d: d["macro_f1"])
+    _deploy["delta"] = _deploy.int8_f1 - _deploy.fp32_f1
+    _deploy["kb"] = _deploy.tflite.apply(lambda d: d["size_kb"])
+
+    # same per-pair pqk calibration as G2
+    def _reported(row):
+        chosen = PQK_CONFIG.get((row.dataset, row.student), DEFAULT_PQK)
+        if row.method in ("pqk", "pqk_adaptive"):
+            return "pqk" if row.method == chosen else None
+        return row.method if row.method in FINAL_METHODS else None
+    _deploy["rmethod"] = _deploy.apply(_reported, axis=1)
+    _deploy = _deploy[_deploy.rmethod.notna()]
+
+    g3_rows = []
+    for (ds, stu), grp in _deploy.groupby(["dataset", "student"]):
+        p, k = grp[grp.rmethod == "pqk"], grp[grp.rmethod == "kd"]
+        if len(p) < 3 or len(k) < 3:
+            continue
+        g3_rows.append({
+            "dataset": ds, "student": stu, "KB": round(p.kb.mean(), 1),
+            "kd fp32": k.fp32_f1.mean(), "kd int8": k.int8_f1.mean(),
+            "pqk fp32": p.fp32_f1.mean(), "pqk int8": p.int8_f1.mean(),
+            "pqk−kd (int8)": p.int8_f1.mean() - k.int8_f1.mean(),
+            "verdict": "PASS" if p.int8_f1.mean() > k.int8_f1.mean() else "FAIL",
+        })
+    g3_df = pd.DataFrame(g3_rows)
+
+    def _style_g3(val):
+        return {"PASS": "background-color: #1a4d2e; color: #d4f5dd",
+                "FAIL": "background-color: #4d1a1a; color: #f5d4d4"}.get(val, "")
+
+    st.dataframe(
+        g3_df.style.map(_style_g3, subset=["verdict"]).format(
+            {c: "{:.4f}" for c in ["kd fp32", "kd int8", "pqk fp32", "pqk int8"]} | {"pqk−kd (int8)": "{:+.4f}"}),
+        use_container_width=True, hide_index=True,
+    )
+    all_d = _deploy.delta
+    st.caption(
+        f"All {len(_deploy)} reported models export **fully integer, every conv per-channel, no quantum or "
+        f"custom ops** (Rule #1 verified), and reload to their recorded fp32 score exactly. Size is set by "
+        f"the architecture alone, so every method on a student is at matched KB by construction. "
+        f"**Read the verdicts with care:** INT8 has no systematic cost on any method — mean int8−fp32 is "
+        f"{all_d.mean():+.4f} ± {all_d.std():.4f}, and {(all_d > 0).sum()}/{len(all_d)} models *gained* at "
+        f"INT8 — so per-pair INT8 differences are fp32 differences plus quantization noise. The rps_25 "
+        f"margins swing ±0.10 seed to seed; only trashnet/mobilenetv3_small (pqk behind on all 3 seeds) "
+        f"is a clean result, and it is a FAIL."
+    )
+    with st.expander("fp32 vs INT8 — every reported model (mean over 3 seeds)"):
+        full = (_deploy.groupby(["dataset", "student", "rmethod"])
+                .agg(fp32=("fp32_f1", "mean"), int8=("int8_f1", "mean"), delta=("delta", "mean"),
+                     delta_std=("delta", "std"), KB=("kb", "mean"), n=("seed", "count"))
+                .reset_index().rename(columns={"rmethod": "method"}))
+        st.dataframe(full.style.format({"fp32": "{:.4f}", "int8": "{:.4f}", "delta": "{:+.4f}",
+                                        "delta_std": "{:.4f}", "KB": "{:.1f}"}),
+                     use_container_width=True, hide_index=True)
+
 # ---------------------------------------------------------------- Conclusions
 st.header("Conclusions")
 
@@ -408,7 +472,9 @@ with c2:
 st.info(
     "**Overall** — kernel-alignment distillation works, and works classically. Nothing in these "
     "results requires the kernel to be quantum, which is consistent with the project's own "
-    "'no quantum speedup claimed' framing."
+    "'no quantum speedup claimed' framing. **Deployment holds for every method:** all students "
+    "export to fully-integer INT8 (≈604 KB / ≈1180 KB) with no quantum ops and no systematic "
+    "accuracy cost — but INT8 does not create a `pqk` advantage that fp32 lacks."
 )
 
 # ---------------------------------------------------------------- Still to do
@@ -423,8 +489,8 @@ with d1:
         "0.541 → 0.384 → 0.313 as qubits go 4 → 8 → 12, so each qubit's marginal carries *less* "
         "signal as the circuit grows (this is why raising `n_qubits` made results worse, not "
         "better). Adding the n(n−1)/2 ⟨Z_iZ_j⟩ correlators restores the two-body information: "
-        "at 8 qubits the feature goes 24 → 52 dims and effective dimensionality 8.90 → 10.92, "
-        "for ~25% more simulator time, still polynomially many observables.\n\n"
+        "at 8 qubits the active features go 16 → 44 (⟨Y⟩ is identically zero — see below) and "
+        "effective dimensionality 8.90 → 10.92, for ~25% more simulator time.\n\n"
         "**Seed-0 status — pair-dependent, in opposite directions.** On trashnet/mobilenetv3_small "
         "(the pair that failed five other configs) it scored **0.7312**, clearing both `scratch` "
         "(+0.0076) and `rbf_control` (+0.0161). But on rps_25/mobilenetv2_035 it *regressed* to "
@@ -441,27 +507,21 @@ with d1:
         "nonlinear feature map of the same width, to test whether any gain is quantum-specific."
     )
 with d2:
-    st.subheader("2. INT8 quantization (Stage 8 / G3)")
+    st.subheader("2. INT8 quantization (Stage 8 / G3) — done")
     st.markdown(
-        "Not started. Quantization is **not a method** — it is an evaluation step applied to every "
-        "final checkpoint, so each model gets an fp32 and an INT8 row.\n\n"
-        "**The fp32 ranking above may not survive it.** Quantization error is not uniform across "
-        "training objectives: different losses produce different weight and activation "
-        "distributions, and a 2pt fp32 lead can vanish at 8 bits.\n\n"
-        "**And the effect is architecture-dependent — the same axis that decides G2.** Both edge "
-        "students are depthwise-separable, which Trap #5 flags as needing per-channel "
-        "quantization (per-tensor \"will cost points and look like a method failure\"). "
-        "`mobilenetv3_small` is the more fragile of the two: Hardswish has a wide dynamic range and "
-        "SE blocks apply sensitive multiplications, so it should degrade more than "
-        "`mobilenetv2_035`. That is the *same* architectural split that separates where the kernel "
-        "methods work from where they fail — so INT8 could either compound the existing gap or "
-        "reverse it, and the two effects will be hard to disentangle unless both are reported.\n\n"
-        "**One testable prediction.** `pqk`'s single robust property is the lowest seed-to-seed "
-        "variance of any method. Regularised models usually have tighter weight distributions, "
-        "which quantize more cleanly — so `pqk` may lose *less* going fp32 → INT8 than `kd` does. "
-        "That is precisely what G3 asks (`pqk` INT8 vs `kd` INT8 at matched KB), and it is the one "
-        "route by which a negative fp32 result could still yield a positive deployment finding. "
-        "Hypothesis from the variance data, not a measurement."
+        "**Done (2026-10-02).** All 66 reported models exported to fully-integer TFLite "
+        "(per-channel, calibrated on 256 training images) and verified — see the G3 section. "
+        "Two predictions made here before the run, now tested:\n\n"
+        "**\"MobileNetV3 will degrade more\" — not supported.** Hardswish and SE blocks were "
+        "expected to be fragile. Measured int8−fp32: mobilenetv3_small −0.0016 ± 0.0222 vs "
+        "mobilenetv2_035 +0.0068 ± 0.0214 — indistinguishable — and V3 actually agrees with its own "
+        "fp32 predictions *more* often (95.3% vs 91.5%). With per-channel weights (Trap #5), both "
+        "architectures quantize cleanly.\n\n"
+        "**\"`pqk` will lose less going to INT8\" — not supported.** INT8 has no systematic cost on "
+        "*any* method (37 of 66 models gained), so there is no loss for `pqk`'s lower variance to "
+        "protect against. INT8 rankings are fp32 rankings plus noise.\n\n"
+        "**Remaining (Stage 10, needs hardware):** latency and mJ/inference on Raspberry Pi 4B / "
+        "Jetson Orin Nano. The `model_int8.tflite` files in `exports/` are what would be benchmarked."
     )
 
 # ---------------------------------------------------------------- All results

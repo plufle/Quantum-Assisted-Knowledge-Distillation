@@ -175,3 +175,5 @@ CLAUDE.md
 
 checkpoints/
 results/
+# deploy artefacts (ONNX / TFLite) — regenerable from checkpoints via qakd.deploy.export
+exports/

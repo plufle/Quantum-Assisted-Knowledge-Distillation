@@ -24,7 +24,7 @@ from qakd.losses.kd import kd_loss
 from qakd.losses.pqk import KernelProjectionHead, gamma_ramp, kernel_alignment_loss, mean_offdiagonal
 from qakd.losses.rkd import rkd_loss
 from qakd.models.common import calibrate_batch_norm, use_batch_stats_only
-from qakd.models.registry import build_student, build_teacher
+from qakd.models.registry import build_student_from_cfg, build_teacher
 from qakd.quantum.classical_ctrl import rbf_gram_matrix
 from qakd.quantum.kernels import pqk_gram_matrix
 from qakd.utils import set_seed
@@ -33,11 +33,6 @@ from qakd.utils import set_seed
 # not a name list, so `method.name=...` can be overridden freely for hyperparameter
 # screens without the run_id colliding with the frozen canonical runs.
 _KERNEL_METHODS = {"rbf_control", "pqk", "pqk_adaptive"}  # informational only
-
-# Config keys on `cfg.student` that are training recipe, not model constructor kwargs.
-_STUDENT_RECIPE_KEYS = {
-    "name", "epochs", "patience", "optimizer", "lr", "weight_decay", "force_batch_stats_only",
-}
 
 _LOADER_BUILDERS = {
     "trashnet": build_trashnet_loaders,
@@ -376,8 +371,7 @@ def train_student(cfg):
             )
         ce_label_smoothing = float(cfg.dataset.get("ce_label_smoothing", 0.0))
 
-        student_kwargs = {k: v for k, v in cfg.student.items() if k not in _STUDENT_RECIPE_KEYS}
-        model = build_student(student_name, num_classes=cfg.dataset.num_classes, **student_kwargs)
+        model = build_student_from_cfg(cfg.student, num_classes=cfg.dataset.num_classes)
         params = _count_params(model)
         logger.info("%s has %d parameters", student_name, params)
         if needs_batch_stats_only:  # Trap #10
