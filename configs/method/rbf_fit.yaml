@@ -1,0 +1,16 @@
+name: rbf_fit
+# rbf_control with the same train-only fitted teacher projection as pqk_fit (2026-10-02) —
+# the paired classical arm of the fitted-projection experiment. rbf_control itself stays
+# LOCKED; this is a new method that differs from it only in `teacher_projection`.
+# Validation CKTA of the target kernel: random 0.363 -> lda_pca 0.825 (trashnet), 0.685 ->
+# 0.861 (rps_25). See configs/method/pqk_fit.yaml for the selection protocol.
+kernel: rbf
+teacher_projection: lda_pca
+bandwidth: null
+n_qubits: 8
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5

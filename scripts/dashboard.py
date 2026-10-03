@@ -432,96 +432,238 @@ else:
                                         "delta_std": "{:.4f}", "KB": "{:.1f}"}),
                      use_container_width=True, hide_index=True)
 
+# ---------------------------------------------------------------- Follow-up controls
+st.header("Follow-up controls — does anything here need the quantum circuit?")
+st.caption(
+    "Exploratory. These four pairs' test scores already informed earlier design choices, so "
+    "**validation macro-F1 decides** and test is descriptive only. trashnet validation has 379 "
+    "images; rps_25 has 33, so rps_25 rows are weak. Every arm is paired seed-for-seed (same "
+    "student init and data order — verified). Fills in as runs land."
+)
+_raw = pd.DataFrame(load_results_json()["students"])
+if not _raw.empty:
+    _raw = _raw[_raw.student.isin(STUDENTS)]
+
+
+def _seeds(ds, stu, method, key="best_val_macro_f1"):
+    sub = _raw[(_raw.dataset == ds) & (_raw.student == stu) & (_raw.method == method)]
+    return {int(r["seed"]): float(r[key]) for _, r in sub.iterrows()}
+
+
+def _cell(d):
+    return f"{pd.Series(list(d.values())).mean():.4f} (n={len(d)})" if d else "—"
+
+
+def _paired(a, b):
+    """mean(a - b) over shared seeds, with a's win count."""
+    shared = sorted(set(a) & set(b))
+    if not shared:
+        return "—"
+    diffs = [a[s] - b[s] for s in shared]
+    return f"{pd.Series(diffs).mean():+.4f} ({sum(d > 0 for d in diffs)}/{len(shared)})"
+
+
+if _raw.empty:
+    st.info("No results yet.")
+else:
+    st.subheader("1. Matched classical controls (random teacher projection)")
+    st.caption(
+        "**no-CNOT** = the PQK circuit with its CNOTs deleted — exactly [sin 4θ, cos 4θ], so it differs "
+        "from pqk *only* by entanglement. **RFF-16** = random Fourier features drawn from the circuit's own "
+        "frequency spectrum (integers −4…4), 16 wide, untuned — a generic classical map of the same function "
+        "class. **rbf** = plain RBF on the 8 angles (`rbf_control`). Decision rule, fixed before results: "
+        "'pqk beats classical maps in general' needs pqk ≥ both controls on validation on both trashnet pairs. "
+        "Columns 'pqk − X' show mean paired difference and pqk's seed wins."
+    )
+    rows = []
+    for ds in ["trashnet", "rps_25"]:
+        for stu in STUDENTS:
+            q = _seeds(ds, stu, "pqk_adaptive")
+            n, r, rb = _seeds(ds, stu, "noent_control"), _seeds(ds, stu, "rff_control"), _seeds(ds, stu, "rbf_control")
+            rows.append({"dataset": ds, "student": stu, "val n": 379 if ds == "trashnet" else 33,
+                         "pqk": _cell(q), "no-CNOT": _cell(n), "RFF-16": _cell(r), "rbf": _cell(rb),
+                         "pqk − no-CNOT": _paired(q, n), "pqk − RFF-16": _paired(q, r)})
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+    st.subheader("2. Train-fitted teacher projection (LDA+PCA, frozen) vs fixed random")
+    st.caption(
+        "The fixed random 2048→8 teacher projection discards about half the teacher's class structure; an "
+        "LDA+PCA projection fitted on the training split only (selected on validation) restores it. "
+        "'fitted − random' = mean paired difference (fitted's seed wins)."
+    )
+    rows = []
+    for ds in ["trashnet", "rps_25"]:
+        for stu in STUDENTS:
+            pa, pf = _seeds(ds, stu, "pqk_adaptive"), _seeds(ds, stu, "pqk_fit")
+            ra, rf = _seeds(ds, stu, "rbf_control"), _seeds(ds, stu, "rbf_fit")
+            rows.append({"dataset": ds, "student": stu,
+                         "pqk random": _cell(pa), "pqk fitted": _cell(pf), "pqk: fitted − random": _paired(pf, pa),
+                         "rbf random": _cell(ra), "rbf fitted": _cell(rf), "rbf: fitted − random": _paired(rf, ra)})
+    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+    with st.expander("Gradient balance — kernel term vs CE over training"):
+        st.caption(
+            "Norm of each loss term's gradient w.r.t. the student's parameters, first batch of every epoch, "
+            "mean over seeds. With the random target the kernel term fades to ~0.1× CE; with the fitted target "
+            "it can stay several times larger than CE and crowd out the label signal."
+        )
+        pair = st.selectbox("pair", [f"{d} / {s}" for d in ["trashnet", "rps_25"] for s in STUDENTS], key="gn_pair")
+        ds_sel, stu_sel = [p.strip() for p in pair.split("/")]
+        fig = go.Figure()
+        for method in ["pqk_adaptive", "noent_control", "rff_control", "pqk_fit", "rbf_fit"]:
+            sub = _raw[(_raw.dataset == ds_sel) & (_raw.student == stu_sel) & (_raw.method == method)]
+            logs = [g for g in sub.get("grad_norms", pd.Series(dtype=object)) if isinstance(g, list) and g]
+            if not logs:
+                continue
+            per_epoch = {}
+            for g in logs:
+                for e in g:
+                    if e.get("ce"):
+                        per_epoch.setdefault(e["epoch"], []).append(e["kernel"] / e["ce"])
+            xs = sorted(per_epoch)
+            fig.add_trace(go.Scatter(x=xs, y=[sum(per_epoch[x]) / len(per_epoch[x]) for x in xs],
+                                     mode="lines", name=f"{method} (n={len(logs)})"))
+        fig.add_hline(y=1.0, line_dash="dot", annotation_text="kernel = CE")
+        fig.update_layout(xaxis_title="epoch", yaxis_title="|∇ kernel| / |∇ CE|", yaxis_type="log")
+        st.plotly_chart(fig, use_container_width=True)
+
+    with st.expander("Teacher-kernel class separation (validation CKTA, no training)"):
+        st.caption(
+            "Centered kernel-target alignment between the *teacher* Gram matrix the student must match and the "
+            "label kernel; 1 = encodes the class partition perfectly. Projections fit on train, scored on "
+            "validation (`scripts/teacher_kernel_diagnostics.py`). Caveat: it mispredicted Block A (no-CNOT "
+            "target > pqk's, yet pqk won on trashnet), so it describes the target, not student accuracy."
+        )
+        st.dataframe(pd.DataFrame([
+            {"target kernel": "raw teacher, 2048-d RBF", "trashnet random": 0.720, "trashnet fitted": None,
+             "rps_25 random": 0.864, "rps_25 fitted": None},
+            {"target kernel": "angles → RBF (rbf)", "trashnet random": 0.363, "trashnet fitted": 0.825,
+             "rps_25 random": 0.685, "rps_25 fitted": 0.861},
+            {"target kernel": "PQK 16 (RY+CNOT)", "trashnet random": 0.245, "trashnet fitted": 0.752,
+             "rps_25 random": 0.539, "rps_25 fitted": 0.797},
+            {"target kernel": "no-CNOT 16", "trashnet random": 0.323, "trashnet fitted": 0.676,
+             "rps_25 random": 0.642, "rps_25 fitted": 0.636},
+            {"target kernel": "RFF 16 (spectrum-matched)", "trashnet random": 0.125, "trashnet fitted": None,
+             "rps_25 random": 0.362, "rps_25 fitted": None},
+        ]).style.format(precision=3, na_rep="—"), use_container_width=True, hide_index=True)
+
 # ---------------------------------------------------------------- Conclusions
 st.header("Conclusions")
+st.caption(
+    "**Basis:** 152 completed student runs, 2 teachers and 66 INT8 exports; every reported cell has 3 seeds. "
+    "**Status: exploratory.** The four reported pairs' test splits shaped earlier design choices, so validation "
+    "decides (trashnet n=379, rps_25 n=33 — rps_25 is weak) and test is descriptive. No on-device latency or "
+    "energy has been measured; INT8 accuracy comes from the TFLite interpreter on a CPU."
+)
 
 c1, c2 = st.columns(2)
 with c1:
-    st.subheader("G1 — does distillation beat training from scratch?")
+    st.subheader("1. Dataset, architecture and method interact")
     st.markdown(
-        "**1. Yes, but the margin is small.** On trashnet `kd` beats `scratch` by "
-        "+2.5pt (mobilenetv2_035) and +0.9pt (mobilenetv3_small). Real and repeatable, but modest.\n\n"
-        "**2. Fixing the training recipe mattered far more than choosing a method.** Retuning "
-        "sampler, augmentation and epoch budget moved `scratch` ~+17pt. Every method-vs-method gap "
-        "is 1–3pt. At this data scale, pipeline defects dominate method choice.\n\n"
-        "**3. Dataset size decides whether anything is measurable.** trashnet's seed spread is "
-        "~0.01–0.02, so a 2pt effect is visible. rps_25's reaches ~0.11 — larger than any effect "
-        "present — so it confirms nothing at 3 seeds. It is a dev loop, not evidence.\n\n"
-        "**4. Capacity changes which kind of distillation works.** Logit transfer holds at ~0.4M "
-        "params; the smallest students needed relational transfer instead, at different temperatures."
+        "**The dataset decides which kind of transfer pays.** On trashnet (6 classes, 1,768 training images) "
+        "logit KD is first on test for both students (0.708, 0.732). On rps_25 (3 classes, 630 images) KD is never "
+        "first; relational or kernel transfer leads — `rkd` on mobilenetv2_035 (val 0.862), `rbf_control` on "
+        "mobilenetv3_small (val 0.927, test 0.888). A plausible reason, untested: with three classes the "
+        "teacher's soft labels add little beyond the label, so sample-to-sample geometry carries more of what "
+        "the teacher knows.\n\n"
+        "**The architecture decides which kernel wins.** On validation `pqk` beats `rbf_control` on "
+        "mobilenetv2_035 on *both* datasets (0.705 vs 0.661; 0.797 vs 0.733), and `rbf_control` beats `pqk` on "
+        "mobilenetv3_small on *both* (0.750 vs 0.737; 0.927 vs 0.907). This is **not** the BatchNorm regime, as "
+        "earlier hypothesised: on rps_25 both students use per-batch BN statistics, yet the split persists. "
+        "Whether it is feature width (1,280 vs 576) or the Hardswish/SE blocks is untested.\n\n"
+        "**No method is best everywhere.** The four pairs have three different validation leaders (`kd`, "
+        "`rbf_control` twice, `rkd`). mobilenetv3_small gains least from any teacher — `scratch` is second on "
+        "validation on both datasets. And the training recipe mattered more than the method: retuning sampler, "
+        "augmentation and epochs moved `scratch` ~+17pt on trashnet, more than any method-to-method gap."
     )
 with c2:
-    st.subheader("G2 — does the quantum kernel add anything over its classical twin?")
+    st.subheader("2. Average versus consistency")
     st.markdown(
-        "**1. The result splits by architecture, not by dataset or parameter count.** "
-        "`mobilenetv2_035` passes on both datasets; `mobilenetv3_small` fails on trashnet and only "
-        "partially clears on rps_25. Same datasets, same sizes — different backbone.\n\n"
-        "**2. The likely cause is training mechanics, not the kernel.** `mobilenetv3_small` is the "
-        "one student using per-batch BatchNorm statistics, and the kernel loss is built from that "
-        "same batch. The *classical* twin fails on this student too — which points at the mechanism "
-        "rather than at anything quantum.\n\n"
-        "**3. Kernel calibration must be set per dataset/model.** A single fixed λ silently ran the "
-        "kernel at a different operating point on every pair; matching the classical twin's "
-        "per-batch calibration is what turned a failing pair into a pass.\n\n"
-        "**4. The consistent advantage is stability, not accuracy.** `pqk` has the lowest "
-        "seed-to-seed variance of any method tested, while never beating plain `kd` anywhere. At "
-        "3 seeds, effects under ~3pt are not resolvable — so the honest claim is a regularisation "
-        "effect, not a performance win."
+        "**The observation that `pqk` is more consistent holds on trashnet validation — not elsewhere.** With "
+        "adaptive λ it is the steadiest method on trashnet validation for both students (seed std 0.0058 and "
+        "0.0028, vs 0.0175 and 0.0122 for the steadiest classical method). On rps_25 it is among the *least* "
+        "consistent (5th–6th of 6), and on test `rkd` is steadiest on 3 of 4 pairs.\n\n"
+        "**Why it plausibly holds on trashnet:** the kernel term pulls hardest in the first epochs (0.5–1.2× the "
+        "CE gradient) — exactly when seeds diverge — then fades to ~0.1×. Adaptive λ pins the kernel's operating "
+        "point every batch, which is why it is steadier than fixed λ (std 0.0141 / 0.0118).\n\n"
+        "**Why not on rps_25:** 5 batches per epoch make each batch Gram matrix a noisy estimate, and checkpoint "
+        "selection on a 33-image validation loss adds noise that swamps any method-level stability.\n\n"
+        "**Consistency is not accuracy:** `pqk` leads no pair on mean validation score — its best placing is "
+        "second (trashnet/mobilenetv2_035). **Caveat:** with 3 seeds a variance ratio must exceed ~19 for "
+        "p<0.05; of 16 comparisons only one comes close (18.3×, p≈0.05). This is a tendency, not a demonstrated "
+        "property."
     )
 
-st.info(
-    "**Overall** — kernel-alignment distillation works, and works classically. Nothing in these "
-    "results requires the kernel to be quantum, which is consistent with the project's own "
-    "'no quantum speedup claimed' framing. **Deployment holds for every method:** all students "
-    "export to fully-integer INT8 (≈604 KB / ≈1180 KB) with no quantum ops and no systematic "
-    "accuracy cost — but INT8 does not create a `pqk` advantage that fp32 lacks."
-)
+c3, c4 = st.columns(2)
+with c3:
+    st.subheader("3. Quantization (fp32 → INT8)")
+    st.markdown(
+        "**Every reported model quantizes cleanly:** 66/66 fully integer at ≈0.6 MB (mobilenetv2_035) / ≈1.2 MB "
+        "(mobilenetv3_small), with no systematic accuracy cost (mean change +0.0026 ± 0.0220; 37/66 gained).\n\n"
+        "**The observation that `pqk` rises while `kd` falls holds clearly on trashnet/mobilenetv2_035** — `pqk` "
+        "up on 3/3 seeds (+0.0129), `kd` down on 2/3 (−0.0057) — enough to put `pqk` INT8 above `kd` INT8 there "
+        "(0.707 vs 0.703). Pooled over all pairs, `pqk` has the most favourable change of the five methods (up on "
+        "9/12 seeds, +0.0080; `kd` 5/12, −0.0031). **It does not hold** on trashnet/mobilenetv3_small (both fall), "
+        "and the paired `pqk`−`kd` difference is not significant (p=0.22–0.38). A plausible mechanism — tighter "
+        "feature geometry leaving fewer borderline predictions for 8-bit rounding to flip — is untested."
+    )
+with c4:
+    st.subheader("4. What the quantum part does — and doesn't")
+    st.markdown(
+        "**The entanglement contributes, relative to its own circuit.** On trashnet `pqk` beats the identical "
+        "circuit with its CNOTs removed on 6/6 validation seeds (+0.049, +0.007); on rps_25 the direction "
+        "reverses (33-image validation).\n\n"
+        "**Not shown:** that `pqk` beats classical feature maps in general — the generic RFF control was not "
+        "run, and plain RBF on the same angles still splits 2–2 with `pqk`.\n\n"
+        "**Changes that did not help:** ⟨ZᵢZⱼ⟩ correlators (−0.009 vs adaptive λ, 1/3 seeds); a train-fitted "
+        "teacher projection (better on 1 of 8 arm-pairs) — on training batches it collapses to the label kernel "
+        "(CKTA 0.966), duplicating CE instead of transferring relational structure. The circuit's ⟨Y⟩ readouts "
+        "are identically zero, so `pqk` reads 16 active features, not 24."
+    )
+
+with st.container(border=True):
+    st.markdown(
+        "#### Conditional conclusion\n"
+        "- **Highest mean accuracy on trashnet:** logit KD, best on mobilenetv3_small (test 0.732 fp32 / 0.724 INT8).\n"
+        "- **A ≈0.6 MB INT8 model that behaves the same run to run on trashnet:** **mobilenetv2_035 + `pqk`** is the "
+        "most promising PQK combination — second on validation behind KD and ahead of `scratch` and `rbf_control` "
+        "(adaptive λ, 0.705), the steadiest method on validation (adaptive λ), and level with KD after INT8 in the "
+        "exported fixed-λ variant (0.707 vs 0.703). The adaptive variant has not been exported to INT8.\n"
+        "- **Scarce data, few classes (rps_25):** relational or kernel transfer — `rkd` on mobilenetv2_035, "
+        "`rbf_control` on mobilenetv3_small — rather than logit KD; `pqk` is not distinguished there.\n"
+        "- **What the evidence supports about PQK:** its circuit contributes beyond an entanglement-free twin on "
+        "trashnet; it is the steadiest method on trashnet validation; it has the most favourable INT8 behaviour. "
+        "**It does not support** PQK beating KD on mean accuracy anywhere, or consistently beating a classical "
+        "RBF kernel.\n"
+        "- **Still uncertain:** whether `pqk` beats a generic classical map of the same function class (RFF control "
+        "not run); whether the consistency and INT8 tendencies survive more seeds (all below significance at n=3); "
+        "what drives the architecture split; on-device latency and energy (not measured). Every result here is "
+        "exploratory — a confirmatory claim needs a fresh benchmark, a frozen protocol and ≥5 seeds, e.g. "
+        "mobilenetv2_035 + `pqk` (adaptive λ) vs KD vs RBF."
+    )
 
 # ---------------------------------------------------------------- Still to do
 st.header("Still to be done")
-
 d1, d2 = st.columns(2)
 with d1:
-    st.subheader("1. `pqk_zz` — two-body correlators")
+    st.subheader("In progress")
     st.markdown(
-        "The current kernel measures only single-qubit ⟨X⟩,⟨Y⟩,⟨Z⟩ — which is exactly what "
-        "discards the correlations entanglement creates. Measured: mean Bloch length |r| falls "
-        "0.541 → 0.384 → 0.313 as qubits go 4 → 8 → 12, so each qubit's marginal carries *less* "
-        "signal as the circuit grows (this is why raising `n_qubits` made results worse, not "
-        "better). Adding the n(n−1)/2 ⟨Z_iZ_j⟩ correlators restores the two-body information: "
-        "at 8 qubits the active features go 16 → 44 (⟨Y⟩ is identically zero — see below) and "
-        "effective dimensionality 8.90 → 10.92, for ~25% more simulator time.\n\n"
-        "**Seed-0 status — pair-dependent, in opposite directions.** On trashnet/mobilenetv3_small "
-        "(the pair that failed five other configs) it scored **0.7312**, clearing both `scratch` "
-        "(+0.0076) and `rbf_control` (+0.0161). But on rps_25/mobilenetv2_035 it *regressed* to "
-        "0.6330 (−0.0774 vs `scratch`).\n\n"
-        "**3-seed result: FAIL.** trashnet/mobilenetv3_small came in at 0.7092 ± 0.0327 — below "
-        "`scratch` (0.7236) and `rbf_control` (0.7152). The seed-0 margin was optimism, as predicted.\n\n"
-        "**Confound resolved (2026-10-02) — ZZ adds nothing.** `pqk_zz` changed λ to adaptive *and* "
-        "added ZZ. Paired against `pqk_adaptive` on the same 3 seeds: ZZ − adaptive = **−0.0092 ± "
-        "0.0372**, ZZ wins 1/3. The earlier gain over fixed λ was entirely the calibration fix "
-        "(adaptive − fixed = +0.0452 paired). Correlators are not worth carrying forward as-is.\n\n"
-        "**Remaining note.** The circuit uses "
-        "only RY and CNOT, so the state stays real and every ⟨Y⟩ is exactly zero: the features are "
-        "16 active coordinates (not 24), 44 with ZZ (not 52). Next control: a matched *classical* "
-        "nonlinear feature map of the same width, to test whether any gain is quantum-specific."
+        "**Fitted-projection experiment (Block B)** and the **RFF-16 generic control** are running, "
+        "sequentially — results fill the *Follow-up controls* tables above as they land.\n\n"
+        "**Settled since the last review:** `pqk_zz` — two-body ⟨ZᵢZⱼ⟩ correlators add nothing once the "
+        "λ-calibration confound is removed (paired ZZ − adaptive = −0.0092 ± 0.0372, 1/3 seeds); its earlier "
+        "gain was the calibration fix. INT8 deployment is done (G3 section). The circuit is RY + CNOT only, "
+        "so every ⟨Y⟩ is exactly zero — pqk reads 16 active coordinates, not 24."
     )
 with d2:
-    st.subheader("2. INT8 quantization (Stage 8 / G3) — done")
+    st.subheader("Remaining")
     st.markdown(
-        "**Done (2026-10-02).** All 66 reported models exported to fully-integer TFLite "
-        "(per-channel, calibrated on 256 training images) and verified — see the G3 section. "
-        "Two predictions made here before the run, now tested:\n\n"
-        "**\"MobileNetV3 will degrade more\" — not supported.** Hardswish and SE blocks were "
-        "expected to be fragile. Measured int8−fp32: mobilenetv3_small −0.0016 ± 0.0222 vs "
-        "mobilenetv2_035 +0.0068 ± 0.0214 — indistinguishable — and V3 actually agrees with its own "
-        "fp32 predictions *more* often (95.3% vs 91.5%). With per-channel weights (Trap #5), both "
-        "architectures quantize cleanly.\n\n"
-        "**\"`pqk` will lose less going to INT8\" — not supported.** INT8 has no systematic cost on "
-        "*any* method (37 of 66 models gained), so there is no loss for `pqk`'s lower variance to "
-        "protect against. INT8 rankings are fp32 rankings plus noise.\n\n"
-        "**Remaining (Stage 10, needs hardware):** latency and mJ/inference on Raspberry Pi 4B / "
-        "Jetson Orin Nano. The `model_int8.tflite` files in `exports/` are what would be benchmarked."
+        "**Stage 10 — on-device benchmark** (needs a Raspberry Pi 4B / Jetson Orin Nano): latency and "
+        "mJ/inference for the `exports/*/model_int8.tflite` files.\n\n"
+        "**Optional — γ rebalancing for fitted projections:** the fitted target's gradient can stay several "
+        "times larger than CE; rescaling γ (selected on validation) would separate 'a fitted target helps' "
+        "from 'γ = 1 is too strong for it'.\n\n"
+        "**Stage 11 — final aggregation table.**"
     )
 
 # ---------------------------------------------------------------- All results

@@ -8,6 +8,9 @@ defaults:
   - override hydra/hydra_logging: none
 
 seed: 0
+# Per-term gradient norms (alpha*CE, beta*tau^2*KL, gamma*L_kernel) on the first training
+# batch of every epoch, kernel methods only. Diagnostic; does not change training.
+log_grad_norms: false
 device: cuda
 run_id: ${dataset.name}__${student.name}__${method.name}__s${seed}
 output_dir: results/${run_id}

@@ -20,12 +20,13 @@ from qakd.data.datasets import (
 )
 from qakd.exception import CustomException
 from qakd.logger import logger
-from qakd.losses.kd import kd_loss
+from qakd.losses.kd import kd_loss, kd_loss_terms
 from qakd.losses.pqk import KernelProjectionHead, gamma_ramp, kernel_alignment_loss, mean_offdiagonal
 from qakd.losses.rkd import rkd_loss
+from qakd.losses.teacher_projection import load_or_fit as load_or_fit_teacher_projection
 from qakd.models.common import calibrate_batch_norm, use_batch_stats_only
 from qakd.models.registry import build_student_from_cfg, build_teacher
-from qakd.quantum.classical_ctrl import rbf_gram_matrix
+from qakd.quantum.classical_ctrl import entanglement_free_features, rbf_gram_matrix, spectrum_rff_features
 from qakd.quantum.kernels import pqk_gram_matrix
 from qakd.utils import set_seed
 
@@ -198,6 +199,20 @@ def _kernel_loss_and_stats(method_cfg, kernel_modules, student_feats, teacher_fe
                 teacher_proj, method_cfg.n_qubits, method_cfg.depth, method_cfg.lambda_,
                 method_cfg.device_backend, include_zz,
             )
+    elif method_cfg.kernel == "classical_map":
+        # Matched classical control for pqk: the same angles through the PQK circuit with
+        # its CNOTs deleted (computed classically), then the same adaptive-bandwidth RBF that
+        # pqk_adaptive uses (both reduce to K = exp(-0.5 * d^2 / median d^2)).
+        if method_cfg.feature_map == "no_cnot":
+            fmap = lambda a: entanglement_free_features(a, method_cfg.depth)  # noqa: E731
+        elif method_cfg.feature_map == "rff":
+            fmap = lambda a: spectrum_rff_features(  # noqa: E731
+                a, method_cfg.rff_width, method_cfg.depth, method_cfg.rff_seed)
+        else:
+            raise ValueError(f"Unknown feature_map={method_cfg.feature_map!r}")
+        student_gram = rbf_gram_matrix(fmap(student_proj), None)
+        with torch.no_grad():
+            teacher_gram = rbf_gram_matrix(fmap(teacher_proj), None)
     else:
         raise ValueError(f"Unknown kernel={method_cfg.kernel!r}")
     kernel_term = gamma * kernel_alignment_loss(teacher_gram, student_gram)
@@ -218,6 +233,7 @@ def _student_loss(
     ce_label_smoothing=0.0,
     kernel_modules=None,
     gamma=0.0,
+    terms_out=None,
 ):
     aux = {}
     if method_cfg.name == "scratch":
@@ -261,20 +277,19 @@ def _student_loss(
         logits, student_feats = model(images, return_feats=True)
         with torch.no_grad():
             teacher_logits, teacher_feats = teacher(images, return_feats=True)
-        base_loss = kd_loss(
-            logits,
-            teacher_logits,
-            labels,
-            method_cfg.loss.alpha,
-            method_cfg.loss.beta,
-            method_cfg.loss.tau,
-            ce_class_weights=ce_class_weights,
-            ce_label_smoothing=ce_label_smoothing,
+        ce, kd = kd_loss_terms(
+            logits, teacher_logits, labels, method_cfg.loss.tau,
+            ce_class_weights=ce_class_weights, ce_label_smoothing=ce_label_smoothing,
         )
+        # Same expression kd_loss returns, so the summed loss is bit-identical to before.
+        base_loss = method_cfg.loss.alpha * ce + method_cfg.loss.beta * kd
         kernel_term, aux = _kernel_loss_and_stats(
             method_cfg, kernel_modules, student_feats[-1], teacher_feats[-1], gamma
         )
         loss = base_loss + kernel_term
+        if terms_out is not None:
+            terms_out.update({"ce": method_cfg.loss.alpha * ce, "kl": method_cfg.loss.beta * kd,
+                              "kernel": kernel_term})
     else:
         raise ValueError(f"Unknown method={method_cfg.name!r}")
     return logits, loss, aux
@@ -291,14 +306,20 @@ def _run_student_epoch(
     ce_label_smoothing=0.0,
     kernel_modules=None,
     gamma=0.0,
+    grad_log=None,
 ):
     train_mode = optimizer is not None
     model.train(train_mode)
     all_preds, all_labels = [], []
     total_loss = 0.0
     kernel_stats_sum, kernel_stats_count = {}, 0
-    for images, labels in loader:
+    for batch_idx, (images, labels) in enumerate(loader):
         images, labels = images.to(device), labels.to(device)
+        # Per-term gradient norms on the first training batch of the epoch. Measured from the
+        # *same* forward graph via autograd.grad (no extra forward, so BN running stats and the
+        # RNG are untouched; autograd.grad does not write .grad), w.r.t. the student's own
+        # parameters — the ones all three terms share — so the sizes are directly comparable.
+        terms = {} if (train_mode and grad_log is not None and batch_idx == 0) else None
         with torch.set_grad_enabled(train_mode):
             logits, loss, aux = _student_loss(
                 method_cfg,
@@ -310,7 +331,15 @@ def _run_student_epoch(
                 ce_label_smoothing=ce_label_smoothing,
                 kernel_modules=kernel_modules,
                 gamma=gamma,
+                terms_out=terms,
             )
+            if terms:
+                params = [p for p in model.parameters() if p.requires_grad]
+                norms = {"gamma": float(gamma)}
+                for name, term in terms.items():
+                    grads = torch.autograd.grad(term, params, retain_graph=True, allow_unused=True)
+                    norms[name] = float(torch.sqrt(sum((g.detach() ** 2).sum() for g in grads if g is not None)))
+                grad_log.append(norms)
             if train_mode:
                 optimizer.zero_grad()
                 loss.backward()
@@ -413,6 +442,23 @@ def train_student(cfg):
             teacher_proj.eval()
             for p in teacher_proj.parameters():
                 p.requires_grad_(False)
+            projection_kind = cfg.method.get("teacher_projection", "random")
+            if projection_kind != "random":
+                # Train-only fitted projection, frozen before student training. The random
+                # head above is still constructed first so the RNG stream — and therefore
+                # student init and data order — stays identical to the paired random-
+                # projection runs; fork_rng then shields that stream from the DataLoader
+                # iterator the fit uses (iterator creation draws from the global RNG).
+                cache = os.path.join("checkpoints", "teachers", f"{cfg.teacher.name}__{dataset_name}"
+                                     f"__proj_{projection_kind}{cfg.method.n_qubits}.pt")
+                with torch.random.fork_rng(devices=[]):
+                    W, b = load_or_fit_teacher_projection(
+                        projection_kind, teacher, build_bn_calibration_loader(cfg.dataset, train_loader),
+                        cache, cfg.method.n_qubits, device,
+                    )
+                with torch.no_grad():
+                    teacher_proj.linear.weight.copy_(W.to(device))
+                    teacher_proj.linear.bias.copy_(b.to(device))
             kernel_modules = {"student_proj": student_proj, "teacher_proj": teacher_proj}
             trainable_params += list(student_proj.parameters())
 
@@ -421,6 +467,7 @@ def train_student(cfg):
         gamma_max = cfg.method.get("gamma_loss_weight", 0.0) if kernel_modules is not None else 0.0
         gamma_ramp_epochs = cfg.method.get("gamma_ramp_epochs", 0) if kernel_modules is not None else 0
         kernel_concentration_warned = False
+        grad_log = [] if (cfg.get("log_grad_norms", False) and kernel_modules is not None) else None
 
         # Trap #11: rps_25's validation split is only 33 images (11/class) — val_f1 moves
         # in ~3pt steps and swings wildly epoch to epoch (observed: 0.53->0.31->0.64->0.82
@@ -434,6 +481,7 @@ def train_student(cfg):
         best_val_f1, best_state, epochs_without_improvement = -1.0, None, 0
         for epoch in range(cfg.student.epochs):
             gamma = gamma_ramp(epoch, gamma_ramp_epochs, gamma_max) if kernel_modules is not None else 0.0
+            n_logged = len(grad_log) if grad_log is not None else 0
             train_loss, train_f1, train_acc, train_kernel_stats = _run_student_epoch(
                 model,
                 teacher,
@@ -445,7 +493,10 @@ def train_student(cfg):
                 ce_label_smoothing=ce_label_smoothing,
                 kernel_modules=kernel_modules,
                 gamma=gamma,
+                grad_log=grad_log,
             )
+            if grad_log is not None and len(grad_log) > n_logged:
+                grad_log[-1]["epoch"] = epoch + 1
             if bn_calibration_loader is not None:
                 calibrate_batch_norm(model, bn_calibration_loader, device)
             # val_loss is used for checkpoint selection (Trap #11) — evaluate it at a
@@ -535,6 +586,8 @@ def train_student(cfg):
             "checkpoint": ckpt_path,
             "kernel_offdiag_student": test_kernel_stats.get("kernel_offdiag_student") if test_kernel_stats else None,
             "kernel_offdiag_teacher": test_kernel_stats.get("kernel_offdiag_teacher") if test_kernel_stats else None,
+            "teacher_projection": cfg.method.get("teacher_projection", "random") if kernel_modules else None,
+            "grad_norms": grad_log,
             "recipe": {
                 "epochs_ran": epoch + 1,
                 "epochs_budget": cfg.student.epochs,

@@ -1,0 +1,33 @@
+name: rff_control
+# Generic classical control for pqk_adaptive (2026-10-03) — needed before claiming pqk beats
+# classical feature maps *in general*. Block A's no-CNOT twin only showed entanglement beats
+# that one map, whose readout [sin 4t, cos 4t] is highly oscillatory and may just be weak.
+#
+# Map: random Fourier features on the circuit's own frequency spectrum — 16 features
+# sqrt(2/16)*cos(W a + b), W integer-uniform in [-4, 4] (= depth), b ~ U[0, 2pi), fixed seed.
+# A depth-4 Pauli data-re-uploading circuit outputs trigonometric polynomials with integer
+# frequencies {-4..4} per angle (Schuld, Sweke & Meyer 2021), so this samples *random* members
+# of the very function class the circuit implements: same frequencies, features that mix all
+# angles (as the CNOTs do), same width as pqk's 16 active coordinates, same adaptive-median
+# RBF on top. Matched budget: the scale is fixed by the circuit's spectrum, not tuned — the
+# circuit received no tuning either. W, b use a private generator (global RNG untouched), so it
+# pairs seed-for-seed with pqk_adaptive / noent_control under the same random teacher
+# projection.
+#
+# Decision rule, fixed before results: "pqk beats classical maps in general" requires pqk >=
+# rff_control AND >= noent_control on *validation* on both trashnet pairs (the splits with
+# n=379). Test is descriptive. Teacher-target CKTA for this map (random projection, val) is
+# 0.125 trashnet / 0.362 rps_25 — lowest of the maps — but CKTA mispredicted Block A, so no
+# directional prediction is drawn from it.
+kernel: classical_map
+feature_map: rff
+rff_width: 16
+rff_seed: 0
+n_qubits: 8 # number of angles
+depth: 4 # sets the max integer frequency, matching the circuit's spectrum
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5

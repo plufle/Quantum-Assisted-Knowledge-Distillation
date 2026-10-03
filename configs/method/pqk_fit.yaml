@@ -1,0 +1,23 @@
+name: pqk_fit
+# pqk_adaptive with a train-only fitted teacher projection (2026-10-02). Identical to
+# pqk_adaptive except `teacher_projection`, so it pairs seed-for-seed with the existing
+# pqk_adaptive runs (the random head is still constructed, keeping the RNG stream equal).
+#
+# Why: the fixed random 2048->8 teacher projection discards about half the teacher's class
+# structure (validation CKTA, trashnet: raw teacher 0.720 -> random angles 0.363 -> through
+# the PQK map 0.245). lda_pca — shrinkage-LDA directions topped up with residual PCA,
+# z-scored, fitted on the training split only and frozen before any student training — lifts
+# the PQK target to 0.752 (trashnet) / 0.797 (rps_25). Chosen over plain PCA on validation
+# CKTA for every feature map on both datasets; the test split was never read in selecting it.
+kernel: projected_quantum
+teacher_projection: lda_pca
+n_qubits: 8
+depth: 4
+lambda_: null
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+device_backend: lightning.qubit # Trap #1
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5

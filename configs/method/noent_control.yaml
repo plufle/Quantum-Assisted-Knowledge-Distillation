@@ -1,0 +1,25 @@
+name: noent_control
+# Matched classical control for pqk_adaptive (2026-10-02): the PQK circuit with its CNOTs
+# deleted. RY(a)^depth on |0> = RY(depth*a), so the readout is [sin(depth*a), cos(depth*a)]
+# per angle — computed classically, verified against the simulator to 6e-8. It has the same
+# 16 active coordinates as pqk (whose <Y> is identically zero), the same [-1, 1] range, no
+# trainable parameters, and the same adaptive median-bandwidth RBF on top. The ONLY thing
+# that differs from pqk_adaptive is the entangling layer, so the paired comparison isolates
+# what the quantum part contributes. Same optimization budget: like the circuit, the map is
+# fixed a priori — nothing about it was tuned on any split.
+#
+# Pre-registered reading: teacher-kernel validation CKTA with the current random projection
+# was pqk 0.245 vs this map 0.323 (trashnet) and 0.539 vs 0.642 (rps_25) — the entangling
+# layers *lower* the class structure of the target, so this control is expected to match or
+# beat pqk_adaptive. Paired with existing pqk_adaptive runs (same seeds, same random
+# teacher projection, same RNG stream).
+kernel: classical_map
+feature_map: no_cnot
+n_qubits: 8 # number of angles
+depth: 4
+gamma_loss_weight: 1.0
+gamma_ramp_epochs: 10
+loss:
+  alpha: 0.5
+  beta: 0.5
+  tau: 0.5
