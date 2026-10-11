@@ -552,8 +552,9 @@ st.header("Conclusions")
 st.caption(
     "**Basis:** 152 completed student runs, 2 teachers and 66 INT8 exports; every reported cell has 3 seeds. "
     "**Status: exploratory.** The four reported pairs' test splits shaped earlier design choices, so validation "
-    "decides (trashnet n=379, rps_25 n=33 — rps_25 is weak) and test is descriptive. No on-device latency or "
-    "energy has been measured; INT8 accuracy comes from the TFLite interpreter on a CPU."
+    "decides (trashnet n=379, rps_25 n=33 — rps_25 is weak) and test is descriptive. Latency, CPU, memory and "
+    "temperature were measured on a Raspberry Pi 4B (160 runs); energy was not. PC INT8 scores use LiteRT's "
+    "builtin kernels; the Pi's default XNNPACK kernels give slightly different INT8 predictions (section 5)."
 )
 
 c1, c2 = st.columns(2)
@@ -605,7 +606,11 @@ with c3:
         "(0.707 vs 0.703). Pooled over all pairs, `pqk` has the most favourable change of the five methods (up on "
         "9/12 seeds, +0.0080; `kd` 5/12, −0.0031). **It does not hold** on trashnet/mobilenetv3_small (both fall), "
         "and the paired `pqk`−`kd` difference is not significant (p=0.22–0.38). A plausible mechanism — tighter "
-        "feature geometry leaving fewer borderline predictions for 8-bit rounding to flip — is untested."
+        "feature geometry leaving fewer borderline predictions for 8-bit rounding to flip — is untested.\n\n"
+        "**On the Pi's default kernels (XNNPACK) it weakens:** `pqk` +0.0025 (up on 5/12), `kd` −0.0049 (4/12). "
+        "`pqk` still changes more favourably than `kd` under all three INT8 numerics (PC, Pi builtin, Pi XNNPACK), "
+        "but \"`pqk` rises at INT8\" no longer holds, and on trashnet/mobilenetv2_035 `pqk` INT8 falls behind `kd` "
+        "(0.694 vs 0.698). The size of every INT8 effect depends on the kernels that compute it."
     )
 with c4:
     st.subheader("4. What the quantum part does — and doesn't")
@@ -621,23 +626,50 @@ with c4:
         "are identically zero, so `pqk` reads 16 active features, not 24."
     )
 
+st.subheader("5. On-device results (Raspberry Pi 4B)")
+st.markdown(
+    "Measured with `edge/bench/run.py` (50 warmup + 500 timed calls, batch 1, a fresh process per model); full "
+    "report in `edge/results/rpi4/summary.md`.\n\n"
+    "- **Latency is set by architecture, not method:** INT8, 4 threads, p50 — mobilenetv2_035 **2.5 ms** "
+    "(≈395 inferences/s), mobilenetv3_small **3.2 ms** (≈315/s); all methods within 0.11 ms of each other.\n"
+    "- **MACs do not predict speed:** near-equal work (18.9 M vs 18.2 M MACs), yet mobilenetv2_035 is ~25% faster "
+    "on 4 threads; on 1 thread the order reverses (4.56 vs 4.35 ms). Speedup from 4 threads: 1.8× vs 1.4×.\n"
+    "- **INT8 vs fp32 (same runtime):** 1.2–1.4× faster, 2.6–3.1× smaller, inference-engine memory 8–12 → "
+    "5.4–6.7 MB. The gain is modest because the Pi 4's CPU has no int8 dot-product instructions.\n"
+    "- **INT8 accuracy depends on the kernels:** XNNPACK (LiteRT's default, 1.1–1.4× faster) changes 1.5–5.3% of "
+    "predictions versus the PC; builtin kernels agree on 98.5–99.96%. Per-method macro-F1 moves −0.016 to +0.012.\n"
+    "- **Live camera (640×480):** both students run at the webcam's 30 FPS; best with 2 inference + 2 OpenCV "
+    "threads (12.8 ms per frame, 87% CPU) — the default 4 threads oversubscribes the cores (22 ms, 212% CPU). "
+    "Image preparation (8.8 ms) costs more than inference (4.1 ms).\n"
+    "- **Out-of-domain scenes get confident wrong answers** (a dark room → \"cardboard 99%\"), and neither model has "
+    "a \"nothing there\" class — a deployed system needs a rejection step.\n"
+    "- **Thermal and power:** peak 64.8 °C (throttle point 80 °C); under-voltage in 2 of 160 runs at full 4-core "
+    "load. **Not measured:** energy (no INA219), Jetson Orin Nano, ESP32-S3."
+)
+
 with st.container(border=True):
     st.markdown(
         "#### Conditional conclusion\n"
-        "- **Highest mean accuracy on trashnet:** logit KD, best on mobilenetv3_small (test 0.732 fp32 / 0.724 INT8).\n"
+        "- **Highest mean accuracy on trashnet:** logit KD, best on mobilenetv3_small (test 0.732 fp32 / 0.724 INT8); "
+        "at INT8 `rbf_control` is level with it (0.7269 vs 0.7244 on PC; 0.7278 vs 0.7265 on the Pi), so KD's lead "
+        "is an fp32 result.\n"
         "- **A ≈0.6 MB INT8 model that behaves the same run to run on trashnet:** **mobilenetv2_035 + `pqk`** is the "
         "most promising PQK combination — second on validation behind KD and ahead of `scratch` and `rbf_control` "
-        "(adaptive λ, 0.705), the steadiest method on validation (adaptive λ), and level with KD after INT8 in the "
-        "exported fixed-λ variant (0.707 vs 0.703). The adaptive variant has not been exported to INT8.\n"
+        "(adaptive λ, 0.705), the steadiest method on validation (adaptive λ), and level with KD at INT8 within "
+        "±0.005 in the exported fixed-λ variant — the order depends on the kernels (0.707 vs 0.703 builtin; 0.694 vs "
+        "0.698 on the Pi's default XNNPACK) — at 2.5 ms per inference on a Pi 4B. The adaptive variant has not been "
+        "exported to INT8.\n"
         "- **Scarce data, few classes (rps_25):** relational or kernel transfer — `rkd` on mobilenetv2_035, "
         "`rbf_control` on mobilenetv3_small — rather than logit KD; `pqk` is not distinguished there.\n"
         "- **What the evidence supports about PQK:** its circuit contributes beyond an entanglement-free twin on "
-        "trashnet; it is the steadiest method on trashnet validation; it has the most favourable INT8 behaviour. "
+        "trashnet; it is the steadiest method on trashnet validation; it has the most favourable fp32→INT8 change "
+        "under all three INT8 numerics, though smaller on the Pi's default kernels (+0.0025). "
         "**It does not support** PQK beating KD on mean accuracy anywhere, or consistently beating a classical "
         "RBF kernel.\n"
         "- **Still uncertain:** whether `pqk` beats a generic classical map of the same function class (RFF control "
         "not run); whether the consistency and INT8 tendencies survive more seeds (all below significance at n=3); "
-        "what drives the architecture split; on-device latency and energy (not measured). Every result here is "
+        "what drives the architecture split; energy (not measured — the Pi's supply sagged under full load), the "
+        "Jetson/ESP32 targets, and whether faster preprocessing lifts the camera pipeline (untested). Every result here is "
         "exploratory — a confirmatory claim needs a fresh benchmark, a frozen protocol and ≥5 seeds, e.g. "
         "mobilenetv2_035 + `pqk` (adaptive λ) vs KD vs RBF."
     )
