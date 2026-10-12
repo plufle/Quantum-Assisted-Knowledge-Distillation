@@ -1,0 +1,16 @@
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+ & & fp32 & \multicolumn{3}{c}{INT8} \\
+\cmidrule(lr){4-6}
+Dataset & Student & test macro-F1 & PC (builtin) & Pi builtin & Pi XNNPACK \\
+\midrule
+TrashNet & MobileNetV2-0.35 & $-0.025\pm0.025$ (1/3) & $+0.004\pm0.006$ (2/3) & $+0.004\pm0.006$ (2/3) & $-0.004\pm0.010$ (1/3) \\
+TrashNet & MobileNetV3-S & $-0.014\pm0.021$ (1/3) & $-0.017\pm0.021$ (0/3) & $-0.016\pm0.016$ (0/3) & $-0.025\pm0.015$ (0/3) \\
+TrashNet & LeNet-5 & $+0.051\pm0.073$ (2/3) & -- & -- & -- \\
+RPS-25 & MobileNetV2-0.35 & $+0.003\pm0.073$ (2/3) & $+0.025\pm0.108$ (2/3) & $+0.025\pm0.108$ (2/3) & $+0.032\pm0.113$ (2/3) \\
+RPS-25 & MobileNetV3-S & $+0.010\pm0.112$ (2/3) & $+0.016\pm0.101$ (2/3) & $+0.017\pm0.104$ (2/3) & $+0.011\pm0.115$ (2/3) \\
+RPS-25 & LeNet-5 & $-0.013\pm0.059$ (2/3)$^{\P}$ & -- & -- & -- \\
+\midrule
+\multicolumn{2}{@{}l}{Pairs where \texttt{pqk} is ahead on the mean} & 3/6 & 3/4 & 3/4 & 2/4 \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,38 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{What the evidence supports.}
+Under one pipeline, with paired seeds and a classical twin, the projected quantum kernel did not separate itself from logit KD, hard-label training, relational KD or its RBF twin.
+Two weak patterns favour it: a tendency to lower seed-to-seed variance (clearer against the twin than against hard-label training), and the most favourable fp32-to-INT8 change on PC numerics. Neither is significant at three seeds, and both weaken once the deployment kernels or the calibration of $\lambda$ change.
+One thing does hold. Nothing quantum remains in the deployed model, because every method ends as the same plain INT8 network. A training-time quantum component therefore costs nothing at inference and, here, gains nothing there either.
+
+\paragraph{Why the quantum map adds little.}
+With the adaptive $\lambda$, the PQK Gram matrix is the median-heuristic RBF kernel on the measured features $r(\theta)$, which are sixteen fixed trigonometric polynomials of the eight angles~\citep{schuld2021effect}. The twin applies the same kernel to the angles themselves.
+The two therefore differ by a fixed nonlinear map in front of identically calibrated kernels.
+Such a map changes the geometry the student is asked to match, but nothing guarantees that the new geometry is more useful. We do not find that it is, which is in line with reports that tuned quantum kernels behave like classical ones~\citep{florezablan2025similarity}.
+We did not measure how far apart the two Gram matrices are, and a different circuit, readout or scale could behave differently.
+
+\paragraph{What the kernel term contributes.}
+Logit KD is the only method that improves on \Scratch on every seed of the primary pairs. \Kd does so on TrashNet for both MobileNets. The classical kernel-alignment arm beats \Scratch on the mean in only \RbfBeatsScratch{} of \NPairs{} pairs, and \Pqk differs from \Scratch by at most $0.04$ in either direction.
+The kernel methods carry the same logit term at a different, untuned temperature. The data therefore do not show that the logit term alone is responsible, and the asymmetry in tuning leaves the question open: the \Kd temperature was screened on some pairs, while the kernel methods share an untuned one.
+With the random target, the gradient of the kernel term is a minor share of the total after the first epochs (Figure~\ref{fig:grad}), which is consistent with a small effect on the trained network.
+
+\paragraph{Variation between pairs.}
+The sign of the difference to the twin changes from pair to pair and with the calibration of $\lambda$, and so does the best method (Section~\ref{sec:results-baselines}).
+There is no clean split by dataset or architecture, and we do not identify what determines it. The differences are a few hundredths of macro-F1 against standard deviations of similar size, so much of the variation may be noise.
+The two pairs examined first happened to be the two on which \Pqk looked better than its twin, and the other four did not reproduce it.
+This shows how easily a few cells can mislead, which is why we report the full grid.
+
+\paragraph{A fitted target is not a better target.}
+A random projection discards much of the class structure, and making the teacher's kernel more class-separable was the natural fix. It did not help.
+On TrashNet the fitted target is almost the label kernel on training batches. This suggests that it adds a second label signal while removing within-class structure. We did not test that by intervention, and the account does not explain the RPS-25 results.
+Measuring alignment on training batches, and not only on validation, is a check worth making in any design that fits the target on the training data.
+
+\paragraph{Reading the results for a deployed sorter.}
+For a camera-assisted bin on a Raspberry Pi-class device, logit distillation of a MobileNet gave $0.9$ to $2.5$ points of macro-F1 over hard-label training on TrashNet, at no cost at inference. The effect of the INT8 kernels on a method's score ($\XnnVsPcMin{}$ to $\XnnVsPcMax{}$ macro-F1 between XNNPACK and the PC) is as large as several of the differences between methods.
+No method here closes the gap between the best student ($0.732$) and the teacher ($0.876$).
+
+\paragraph{Relation to QRKD.}
+QRKD reports gains of a quantum-kernel relational loss over classical relational KD on MNIST, CIFAR-10 and language tasks~\citep{liu2025qrkd}.
+Our setting differs in the data, the students, the loss and the controls, and we observe no consistent gain of \Pqk over \Rkd.
+The two results do not conflict. Ours do suggest that gains reported without a classical kernel in the same place should be read with that control in mind.

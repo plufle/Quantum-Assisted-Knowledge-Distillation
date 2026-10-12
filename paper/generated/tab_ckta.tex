@@ -1,0 +1,21 @@
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+ & & \multicolumn{2}{c}{TrashNet} & \multicolumn{2}{c}{RPS-25} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Projection & Target kernel & val. & train batches & val. & train batches \\
+\midrule
+-- & raw teacher 2048-d, RBF & $0.720$ & $0.818$ & $0.864$ & $0.936$ \\
+\midrule
+random (fixed) & angles, RBF & $0.363$ & $0.447$ & $0.684$ & $0.765$ \\
+ & PQK (RY+CNOT), 16 coords & $0.245$ & $0.297$ & $0.539$ & $0.617$ \\
+ & no-CNOT, 16 coords & $0.323$ & $0.408$ & $0.641$ & $0.703$ \\
+\midrule
+PCA (fitted) & angles, RBF & $0.666$ & $0.793$ & $0.783$ & $0.615$ \\
+ & PQK (RY+CNOT), 16 coords & $0.531$ & $0.672$ & $0.754$ & $0.583$ \\
+ & no-CNOT, 16 coords & $0.494$ & $0.636$ & $0.587$ & $0.480$ \\
+\midrule
+LDA+PCA (fitted) & angles, RBF & $0.825$ & $0.963$ & $0.861$ & $0.844$ \\
+ & PQK (RY+CNOT), 16 coords & $0.752$ & $0.902$ & $0.797$ & $0.897$ \\
+ & no-CNOT, 16 coords & $0.676$ & $0.855$ & $0.636$ & $0.659$ \\
+\bottomrule
+\end{tabular}

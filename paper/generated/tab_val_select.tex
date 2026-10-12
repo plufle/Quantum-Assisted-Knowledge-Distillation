@@ -1,0 +1,12 @@
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Dataset & Student & $\lambda{=}1$ (val.) & adaptive (val.) & selected \\
+\midrule
+TrashNet & MobileNetV2-0.35 & $0.692\pm0.014$ & $0.705\pm0.006$ & adaptive \\
+TrashNet & MobileNetV3-S & $0.725\pm0.012$ & $0.737\pm0.003$ & adaptive \\
+TrashNet & LeNet-5 & $0.567\pm0.005$ & -- ($n{=}1$) & $\lambda{=}1$ \\
+RPS-25 & MobileNetV2-0.35 & $0.781\pm0.084$ & $0.797\pm0.083$ & adaptive \\
+RPS-25 & MobileNetV3-S & $0.907\pm0.055$ & $0.874\pm0.057$ & $\lambda{=}1$ \\
+RPS-25 & LeNet-5 & $0.858\pm0.046$ & -- ($n{=}1$) & $\lambda{=}1$ \\
+\bottomrule
+\end{tabular}

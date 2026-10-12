@@ -1,0 +1,17 @@
+\begin{tabular}{@{}lll@{}}
+\toprule
+Method & Loss setting & Pairs \\
+\midrule
+\texttt{scratch} & CE$\times$1 & all pairs \\
+\texttt{kd} & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}3$ & TrashNet (all students) \\
+ & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}1$ & RPS-25: MobileNetV2-0.35, MobileNetV3-S \\
+ & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}0.5$ & RPS-25: LeNet-5 (seed 0)$^{\P}$ \\
+ & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}1$ & RPS-25: LeNet-5 (seeds 1, 2)$^{\P}$ \\
+\texttt{rkd} & CE$\times$1, dist.$\times$5, angle$\times$10 & TrashNet: MobileNetV2-0.35, MobileNetV3-S; RPS-25: MobileNetV2-0.35, MobileNetV3-S \\
+ & CE$\times$1, dist.$\times$1, angle$\times$2 & TrashNet: LeNet-5 \\
+\texttt{rbf\_control} & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}0.5$, $\gamma{=}1$ (10-epoch ramp) & all pairs \\
+\texttt{pqk} & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}0.5$, $\gamma{=}1$ (10-epoch ramp) & all pairs \\
+\texttt{pqk\_adaptive} & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}0.5$, $\gamma{=}1$ (10-epoch ramp) & all pairs \\
+\texttt{noent\_control} & $\alpha{=}0.5$, $\beta{=}0.5$, $\tau{=}0.5$, $\gamma{=}1$ (10-epoch ramp) & TrashNet: MobileNetV2-0.35, MobileNetV3-S; RPS-25: MobileNetV2-0.35, MobileNetV3-S \\
+\bottomrule
+\end{tabular}

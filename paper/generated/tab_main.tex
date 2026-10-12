@@ -1,0 +1,25 @@
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+ & & \multicolumn{2}{c}{TrashNet (6 classes)} & \multicolumn{2}{c}{RPS-25 (3 classes)} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Student & Method & Macro-F1 & Top-1 & Macro-F1 & Top-1 \\
+\midrule
+MobileNetV2-0.35 & \texttt{scratch} & $0.684\pm0.014$ & $0.697\pm0.021$ & $0.710\pm0.023$ & $0.727\pm0.030$ \\
+ & \texttt{kd} & $\mathbf{0.708}\pm0.013$ & $\mathbf{0.725}\pm0.009$ & $0.710\pm0.088$ & $0.719\pm0.087$ \\
+ & \texttt{rkd} & $0.672\pm0.004$ & $0.686\pm0.003$ & $\mathbf{0.737}\pm0.051$ & $\mathbf{0.745}\pm0.048$ \\
+ & \texttt{rbf\_control} & $0.671\pm0.010$ & $0.692\pm0.012$ & $0.684\pm0.062$ & $0.702\pm0.059$ \\
+ & \texttt{pqk} & $0.683\pm0.013$$^{\dagger}$ & $0.694\pm0.016$$^{\dagger}$ & $0.713\pm0.030$$^{\dagger}$ & $0.730\pm0.019$$^{\dagger}$ \\
+\midrule
+MobileNetV3-S & \texttt{scratch} & $0.724\pm0.016$ & $0.745\pm0.016$ & $0.816\pm0.053$ & $0.828\pm0.045$ \\
+ & \texttt{kd} & $\mathbf{0.732}\pm0.020$ & $\mathbf{0.753}\pm0.021$ & $0.830\pm0.089$ & $0.843\pm0.075$ \\
+ & \texttt{rkd} & $0.716\pm0.003$ & $0.736\pm0.007$ & $0.849\pm0.048$ & $0.859\pm0.041$ \\
+ & \texttt{rbf\_control} & $0.715\pm0.037$ & $0.730\pm0.040$ & $\mathbf{0.888}\pm0.063$ & $\mathbf{0.892}\pm0.060$ \\
+ & \texttt{pqk} & $0.718\pm0.009$$^{\dagger}$ & $0.735\pm0.008$$^{\dagger}$ & $0.840\pm0.065$ & $0.851\pm0.054$ \\
+\midrule
+LeNet-5 & \texttt{scratch} & $0.529\pm0.021$ & $0.541\pm0.022$ & $\mathbf{0.676}\pm0.108$$^{\S}$ & $\mathbf{0.676}\pm0.109$$^{\S}$ \\
+ & \texttt{kd} & $0.484\pm0.074$ & $0.490\pm0.075$ & $0.650\pm0.012$$^{\P}$ & $0.652\pm0.016$$^{\P}$ \\
+ & \texttt{rkd} & $\mathbf{0.578}\pm0.016$ & $\mathbf{0.597}\pm0.021$ & -- & -- \\
+ & \texttt{rbf\_control} & $0.539\pm0.008$ & $0.552\pm0.007$ & $0.538\pm0.202$ & $0.584\pm0.153$ \\
+ & \texttt{pqk} & $0.535\pm0.003$ & $0.552\pm0.003$ & $0.638\pm0.070$ & $0.642\pm0.058$ \\
+\bottomrule
+\end{tabular}

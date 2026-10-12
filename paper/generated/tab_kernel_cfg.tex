@@ -1,0 +1,12 @@
+\begin{tabular}{@{}llrrll@{}}
+\toprule
+Method & Kernel on the 8 angles & Qubits & Depth & $\lambda$ / bandwidth & Teacher projection \\
+\midrule
+\texttt{rbf\_control} & RBF & 8 & -- & median heuristic & random (frozen) \\
+\texttt{pqk} & projected quantum (RY+CNOT) & 8 & 4 & 1 & random (frozen) \\
+\texttt{pqk\_adaptive} & projected quantum (RY+CNOT) & 8 & 4 & median heuristic & random (frozen) \\
+\texttt{noent\_control} & classical map $[\sin4\theta,\cos4\theta]$ & 8 & 4 & median heuristic & random (frozen) \\
+\texttt{pqk\_fit} & projected quantum (RY+CNOT) & 8 & 4 & median heuristic & LDA+PCA (fitted, frozen) \\
+\texttt{rbf\_fit} & RBF & 8 & -- & median heuristic & LDA+PCA (fitted, frozen) \\
+\bottomrule
+\end{tabular}

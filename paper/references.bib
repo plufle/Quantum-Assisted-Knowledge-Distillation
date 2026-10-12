@@ -1,0 +1,386 @@
+% References for the QAKD paper.
+%
+% PROVENANCE — read before submitting.
+%   [lit]  = metadata taken from paper/literature-review/*.xlsx (title/authors/year/DOI as recorded there;
+%            author lists the spreadsheet truncated with "et al." are written "and others").
+%   [mem]  = written from memory, NOT checked against a source in this repo. Verify every field
+%            (volume, pages, arXiv id) before submission.
+%   [todo] = bibliographic detail deliberately left out because it could not be confirmed.
+
+% ---------------------------------------------------------------- knowledge distillation
+% [mem]
+@article{hinton2015distilling,
+  title   = {Distilling the Knowledge in a Neural Network},
+  author  = {Hinton, Geoffrey and Vinyals, Oriol and Dean, Jeff},
+  journal = {arXiv preprint arXiv:1503.02531},
+  year    = {2015}
+}
+
+% [mem]
+@inproceedings{romero2015fitnets,
+  title     = {{FitNets}: Hints for Thin Deep Nets},
+  author    = {Romero, Adriana and Ballas, Nicolas and Kahou, Samira Ebrahimi and Chassang, Antoine and Gatta, Carlo and Bengio, Yoshua},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2015}
+}
+
+% [lit] DOI; [mem] pages
+@inproceedings{park2019relational,
+  title     = {Relational Knowledge Distillation},
+  author    = {Park, Wonpyo and Kim, Dongju and Lu, Yan and Cho, Minsu},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {3967--3976},
+  year      = {2019},
+  doi       = {10.1109/CVPR.2019.00409}
+}
+
+% [mem]
+@inproceedings{tian2020contrastive,
+  title     = {Contrastive Representation Distillation},
+  author    = {Tian, Yonglong and Krishnan, Dilip and Isola, Phillip},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2020}
+}
+
+% [lit]
+@inproceedings{liu2019instance,
+  title     = {Knowledge Distillation via Instance Relationship Graph},
+  author    = {Liu, Yufan and others},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year      = {2019},
+  doi       = {10.1109/CVPR.2019.00726}
+}
+
+% [lit]
+@misc{he2022feature,
+  title  = {Feature Kernel Distillation},
+  author = {He, Bobby and others},
+  year   = {2022},
+  note   = {Venue not recorded in the literature review [todo]}
+}
+
+% ---------------------------------------------------------------- quantum kernels
+% [mem]
+@article{huang2021power,
+  title   = {Power of data in quantum machine learning},
+  author  = {Huang, Hsin-Yuan and Broughton, Michael and Mohseni, Masoud and Babbush, Ryan and Boixo, Sergio and Neven, Hartmut and McClean, Jarrod R.},
+  journal = {Nature Communications},
+  volume  = {12},
+  pages   = {2631},
+  year    = {2021}
+}
+
+% [mem]
+@article{havlicek2019supervised,
+  title   = {Supervised learning with quantum-enhanced feature spaces},
+  author  = {Havl{\'\i}{\v{c}}ek, Vojt{\v{e}}ch and C{\'o}rcoles, Antonio D. and Temme, Kristan and Harrow, Aram W. and Kandala, Abhinav and Chow, Jerry M. and Gambetta, Jay M.},
+  journal = {Nature},
+  volume  = {567},
+  pages   = {209--212},
+  year    = {2019}
+}
+
+% [mem]
+@article{schuld2019feature,
+  title   = {Quantum Machine Learning in Feature {Hilbert} Spaces},
+  author  = {Schuld, Maria and Killoran, Nathan},
+  journal = {Physical Review Letters},
+  volume  = {122},
+  pages   = {040504},
+  year    = {2019}
+}
+
+% [mem]
+@article{schuld2021effect,
+  title   = {Effect of data encoding on the expressive power of variational quantum-machine-learning models},
+  author  = {Schuld, Maria and Sweke, Ryan and Meyer, Johannes Jakob},
+  journal = {Physical Review A},
+  volume  = {103},
+  pages   = {032430},
+  year    = {2021}
+}
+
+% [lit] DOI; [mem] volume
+@article{thanasilp2024exponential,
+  title   = {Exponential concentration in quantum kernel methods},
+  author  = {Thanasilp, Supanut and others},
+  journal = {Nature Communications},
+  volume  = {15},
+  year    = {2024},
+  doi     = {10.1038/s41467-024-49287-w}
+}
+
+% [lit]
+@article{slattery2023numerical,
+  title   = {Numerical evidence against advantage with quantum fidelity kernels on classical data},
+  author  = {Slattery, L. and others},
+  journal = {Physical Review A},
+  volume  = {107},
+  pages   = {062417},
+  year    = {2023},
+  doi     = {10.1103/PhysRevA.107.062417}
+}
+
+% [lit]
+@article{florezablan2025similarity,
+  title   = {On the similarity of bandwidth-tuned quantum kernels and classical kernels},
+  author  = {Fl{\'o}rez-Ablan, Roberto and others},
+  journal = {Quantum Science and Technology},
+  year    = {2025},
+  doi     = {10.1088/2058-9565/ade7ad}
+}
+
+% [lit]
+@article{schnabel2025scrutiny,
+  title   = {Quantum kernel methods under scrutiny: a benchmarking study},
+  author  = {Schnabel, Jan and Roth, M.},
+  journal = {Quantum Machine Intelligence},
+  year    = {2025},
+  doi     = {10.1007/s42484-025-00273-5}
+}
+
+% [lit]
+@article{wang2021towards,
+  title   = {Towards understanding the power of quantum kernels in the {NISQ} era},
+  author  = {Wang, Xinbiao and others},
+  journal = {Quantum},
+  volume  = {5},
+  pages   = {531},
+  year    = {2021},
+  doi     = {10.22331/q-2021-08-30-531}
+}
+
+% [lit] title/year; [mem] venue
+@inproceedings{kubler2021inductive,
+  title     = {The Inductive Bias of Quantum Kernels},
+  author    = {K{\"u}bler, Jonas M. and others},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2021}
+}
+
+% [lit]
+@article{suzuki2022fisher,
+  title   = {Quantum Fisher kernel for mitigating the vanishing similarity issue},
+  author  = {Suzuki, Yudai and others},
+  journal = {Quantum Science and Technology},
+  year    = {2022},
+  doi     = {10.1088/2058-9565/ad4b97}
+}
+
+% [lit]
+@article{egginger2023hyperparameter,
+  title   = {A hyperparameter study for quantum kernel methods},
+  author  = {Egginger, Sebastian and others},
+  journal = {Quantum Machine Intelligence},
+  year    = {2023},
+  doi     = {10.1007/s42484-024-00172-1}
+}
+
+% ---------------------------------------------------------------- quantum-assisted distillation (closest prior work)
+% [lit]
+@misc{liu2025qrkd,
+  title  = {Quantum Relational Knowledge Distillation},
+  author = {Liu, Chen-Yu and Chen, Kuan-Cheng and Murota, Keisuke and Chen, Samuel Yen-Chi and Rinaldi, Enrico},
+  year   = {2025},
+  note   = {Preprint. URL recorded in the literature review: semanticscholar.org/paper/b4cfa945df05c92671a2def8e0705c59c5c757a1. arXiv identifier not recorded [todo]}
+}
+
+% [lit]
+@inproceedings{li2024hybrid,
+  title     = {Hybrid Quantum Classical Machine Learning with Knowledge Distillation},
+  author    = {Li, Mingze and Fan, Lei and Cummings, Aaron and Zhang, Xinyue and Pan, Miao and Han, Zhu},
+  booktitle = {IEEE International Conference on Communications},
+  year      = {2024},
+  doi       = {10.1109/ICC51166.2024.10622755}
+}
+
+% [lit]
+@misc{hasan2023bridging,
+  title         = {Bridging Classical and Quantum Machine Learning: Knowledge Transfer From Classical to Quantum Neural Networks Using Knowledge Distillation},
+  author        = {Hasan, Mohammad Junayed and Mahdy, M. R. C.},
+  year          = {2023},
+  eprint        = {2311.13810},
+  archivePrefix = {arXiv},
+  howpublished  = {arXiv:2311.13810}
+}
+
+% [lit]
+@inproceedings{naqvi2026structured,
+  title     = {Structured Supervision from Quantum Models: Distilling Robustness into Classical Networks},
+  author    = {Naqvi, Syed Rameez and Ding, Zhengming and Qi, Fang and Rahman, Md. Mostafizer and Peng, Lu},
+  booktitle = {AAAI Spring Symposium Series},
+  year      = {2026},
+  doi       = {10.1609/aaaiss.v8i1.42582}
+}
+
+% ---------------------------------------------------------------- efficient CNNs, quantization, edge
+% [lit] DOI; [mem] pages
+@inproceedings{sandler2018mobilenetv2,
+  title     = {{MobileNetV2}: Inverted Residuals and Linear Bottlenecks},
+  author    = {Sandler, Mark and Howard, Andrew and Zhu, Menglong and Zhmoginov, Andrey and Chen, Liang-Chieh},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {4510--4520},
+  year      = {2018},
+  doi       = {10.1109/CVPR.2018.00474}
+}
+
+% [lit] DOI
+@inproceedings{howard2019searching,
+  title     = {Searching for {MobileNetV3}},
+  author    = {Howard, Andrew and others},
+  booktitle = {IEEE/CVF International Conference on Computer Vision},
+  year      = {2019},
+  doi       = {10.1109/ICCV.2019.00140}
+}
+
+% [lit] DOI
+@inproceedings{jacob2018quantization,
+  title     = {Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference},
+  author    = {Jacob, Benoit and others},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year      = {2018},
+  doi       = {10.1109/CVPR.2018.00286}
+}
+
+% [mem]
+@misc{krishnamoorthi2018quantizing,
+  title         = {Quantizing deep convolutional networks for efficient inference: A whitepaper},
+  author        = {Krishnamoorthi, Raghuraman},
+  year          = {2018},
+  eprint        = {1806.08342},
+  archivePrefix = {arXiv}
+}
+
+% [lit] title/year; [mem] venue
+@inproceedings{polino2018model,
+  title     = {Model compression via distillation and quantization},
+  author    = {Polino, Antonio and Pascanu, Razvan and Alistarh, Dan},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2018}
+}
+
+% [lit] title/year; [mem] arXiv id
+@misc{kim2019qkd,
+  title         = {{QKD}: Quantization-aware Knowledge Distillation},
+  author        = {Kim, Jangho and Bhalgat, Yash and Lee, Jinwon and Patel, Chirag and Kwak, Nojun},
+  year          = {2019},
+  eprint        = {1911.12491},
+  archivePrefix = {arXiv}
+}
+
+% ---------------------------------------------------------------- datasets, models, tooling
+% [mem]
+@misc{yang2016trashnet,
+  title  = {Classification of Trash for Recyclability Status},
+  author = {Yang, Mindy and Thung, Gary},
+  year   = {2016},
+  note   = {CS229 project report, Stanford University. TrashNet dataset}
+}
+
+% [mem]
+@misc{moroney2019rps,
+  title  = {Rock, Paper, Scissors Dataset},
+  author = {Moroney, Laurence},
+  year   = {2019},
+  note   = {\url{https://laurencemoroney.com/datasets.html}}
+}
+
+% [mem]
+@inproceedings{he2016deep,
+  title     = {Deep Residual Learning for Image Recognition},
+  author    = {He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition},
+  pages     = {770--778},
+  year      = {2016}
+}
+
+% [mem]
+@article{lecun1998gradient,
+  title   = {Gradient-based learning applied to document recognition},
+  author  = {LeCun, Yann and Bottou, L{\'e}on and Bengio, Yoshua and Haffner, Patrick},
+  journal = {Proceedings of the IEEE},
+  volume  = {86},
+  number  = {11},
+  pages   = {2278--2324},
+  year    = {1998}
+}
+
+% [mem]
+@inproceedings{cubuk2020randaugment,
+  title     = {{RandAugment}: Practical automated data augmentation with a reduced search space},
+  author    = {Cubuk, Ekin D. and Zoph, Barret and Shlens, Jonathon and Le, Quoc V.},
+  booktitle = {IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops},
+  year      = {2020}
+}
+
+% [mem]
+@inproceedings{loshchilov2019decoupled,
+  title     = {Decoupled Weight Decay Regularization},
+  author    = {Loshchilov, Ilya and Hutter, Frank},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2019}
+}
+
+% [mem]
+@misc{bergholm2018pennylane,
+  title         = {{PennyLane}: Automatic differentiation of hybrid quantum-classical computations},
+  author        = {Bergholm, Ville and others},
+  year          = {2018},
+  eprint        = {1811.04968},
+  archivePrefix = {arXiv}
+}
+
+% [mem]
+@article{cortes2012centered,
+  title   = {Algorithms for Learning Kernels Based on Centered Alignment},
+  author  = {Cortes, Corinna and Mohri, Mehryar and Rostamizadeh, Afshin},
+  journal = {Journal of Machine Learning Research},
+  volume  = {13},
+  pages   = {795--828},
+  year    = {2012}
+}
+
+% ---------------------------------------------------------------- added for Related Work (all [lit]: title/authors/year/DOI as in the review)
+% [lit]
+@article{matsubara2020head,
+  title   = {Head Network Distillation: Splitting Distilled Deep Neural Networks for Resource-Constrained Edge Computing Systems},
+  author  = {Matsubara, Yoshitomo and others},
+  journal = {IEEE Access},
+  year    = {2020},
+  doi     = {10.1109/ACCESS.2020.3039714}
+}
+
+% [lit] venue not recorded in the review [todo]
+@misc{paparounas2024evaluating,
+  title  = {Evaluating Knowledge Distillation and Compression Techniques for Edge Class Devices},
+  author = {Paparounas, Fotios and others},
+  year   = {2024},
+  doi    = {10.1145/3716554.3716621}
+}
+
+% [lit]
+@misc{violos2024towards,
+  title         = {Towards Optimal Trade-Offs in Knowledge Distillation for {CNNs} and Vision Transformers at the Edge},
+  author        = {Violos, John and Papadopoulos, Symeon and Kompatsiaris, Y.},
+  year          = {2024},
+  eprint        = {2407.12808},
+  archivePrefix = {arXiv},
+  howpublished  = {arXiv:2407.12808}
+}
+
+% [lit] venue not recorded in the review [todo]
+@misc{micklethwaite2025rbfnetwork,
+  title  = {Classification using quantum kernels in a radial basis function network},
+  author = {Micklethwaite, Emily and others},
+  year   = {2025}
+}
+
+% [lit]
+@inproceedings{kumar2026quantuminspired,
+  title     = {Enabling Edge Intelligence: A Quantum-Inspired Approach to Deploying {AI} Models on Resource-Constrained Devices},
+  author    = {Kumar, Saravana and others},
+  booktitle = {ICEARS},
+  year      = {2026},
+  doi       = {10.1109/ICEARS67481.2026.11416565},
+  note      = {Conference name abbreviated as in the DOI; full name not recorded in the review [todo]}
+}

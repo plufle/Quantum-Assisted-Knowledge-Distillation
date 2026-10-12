@@ -177,3 +177,16 @@ checkpoints/
 results/
 # deploy artefacts (ONNX / TFLite) — regenerable from checkpoints via qakd.deploy.export
 exports/
+
+# Paper: keep sources (main.tex, sections/, references.bib, generated/ tables, figures/); ignore build output and notes
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/PLAN.md
+paper.rar

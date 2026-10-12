@@ -1,0 +1,14 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\begin{itemize}
+  \item \textbf{Statistical power.} Each cell has three seeds. Standard deviations are poorly estimated, paired $t$-tests have little power, and none is corrected for multiple comparisons. Differences of the size we report would need many more seeds to resolve.
+  \item \textbf{Exploratory status and selection.} Student recipes, the KD temperature and the RKD weights were screened on seed~0 and in part judged by test scores. The adaptive $\lambda$ was adopted after the first results. The test splits of all six pairs have therefore informed design choices, and test scores are descriptive. A confirmatory claim needs a frozen protocol, selection on validation only and fresh data.
+  \item \textbf{Unmatched temperature.} The \Kd temperature was screened on TrashNet/MobileNetV2-0.35 and RPS-25/MobileNetV2-0.35 and reused for the other students of each dataset. The kernel methods share one untuned value, which may disadvantage them against \Kd. The comparison between a kernel method and its twin is matched.
+  \item \textbf{Controls.} The quantum kernel is compared with one RBF twin and with the circuit without CNOT gates. A generic classical map of equal width, random Fourier features drawn from the circuit's frequency spectrum, was implemented but not run. We cannot say that \Pqk beats classical maps in general, or that it does not.
+  \item \textbf{Simulation only.} The circuit is simulated without noise or shot noise at eight qubits. Nothing here concerns quantum hardware.
+  \item \textbf{Scope.} We use one teacher, two datasets and three students. RPS-25 has a $33$-image validation split, so its selection and validation comparisons are weak. We did not compute calibration error, per-class recall or confusion matrices.
+  \item \textbf{Recipe mismatch and omissions.} One \Scratch seed on RPS-25/LeNet-5 used a different training budget, and the \Kd cell for that pair mixes two temperatures (Appendix~\ref{app:recipe}). We did not re-run either. \Rkd is absent from the final grid for that pair because screening runs at two loss-weight scales trained poorly; their results were not retained.
+  \item \textbf{Deployment.} Quantization is post-training. Only the two MobileNets are exported, and adaptive $\lambda$ has no INT8 export for TrashNet/MobileNetV2-0.35. All device results come from one Raspberry Pi~4B, whose supply triggered the firmware's under-voltage flag in $2$ of $160$ runs. Energy, the Jetson Orin Nano and the ESP32-S3 were not measured. The live-camera predictions are a demonstration on out-of-distribution frames, and the six-class and three-class models have no rejection class, so every frame receives a label.
+  \item \textbf{Cost accounting.} Runs shared one GPU, so only compute-hours are reported, and the hours spent fine-tuning the teachers were not logged.
+\end{itemize}

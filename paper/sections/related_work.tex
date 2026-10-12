@@ -1,0 +1,33 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Knowledge distillation and relational transfer.}
+Logit distillation trains a student on a teacher's softened output distribution~\citep{hinton2015distilling}.
+FitNets add hints from intermediate representations so that thinner students can follow deeper teachers~\citep{romero2015fitnets}.
+Relational knowledge distillation (RKD) transfers the structure among samples rather than single outputs. It aligns pairwise distances and angles of the embeddings~\citep{park2019relational}. Contrastive representation distillation and instance-relationship graphs pursue the same idea with different objectives~\citep{tian2020contrastive,liu2019instance}.
+A kernel view connects these methods. A trained network's predictions are determined by the inner products of its last-layer representations, the feature kernel, and that kernel is a natural object to distill~\citep{he2022feature}.
+The kernel-alignment loss used here belongs to this family. It matches batch Gram matrices of the teacher and the student after projecting both to eight angles, and its classical twin replaces only the kernel that defines the Gram matrices.
+
+\paragraph{Quantum kernels and their limits.}
+Quantum kernels embed inputs in the Hilbert space of a quantum system and compare them there~\citep{havlicek2019supervised,schuld2019feature}.
+The projected quantum kernel of Huang et al.~\citep{huang2021power} compares reduced states of the embedded system instead of the full state.
+Whether quantum kernels help on classical data is contested.
+Kernel values can concentrate exponentially. Entanglement, noise and embedding expressivity are among the identified sources~\citep{thanasilp2024exponential}. Fidelity kernels also suffer a related vanishing-similarity problem, which alternative constructions try to mitigate~\citep{suzuki2022fisher}.
+Numerical studies find no advantage of tuned fidelity kernels on classical data~\citep{slattery2023numerical}. Analyses of noise and finite data identify regimes where an advantage disappears~\citep{wang2021towards}. Bandwidth-tuned fidelity and projected quantum kernels have been argued to behave classically~\citep{florezablan2025similarity}.
+The inductive bias of the embedding determines what a quantum kernel can learn~\citep{kubler2021inductive}. A hyperparameter study examines how quantum-kernel design choices affect performance and the generalization gap across datasets~\citep{egginger2023hyperparameter}.
+A large-scale benchmark of fidelity and projected quantum kernels studies which design choices make them effective~\citep{schnabel2025scrutiny}. Radial basis function networks have been extended to quantum kernel functions~\citep{micklethwaite2025rbfnetwork}.
+These results motivate our design. The quantum kernel is paired with a classical RBF kernel on the same inputs, and a variant of the quantum kernel receives the same median-heuristic scale as its twin. The comparison can then isolate the kernel rather than its calibration.
+
+\paragraph{Quantum-assisted distillation.}
+Several studies combine distillation with quantum models.
+Quantum relational knowledge distillation (QRKD)~\citep{liu2025qrkd} extends RKD with quantum-kernel values computed from features mapped into a Hilbert space. It evaluates CNNs on MNIST and CIFAR-10 and GPT-2 on three language benchmarks, and reports consistent gains over classical RKD with all deployed models classical.
+In the other direction, classical teachers have been used to improve the training accuracy and stability of quantum students~\citep{li2024hybrid}. One study covers 4- and 8-qubit quantum neural networks on MNIST, Fashion-MNIST and CIFAR-10, with an analysis of dimensionality reduction and data encodings~\citep{hasan2023bridging}.
+A variational circuit has also served as an offline soft-label teacher for a compact classical student, with reported robustness gains on MNIST~\citep{naqvi2026structured}. Quantum-inspired latent-space compression has been combined with distillation for resource-constrained deployment~\citep{kumar2026quantuminspired}.
+Our setting is closest to QRKD, with quantum computation confined to training. It differs in the data (small imbalanced waste images), the students (0.03--0.93\,M parameters), the loss (kernel alignment in addition to a logit term), the controls (a classical RBF twin and two ablation arms), the reporting (three seeds, paired comparisons) and the end point (INT8 models measured on a Raspberry Pi).
+We do not claim that the results of those studies fail in their own settings.
+
+\paragraph{Distillation, quantization and edge deployment.}
+Distillation and quantization are complementary compression mechanisms~\citep{polino2018model}, and quantization-aware distillation trains the two jointly~\citep{kim2019qkd}.
+Integer-arithmetic-only inference~\citep{jacob2018quantization} and its practical recipes~\citep{krishnamoorthi2018quantizing} are the basis of the 8-bit deployment used here. We apply post-training quantization to finished students instead of training with it.
+Edge-oriented distillation work studies accuracy--efficiency trade-offs for CNNs and vision transformers~\citep{violos2024towards}, evaluates distillation and compression on edge-class devices~\citep{paparounas2024evaluating}, and splits distilled networks between device and edge server~\citep{matsubara2020head}.
+We take the same deployment-oriented view but measure a single compact INT8 model on the device itself, and we report how its predictions depend on the kernels that execute it.

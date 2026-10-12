@@ -1,0 +1,10 @@
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+Dataset & Student & Exported \texttt{pqk} & PC (builtin) & Pi builtin & Pi XNNPACK \\
+\midrule
+TrashNet & MobileNetV2-0.35 & $\lambda{=}1$$^{\ddagger}$ & $+0.004\pm0.006$ (2/3) & $+0.004\pm0.006$ (2/3) & $-0.004\pm0.010$ (1/3) \\
+TrashNet & MobileNetV3-S & adaptive & $-0.017\pm0.021$ (0/3) & $-0.016\pm0.016$ (0/3) & $-0.025\pm0.015$ (0/3) \\
+RPS-25 & MobileNetV2-0.35 & adaptive & $+0.025\pm0.108$ (2/3) & $+0.025\pm0.108$ (2/3) & $+0.032\pm0.113$ (2/3) \\
+RPS-25 & MobileNetV3-S & $\lambda{=}1$ & $+0.016\pm0.101$ (2/3) & $+0.017\pm0.104$ (2/3) & $+0.011\pm0.115$ (2/3) \\
+\bottomrule
+\end{tabular}

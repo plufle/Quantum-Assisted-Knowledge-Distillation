@@ -1,0 +1,14 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We asked whether a quantum kernel used only during training helps a lightweight waste classifier beyond what a classical kernel in the same place provides.
+We tested this on TrashNet, with RPS-25 as a low-data confirmation, using three students and five methods under one pipeline.
+A projected quantum kernel was not distinguishable from logit KD in accuracy. It was ahead on the mean in \KdAheadFp{} of \NPairs{} pairs and behind on both TrashNet MobileNets, and no paired difference was significant.
+It beat its RBF twin in \GtwoFixedWins{} of \NPairs{} pairs at its pre-specified scale.
+It also showed a tendency to lower seed-to-seed variance than the twin and, less consistently, than hard-label training. That tendency is not significant at three seeds, depends on the metric and on one mismatched run, and does not hold on every pair.
+Removing the circuit's entanglement hurt on TrashNet validation and helped on RPS-25, and fitting the teacher projection did not help.
+All \NIntModels{} exported MobileNet students are fully integer INT8 models of about \MbMnvTwo{} and \MbMnvThree{}\,MB. They run in \LatMnvTwo{} and \LatMnvThree{}\,ms per inference on a Raspberry Pi~4B, and the choice of INT8 kernels on the device changes between \XnnDisMin{}\% and \XnnDisMax{}\% of a model's predictions.
+The quantum kernel leaves nothing in the deployed model, and our evidence does not show an accuracy benefit over classical alternatives.
+
+The results are exploratory.
+One question remains open: whether the quantum map beats classical maps of equal width. A confirmatory test would need a frozen protocol, the random-feature control we did not run, at least five seeds, and fresh data. On the deployment side, energy and further devices remain to be measured.

@@ -1,0 +1,188 @@
+\appendix
+
+\section{Pitfalls We Hit and Corrected}
+\label{app:pitfalls}
+
+Three problems affected the results, and one check found none. The fixes are part of the pipeline used for every reported number.
+
+\paragraph{BatchNorm statistics with few batches.}
+A student trained from scratch on RPS-25 sees five optimization batches per epoch at batch size $128$. That is too few for BatchNorm running statistics to stabilize.
+The symptom was training F1 improving normally while validation F1 stayed at one constant value, the score of a model that always predicts one class. Evaluation-mode normalization was using degenerate running statistics.
+MobileNetV3-Small showed the same symptom on TrashNet, which has $14$ batches per epoch. The number of batches is therefore not the whole cause, and we did not isolate the rest.
+Both cases are handled by training with per-batch statistics. Before every evaluation and before export, one no-gradient pass over the unaugmented training images accumulates cumulative running statistics, so predictions do not depend on the evaluator's batch boundaries.
+This applies to all students on RPS-25, to MobileNetV3-Small on TrashNet (Table~\ref{tab:hparams-students}), and to every method alike.
+
+\paragraph{Checkpoint selection on a small validation set.}
+RPS-25's validation split has $33$ images, so validation F1 moves in steps of about three points and swings between epochs long after the model has converged.
+In one screening run (MobileNetV2-0.35, KD, seed~0) the validation F1 of the first fourteen epochs was $0.53$, $0.45$, $0.31$, $0.50$, $0.52$, $0.63$, $0.64$, $0.52$, $0.60$, $0.73$, $0.74$, $0.79$, $0.82$, $0.73$. Over the same epochs the validation loss fell from $2.15$ to $1.17$ with only small reversals.
+Selecting the maximum F1 picks a spike, so on RPS-25 we select by validation loss.
+The kernel methods add a second effect. With the kernel weight ramped over ten epochs, the validation loss itself grows while the ramp is rising, and the least-trained epoch always looks best.
+Validation is therefore scored at the final weight $\gamma_{\max}$, whatever the epoch's training weight.
+
+\paragraph{Mutual collapse of the kernel-alignment loss.}
+In our first implementation both projection heads were trainable.
+Collapsing both to constant maps is then a global optimum of $\Vert\tilde K_t-\tilde K_s\Vert_F^2$. Every Gram entry becomes one, trace normalization makes the two matrices identical, and the loss is zero while the student has learned nothing.
+We found the problem in the kernel statistics stored with the first \Pqk run we inspected (RPS-25, LeNet-5, seed~0; a single pass over the test split at the selected checkpoint). Its mean off-diagonal kernel value was \CollapseStudent{} for the student and \CollapseTeacher{} for the teacher. The teacher backbone is frozen and its features vary, so a value that close to one can only mean its projection had collapsed.
+Two things made the problem easy to miss.
+Our concentration check guarded only the vacuous end (mean off-diagonal below $0.05$) and not the saturated end. The classical twin is also immune to the symptom: the median-heuristic bandwidth rescales to the data spread in every batch and pins the off-diagonal near $0.6$ ($0.55$ to $0.63$ in the archived twin runs), however collapsed the projection is.
+The twin therefore looked healthy while sharing the flaw.
+The twins must share a pipeline, so every result that used the kernel pipeline before the fix was discarded and both methods were re-run. The pre-fix runs are archived, and none enters the tables.
+The teacher-side projection is now frozen, and the check also flags saturation (above $0.95$).
+Table~\ref{tab:kernel-health} shows the kernel statistics of the reported runs. Every arm sits between $\OffdiagOthersMin{}$ and $\OffdiagOthersMax{}$ except \Pqk with $\lambda=1$. Its mean off-diagonal value ranges from $\OffdiagFixedMin{}$ to $\OffdiagFixedMax{}$ across pairs, because a fixed $\lambda$ does not adapt to the spread of the measured features.
+
+\begin{table*}[t]
+  \centering
+  \caption{Mean off-diagonal kernel value $K_{ij}$ of the student and the teacher Gram matrices, from a single pass over the test split at the selected checkpoint (averaged over its batches, at $\gamma_{\max}$), summarized over the runs of each method.}
+  \label{tab:kernel-health}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_kernel_health}}
+\end{table*}
+
+\paragraph{A check that found no problem: gradient size of the kernel term.}
+We checked whether the kernel term could crowd out the label signal after the ramp, by logging per-term gradient norms (Figure~\ref{fig:grad}). With a random target it does not. With a fitted target it did on RPS-25/MobileNetV2-0.35 (Section~\ref{sec:results-controls}).
+
+\section{Selecting the Scale of the Quantum Kernel}
+\label{app:screens}
+
+The pre-specified $\lambda=1$ gave the \Pqk results of the first full grid.
+We added the adaptive $\lambda$ afterwards to remove an asymmetry. The twin has always recalibrated its bandwidth to each batch, whereas a fixed $\lambda$ left \Pqk with a kernel sharpness that drifted across pairs (Table~\ref{tab:kernel-health}).
+For each pair, we report the variant with the higher three-seed \emph{validation} macro-F1 (Table~\ref{tab:val-select}).
+On RPS-25/MobileNetV3-Small the adaptive variant had earlier been chosen from a seed-0 test screen. By the three-seed validation rule, $\lambda=1$ is preferred ($0.907$ against $0.874$), and it is used.
+
+\begin{table*}[t]
+  \centering
+  \caption{Validation macro-F1 of the two $\lambda$ calibrations of \Pqk (mean $\pm$ std over three seeds) and the one selected. Adaptive $\lambda$ has one seed on the LeNet-5 pairs and is not eligible there.}
+  \label{tab:val-select}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_val_select}}
+\end{table*}
+
+We screened variants of the circuit and loss on TrashNet/MobileNetV3-Small, the pair on which \Pqk fared worst (Table~\ref{tab:screens}).
+None of the changes of temperature, kernel weight or depth improved on the unmodified adaptive-$\lambda$ configuration on test macro-F1 at seed~0. On validation macro-F1 two of them were marginally above it ($\tau=3$: $0.7435$, $\gamma=0.5$: $0.7343$, against $0.7335$). These differences amount to about one to four images, and we did not pursue them.
+The adaptive calibration itself raised the test macro-F1 by $0.045\pm0.033$ over $\lambda=1$, with a higher score on all three seeds. Adding two-body $\langle Z_iZ_j\rangle$ correlators to the readout changed it by $-0.009\pm0.037$ (higher on one seed of three). The gain that first appeared to come from the correlators therefore came from the calibration.
+The screens also show how noisy a single seed is. On this pair the seed-0 score differs from the three-seed mean by between $-0.020$ and $+0.027$ across the methods. It is above the mean by $0.027$ for $\lambda=1$ and by $0.022$ with the correlators, and below it by $0.010$ for adaptive $\lambda$. A screen on one seed can mislead in either direction.
+
+\begin{table*}[t]
+  \centering
+  \caption{Variants of \Pqk on TrashNet/MobileNetV3-Small: test and validation macro-F1 at seed~0 for every variant, and the three-seed test macro-F1 where three seeds exist. Reference methods are shown for comparison.}
+  \label{tab:screens}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_screens}}
+\end{table*}
+
+\section{INT8 Export Details}
+\label{app:export}
+
+\begin{table*}[t]
+  \centering
+  \caption{Checks on the exported models, by pair. Conv ops counts convolutions including depthwise ones. ONNX--PyTorch parity is the largest absolute logit difference over the pair's models; ``fp32 reload exact'' counts models whose reloaded fp32 weights reproduce the recorded test score. The last column is the mean change in test macro-F1 from fp32 to INT8, with its standard deviation over models.}
+  \label{tab:export}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_export}}
+\end{table*}
+
+Table~\ref{tab:export} summarizes the checks.
+The converted graphs use only built-in integer operators.
+MobileNetV2-0.35 consists of $35$ convolutions, $17$ depthwise convolutions, $10$ additions, $5$ paddings, one mean and one fully connected layer. MobileNetV3-Small consists of $41$ convolutions, $11$ depthwise convolutions, $18$ Hardswish, $9$ \texttt{RELU\_0\_TO\_1}, $9$ multiplications, $10$ means, $6$ additions, $5$ paddings and one fully connected layer.
+The ONNX graphs contain only \texttt{Conv}, \texttt{Gemm}, \texttt{Add}, \texttt{Clip}, \texttt{Mul}, \texttt{Relu}, \texttt{HardSwish}, \texttt{HardSigmoid}, \texttt{Flatten}, \texttt{GlobalAveragePool} and constants.
+The static batch size of one is required. A dynamic batch axis makes the converter lower \texttt{Flatten} through a \texttt{FILL} operation that strict integer quantization rejects.
+We also use the converter's TensorFlow back end, because its default writer emitted invalid per-channel metadata.
+The conversion used PyTorch 2.13.0, ONNX 1.20.1 and onnx2tf 2.6.9.
+
+\section{Seed Variance at INT8 and On-Device Accuracy}
+\label{app:int8}
+
+\begin{table*}[t]
+  \centering
+  \caption{Seed standard deviation of INT8 test macro-F1 for the four exported pairs under the three sets of kernels. Bold: lowest of the five methods. $^{\ddagger}$The exported \Pqk is the $\lambda=1$ variant whereas the validation rule prefers adaptive $\lambda$.}
+  \label{tab:var-int8}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_var_int8}}
+\end{table*}
+
+\begin{table*}[t]
+  \centering
+  \caption{Test macro-F1 of the exported models, mean $\pm$ std over three seeds: fp32 (recorded), INT8 on the PC, and INT8 on the Raspberry Pi with its builtin kernels and with the default XNNPACK delegate. The last column is the fraction of test images on which the XNNPACK model and the PC model predict the same class. $^{\dagger}$Adaptive $\lambda$.}
+  \label{tab:device-acc}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_device_acc}}
+\end{table*}
+
+Table~\ref{tab:var-int8} shows the standard deviations behind Section~\ref{sec:results-variance}.
+On TrashNet, \Pqk has a standard deviation below both \Scratch and \Rbf on both students under all three sets of kernels. On RPS-25 it does not.
+Table~\ref{tab:device-acc} gives the scores behind Section~\ref{sec:results-device}.
+With the Pi's builtin kernels the INT8 scores are within $0.006$ of the PC's. XNNPACK changes them by up to $0.016$ in either direction.
+
+\section{Camera Pipeline and Circuit Trainability}
+\label{app:camera}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{camera_pipeline}
+  \caption{Median per-frame processing time of the live camera pipeline ($640{\times}480$ MJPEG) on the Raspberry Pi~4B, split into image preparation, inference and post-processing, with the process CPU use, for different thread counts.}
+  \label{fig:camera}
+\end{figure*}
+
+\begin{table*}[t]
+  \centering
+  \caption{Live camera pipeline: median time per stage (ms), achieved frame rate and process CPU use, by number of TFLite and OpenCV threads (``default'' lets OpenCV use all cores).}
+  \label{tab:camera}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_camera}}
+\end{table*}
+
+The webcam delivers about $30$ frames per second, so the pipeline is bounded by the camera whenever the processing time is below $33$\,ms.
+With one to three inference threads every configuration reaches $29.99$ frames per second. The best one, two TFLite and two OpenCV threads, takes $12.8$\,ms of processing at $87\%$ CPU use.
+Giving the inference all four cores raises the processing time by a factor of $1.7$ to $1.8$ ($22.0$ to $22.5$\,ms for MobileNetV2-0.35 and $24.1$\,ms for MobileNetV3-Small, against $12.8$ and $13.3$\,ms), at $150\%$ to $215\%$ CPU use. Image preparation itself slows from $8.8$ to $14.3$\,ms, and one OpenCV thread is as slow as the default.
+MobileNetV3-Small then falls slightly below the camera rate ($28.6$ frames per second). We did not investigate the cause.
+Image preparation ($8.8$\,ms) costs more than inference ($4.1$\,ms).
+The frames come from an unconstrained scene, so the predicted classes are a demonstration, not a measurement.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.55\textwidth]{barren_plateau}
+  \caption{Variance of the derivative of $\langle Z_0\rangle$ with respect to the first input angle over $200$ random inputs, as a function of the number of qubits (depth $4$).}
+  \label{fig:barren}
+\end{figure*}
+
+We checked that the circuit does not enter a barren-plateau regime at the width used (Figure~\ref{fig:barren}).
+The gradient variance stays between $0.8$ and $1.7$ from $2$ to $12$ qubits, with no exponential decay, as expected for a shallow circuit with a local observable.
+The circuit has no trainable parameters, so this concerns the gradient with respect to the input angles that reach the student.
+
+\section{Recipe Audit}
+\label{app:recipe}
+
+Within each pair, all runs share one training recipe (epoch budget, patience, optimizer, learning rate, weight decay, batch size and BatchNorm handling), and within each cell all seeds share the loss settings.
+Auditing the stored recipes found two exceptions, both on RPS-25/LeNet-5.
+
+\paragraph{A \Scratch seed with a different budget (Table~\ref{tab:rule3}).}
+Seed~0 of \Scratch on RPS-25/LeNet-5 was trained with a budget of $40$ epochs and patience $8$. The other seeds of that pair and all other methods used $60$ and $12$.
+It ran all $40$ epochs, so it was limited by its budget and not stopped early. Its score is the lowest of the three.
+We did not re-run it.
+Excluding it makes \Scratch stronger on that pair ($0.736\pm0.044$ over the two matched seeds, against $0.676\pm0.108$ as reported), and \Pqk $-$ \Scratch goes from $-0.039$ to $-0.060$. The conclusion that \Scratch beats every distillation method there is unchanged.
+The variance comparison does change. The pair's \Scratch standard deviation falls from $0.108$ to $0.044$ (two seeds), and the number of pairs on which \Pqk has a lower standard deviation than \Scratch falls from \VarBelowScratch{} to \VarBelowScratchEx{} of \NPairs{}.
+Comparisons of \Pqk with \Rbf and with \Kd do not involve \Scratch and are unaffected by this run.
+
+\paragraph{A \Kd cell with two temperatures.}
+The \Kd cell for this pair mixes two settings. Seed~0 was trained at $\tau=0.5$, the temperature of the kernel methods. Seeds~1 and~2 were trained at $\tau=1$, in an earlier run at which the temperature was screened, and only seed~0 was repeated at the final value.
+The three scores are $0.639$, $0.663$ and $0.649$, so the cell mean of $0.650\pm0.012$ in Table~\ref{tab:main} combines the two.
+Using only the two seeds at the majority temperature, \Kd scores $0.656\pm0.010$, and \Pqk $-$ \Kd on this pair goes from $-0.013$ (as reported) to $+0.021$. On seed~0 alone it is $-0.080$.
+The pair therefore flips sign depending on the seeds used. The number of pairs on which \Pqk is ahead of \Kd at fp32 is \KdAheadFp{} as reported and \KdAheadFpEx{} without seed~0.
+The \Kd standard deviation for the pair, which is the lowest of any method in Table~\ref{tab:var}, mixes the two temperatures as well.
+We did not re-run the two seeds, because that would require replacing stored results. The conclusion that \Pqk and \Kd are indistinguishable is unaffected, and both counts are given in the text.
+
+\begin{table*}[t]
+  \centering
+  \caption{The recipe audit. $^{\S}$Run trained with a different budget and patience from the rest of its pair.}
+  \label{tab:rule3}
+  \adjustbox{max width=0.85\textwidth}{\input{generated/tab_rule3}}
+\end{table*}
+
+\section{Alignment of the Teacher Kernel with the Labels}
+\label{app:ckta}
+
+Table~\ref{tab:ckta} gives the centered kernel--target alignment (CKTA)~\citep{cortes2012centered} between each target kernel and the label kernel $YY^{\top}$. A value of $1$ means the kernel encodes the class partition exactly.
+Each target is the RBF kernel (median heuristic) of the feature map named in the row, applied to the teacher's features after the projection named in the first column.
+Random projections are averaged over five draws, and fitted projections use the training split only.
+The validation columns use the whole validation split. The training-batch columns use $50$ random batches of $128$ training images, which is where the loss is computed. They are computed from the teacher's features of the unaugmented training images, so they approximate the augmented batches seen in training.
+The test split is never used.
+
+\begin{table*}[t]
+  \centering
+  \caption{Centered kernel--target alignment of the teacher kernel with the label kernel, on validation and on $128$-image training batches.}
+  \label{tab:ckta}
+  \adjustbox{max width=\textwidth}{\input{generated/tab_ckta}}
+\end{table*}

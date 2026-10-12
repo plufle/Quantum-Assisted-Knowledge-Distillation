@@ -1,0 +1,10 @@
+\begin{tabular}{@{}llrrrrrrrr@{}}
+\toprule
+Dataset & Student & Models & INT8 KiB & Conv ops & Integer-only & Per-channel & ONNX $\max|\Delta$logit$|$ & fp32 reload exact & INT8$-$fp32 \\
+\midrule
+TrashNet & MobileNetV2-0.35 & 15 & 608 & 52 & 15/15 & 15/15 & $3.6\times10^{-5}$ & 15/15 & $-0.0013\pm0.0111$ \\
+TrashNet & MobileNetV3-S & 18 & 1181 & 52 & 18/18 & 18/18 & $1.6\times10^{-5}$ & 18/18 & $+0.0004\pm0.0128$ \\
+RPS-25 & MobileNetV2-0.35 & 18 & 604 & 52 & 18/18 & 18/18 & $1.3\times10^{-4}$ & 18/18 & $+0.0136\pm0.0256$ \\
+RPS-25 & MobileNetV3-S & 15 & 1179 & 52 & 15/15 & 15/15 & $1.0\times10^{-5}$ & 15/15 & $-0.0039\pm0.0303$ \\
+\bottomrule
+\end{tabular}

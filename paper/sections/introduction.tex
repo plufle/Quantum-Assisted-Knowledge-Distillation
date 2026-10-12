@@ -1,0 +1,53 @@
+\section{Introduction}
+\label{sec:intro}
+
+Sorting waste at the point of disposal, for example in a camera-assisted bin or collection station that suggests a category for the item presented to it, needs a classifier that runs locally on inexpensive hardware, with a small memory footprint and low latency.
+The data for such a task are small and imbalanced. TrashNet~\citep{yang2016trashnet}, the dataset we use, has six material classes whose training counts range from 96 to 416 images in our split.
+Compact convolutional networks such as MobileNets~\citep{sandler2018mobilenetv2,howard2019searching} and 8-bit integer inference~\citep{jacob2018quantization,krishnamoorthi2018quantizing} address the footprint, at some cost in accuracy relative to large networks.
+
+Knowledge distillation (KD)~\citep{hinton2015distilling} recovers part of that accuracy. The compact student is trained to match a larger teacher's output distribution in addition to the hard labels.
+Relational and feature-based variants transfer the geometry of the teacher's representation instead of, or in addition to, its outputs~\citep{romero2015fitnets,park2019relational,tian2020contrastive}.
+Only the student is deployed, so distillation is compatible with quantization, and the two are complementary compression mechanisms~\citep{polino2018model,kim2019qkd}.
+
+A recent line of work asks whether quantum computation can assist distillation while the deployed model stays classical.
+Quantum relational knowledge distillation (QRKD)~\citep{liu2025qrkd} extends relational KD. It maps features into a Hilbert space, treats them as quantum states, and uses quantum-kernel values to describe relations between samples. It reports gains over classical relational KD on CNNs for MNIST and CIFAR-10 and on GPT-2 language tasks, with quantum computation needed only in training.
+Other work distills classical teachers into quantum students~\citep{li2024hybrid,hasan2023bridging} or uses a quantum model as a soft-label teacher for a classical student~\citep{naqvi2026structured}.
+Our question is narrower: does the quantum component contribute anything that a classical kernel in the same place would not?
+
+For kernels, that question has no obvious answer.
+Quantum kernels can concentrate, so that kernel values stop distinguishing inputs~\citep{thanasilp2024exponential}. Numerical studies of fidelity kernels on classical data find no advantage~\citep{slattery2023numerical}. The inductive bias of a quantum kernel determines what it can learn~\citep{kubler2021inductive}, and once the bandwidth is tuned it can resemble a classical kernel~\citep{florezablan2025similarity}.
+Large-scale benchmarks of fidelity and projected quantum kernels examine which design choices make them work~\citep{schnabel2025scrutiny}.
+The projected quantum kernel (PQK) of Huang et al.~\citep{huang2021power} compares inputs through single-qubit reduced states of an embedding circuit. It is a clean candidate to test: at the small scale used here it can be simulated classically, and a classical kernel acting on the same inputs can replace it one-for-one.
+
+Two practical points shape how such a comparison has to be run.
+First, effects on small datasets are comparable in size to seed-to-seed noise. Conclusions therefore need several seeds, paired comparisons, and an explicit statement of what was selected on which split.
+Second, the end point is the deployed INT8 model, and INT8 results depend on the kernels that execute it.
+
+We therefore compare quantum-assisted distillation with classical alternatives under one pipeline.
+TrashNet (six classes, imbalanced, macro-F1) is the primary dataset. RPS-25, a 25\% training subset of Rock--Paper--Scissors~\citep{moroney2019rps} (three classes), is a low-data confirmation.
+A frozen ResNet-50 teacher~\citep{he2016deep} distills into three students of 0.03\,M to 0.93\,M parameters (LeNet-5, MobileNetV2-0.35, MobileNetV3-Small). Five methods are compared: hard-label training (\Scratch), logit KD (\Kd), relational KD (\Rkd), classical RBF-kernel alignment (\Rbf, the matched twin) and PQK (\Pqk).
+All methods on a pair share data, optimizer and epoch budget. Each cell has \NSeeds{} seeds, and every exported model is a plain INT8 network with no quantum operation.
+Two further arms isolate where a PQK effect could come from: the same circuit with its CNOT gates removed, and a fitted instead of random teacher projection.
+
+Our findings are as follows.
+\begin{itemize}
+  \item The pipeline can detect a distillation gain: \Kd beats \Scratch on TrashNet for both MobileNets (by \KdGainTnA{} and \KdGainTnB{} macro-F1).
+  \item \Pqk is not distinguishable from \Kd. It is ahead on the mean in \KdAheadFp{} of \NPairs{} pairs (\KdAheadFpEx{} if one seed trained with a different KD temperature is excluded) and behind on both TrashNet MobileNets (by \KdBehindTnA{} and \KdBehindTnB{}). The smallest uncorrected paired $p$-value is \MinPKd{}.
+  \item At its pre-specified kernel scale, \Pqk beats its RBF twin in \GtwoFixedWins{} of \NPairs{} pairs (smallest uncorrected $p=\MinPRbfFixed$). With a median-heuristic scale, adopted after these results were seen, it does so in \GtwoAdaptWins{} of \GtwoAdaptPairs{}. The one nominally significant difference ($p=\MinPRbfAdapt$, RPS-25/MobileNetV3-Small) favours \MinPRbfAdaptFavours.
+  \item QRKD reports consistent gains over classical relational KD. Our setting differs in data, students and loss. There, \Pqk is ahead of \Rkd in \RkdAhead{} of \RkdPairs{} pairs, by at most \RkdMaxLead{} macro-F1, and behind in the rest.
+  \item On macro-F1, \Pqk has lower seed-to-seed variance than \Rbf in \VarBelowRbf{} of \NPairs{} pairs and than \Scratch in \VarBelowScratch{} (\VarBelowScratchEx{} if one recipe-mismatched run is excluded). On top-1 the counts are \VarTopBelowRbf{} and \VarTopBelowScratch{}. This is not significant at three seeds, and \Rkd is about as stable.
+  \item Deployment does not depend on the training method: all \NIntModels{} exported MobileNet students are fully integer, per-channel INT8 models, and INT8 conversion changes macro-F1 by $\IntDeltaMean$ on average. The size of each method's INT8 effect depends on the runtime kernels.
+\end{itemize}
+
+All comparisons are exploratory. Cells have three seeds, and test splits informed earlier design choices. We therefore select on validation, report paired differences and treat test scores as descriptive.
+
+\paragraph{Organization.}
+Section~\ref{sec:related} reviews related work. Section~\ref{sec:method} describes the objectives, the quantum kernel and its controls, and Section~\ref{sec:setup} the data, training and deployment protocol.
+Section~\ref{sec:results} reports the results\extra{, Section~\ref{sec:discussion} discusses them and Section~\ref{sec:limitations} lists their limits}.
+\extra{The appendices document the problems we corrected and the details of the screens, the export and the on-device measurements.}
+
+\paragraph{Contributions.}
+(i)~A matched-control comparison of quantum-assisted and classical distillation for lightweight waste classification, with one pipeline, a classical RBF-kernel twin for the quantum kernel, and paired per-seed reporting.
+(ii)~Two ablations that probe where a quantum-kernel effect could originate: removing the circuit's entanglement, and replacing the random teacher projection by a fitted one. The fitted projection makes the target kernel nearly the label kernel on training batches and did not help.
+(iii)~Deployment evidence for the resulting students: a fully integer INT8 export of all \NIntModels{} models, on-device latency, memory and temperature on a Raspberry Pi~4B, and a measure of how INT8 results depend on the kernels that run them.
+(iv)~An account of the pitfalls we hit and corrected, including a collapse of the kernel-alignment loss when the teacher-side projection is trainable, and of how our own selection choices limit what the results can support.

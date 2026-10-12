@@ -1,0 +1,12 @@
+\begin{tabular}{@{}llrrrcccc@{}}
+\toprule
+Dataset & Student & Epochs & Patience & LR & BN stats & RRC min scale & RandAugment (ops, mag.) \\
+\midrule
+TrashNet & MobileNetV2-0.35 & 60 & 10 & $0.001$ & running & 0.85 & 1, 5 \\
+TrashNet & MobileNetV3-S & 40 & 8 & $0.001$ & per-batch + recal. & 0.85 & 1, 5 \\
+TrashNet & LeNet-5 & 60 & 12 & $0.001$ & running & 0.85 & 1, 5 \\
+RPS-25 & MobileNetV2-0.35 & 60 & 10 & $0.001$ & per-batch + recal. & 0.7 & 2, 9 \\
+RPS-25 & MobileNetV3-S & 40 & 8 & $0.001$ & per-batch + recal. & 0.7 & 2, 9 \\
+RPS-25 & LeNet-5 & 40/60$^{*}$ & 8/12 & $0.001$ & per-batch + recal. & 0.7 & 2, 9 \\
+\bottomrule
+\end{tabular}

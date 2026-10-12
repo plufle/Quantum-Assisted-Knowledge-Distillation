@@ -1,0 +1,12 @@
+Knowledge distillation (KD) suits camera-assisted waste sorting on low-power hardware: a large teacher guides a compact student, and only the student is deployed.
+A recent proposal adds a quantum kernel to the distillation loss. Quantum computation is then needed only during training, and the deployed network stays classical.
+Whether such a kernel helps beyond kernel alignment itself requires matched classical controls.
+We test this on TrashNet, with RPS-25 as a low-data confirmation. The setup uses a ResNet-50 teacher, three students (LeNet-5, MobileNetV2-0.35, MobileNetV3-Small) and one shared training pipeline.
+We compare hard-label training, logit KD, relational KD, a classical RBF-kernel twin and a projected quantum kernel (PQK). Each cell has three seeds (\NGridRuns{} grid runs; \NStudentRuns{} student runs including controls, screens and capacity probes).
+PQK is not distinguishable from logit KD. It is ahead on the mean in \KdAheadFp{} of \NPairs{} student--dataset pairs and behind on both TrashNet MobileNets, and no paired difference is significant (smallest uncorrected $p=\MinPKd$).
+At its pre-specified kernel scale, PQK beats its RBF twin in only \GtwoFixedWins{} of \NPairs{} pairs.
+Its seed-to-seed variance tends to be lower than that of the RBF twin and, less consistently, of hard-label training. This is not significant at three seeds and does not hold on every pair.
+All \NIntModels{} exported MobileNet students convert to fully integer INT8 models of about \MbMnvTwo{} and \MbMnvThree{}~MB. On a Raspberry Pi~4B they run in \LatMnvTwo{} and \LatMnvThree{}~ms per inference (median, four threads).
+INT8 conversion changes macro-F1 by $\IntDeltaMean$ on average (std.\ \IntDeltaStd{} across models), and the sign of per-method effects depends on which INT8 kernels run.
+The quantum kernel leaves no trace in the deployed model, but our evidence does not show an accuracy benefit over classical alternatives.
+All results are exploratory.

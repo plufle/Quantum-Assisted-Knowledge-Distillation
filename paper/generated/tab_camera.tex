@@ -1,0 +1,16 @@
+\begin{tabular}{@{}llrrrrrrrrr@{}}
+\toprule
+Student & Method & TFLite thr. & CV thr. & preproc. & invoke & post & processing & FPS & CPU \% & max $^\circ$C \\
+\midrule
+MobileNetV2-0.35 & \texttt{kd} & 1 & 1 & 8.8 & 5.5 & 0.24 & 14.2 & 30.0 & 63 & 50.1 \\
+MobileNetV2-0.35 & \texttt{kd} & 2 & 1 & 8.8 & 4.3 & 0.24 & 12.9 & 30.0 & 71 & 50.1 \\
+MobileNetV2-0.35 & \texttt{kd} & 2 & 2 & 8.8 & 4.1 & 0.24 & 12.8 & 30.0 & 87 & 50.1 \\
+MobileNetV2-0.35 & \texttt{kd} & 3 & 1 & 10.3 & 4.0 & 0.27 & 13.6 & 30.0 & 102 & 49.2 \\
+MobileNetV2-0.35 & \texttt{kd} & 4 & 1 & 14.3 & 7.4 & 0.43 & 22.5 & 29.6 & 151 & 49.2 \\
+MobileNetV2-0.35 & \texttt{kd} & 4 & 4 & 14.3 & 7.3 & 0.43 & 22.0 & 29.6 & 212 & 50.1 \\
+MobileNetV2-0.35 & \texttt{pqk} & 2 & 2 & 8.6 & 4.1 & 0.24 & 12.6 & 30.0 & 88 & 49.7 \\
+MobileNetV3-S & \texttt{kd} & 2 & 2 & 8.4 & 4.8 & 0.22 & 13.3 & 30.0 & 89 & 50.6 \\
+MobileNetV3-S & \texttt{kd} & 4 & 4 & 14.7 & 8.9 & 0.42 & 24.1 & 28.6 & 215 & 49.2 \\
+MobileNetV3-S & \texttt{pqk\_adaptive} & 2 & 2 & 9.1 & 4.7 & 0.22 & 13.5 & 30.0 & 88 & 50.1 \\
+\bottomrule
+\end{tabular}

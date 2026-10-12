@@ -1,0 +1,12 @@
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Run & Seed & Budget & Patience & Epochs run & Macro-F1 \\
+\midrule
+RPS-25/LeNet-5, \texttt{scratch} & 0$^{\S}$ & 40 & 8 & 40 & $0.556$ \\
+RPS-25/LeNet-5, \texttt{scratch} & 1 & 60 & 12 & 39 & $0.705$ \\
+RPS-25/LeNet-5, \texttt{scratch} & 2 & 60 & 12 & 46 & $0.767$ \\
+\midrule
+all three seeds (as reported) & & & & & $0.676\pm0.108$ \\
+matched seeds only ($n=2$) & & & & & $0.736\pm0.044$ \\
+\bottomrule
+\end{tabular}

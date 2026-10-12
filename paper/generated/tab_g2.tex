@@ -1,0 +1,14 @@
+\begin{tabular}{@{}llccccc@{}}
+\toprule
+Dataset & Student & \texttt{scratch} & \texttt{rbf\_control} & $\Delta$ \texttt{pqk} ($\lambda{=}1$) & $\Delta$ \texttt{pqk} (adaptive $\lambda$) & selected \\
+\midrule
+TrashNet & MobileNetV2-0.35 & $0.684\pm0.014$ & $0.671\pm0.010$ & $+0.023\pm0.016$ (3/3) & $+0.013\pm0.011$ (3/3) & adaptive \\
+TrashNet & MobileNetV3-S & $0.724\pm0.016$ & $0.715\pm0.037$ & $-0.042\pm0.049$ (1/3) & $+0.003\pm0.036$ (2/3) & adaptive \\
+TrashNet & LeNet-5 & $0.529\pm0.021$ & $0.539\pm0.008$ & $-0.004\pm0.010$ (2/3) & -- & $\lambda{=}1$ \\
+RPS-25 & MobileNetV2-0.35 & $0.710\pm0.023$ & $0.684\pm0.062$ & $-0.028\pm0.082$ (1/3) & $+0.029\pm0.088$ (1/3) & adaptive \\
+RPS-25 & MobileNetV3-S & $0.816\pm0.053$ & $0.888\pm0.063$ & $-0.048\pm0.125$ (1/3) & $-0.058\pm0.011$ (0/3) & $\lambda{=}1$ \\
+RPS-25 & LeNet-5 & $0.676\pm0.108$$^{\S}$ & $0.538\pm0.202$ & $+0.100\pm0.145$ (2/3) & -- & $\lambda{=}1$ \\
+\midrule
+\multicolumn{5}{@{}l}{Pairs where \texttt{pqk} beats its twin on the 3-seed mean} & \multicolumn{2}{l}{2/6 ($\lambda{=}1$); 3/4 (adaptive)} \\
+\bottomrule
+\end{tabular}
