@@ -190,3 +190,6 @@ paper/*.fdb_latexmk
 paper/*.synctex.gz
 paper/PLAN.md
 paper.rar
+
+# archives (too large for GitHub; the folders they pack are ignored or regenerable)
+*.rar

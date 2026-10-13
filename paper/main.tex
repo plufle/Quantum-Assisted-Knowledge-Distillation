@@ -7,6 +7,7 @@
 \usepackage{booktabs,graphicx,adjustbox,xspace}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{xcolor}
+\usepackage{placeins}
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
 
 \graphicspath{{figures/}}
@@ -50,6 +51,8 @@
 \fi
 \input{sections/conclusion}
 
+% every table and figure is printed before the references
+\FloatBarrier
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 

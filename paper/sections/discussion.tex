@@ -15,7 +15,7 @@ We did not measure how far apart the two Gram matrices are, and a different circ
 \paragraph{What the kernel term contributes.}
 Logit KD is the only method that improves on \Scratch on every seed of the primary pairs. \Kd does so on TrashNet for both MobileNets. The classical kernel-alignment arm beats \Scratch on the mean in only \RbfBeatsScratch{} of \NPairs{} pairs, and \Pqk differs from \Scratch by at most $0.04$ in either direction.
 The kernel methods carry the same logit term at a different, untuned temperature. The data therefore do not show that the logit term alone is responsible, and the asymmetry in tuning leaves the question open: the \Kd temperature was screened on some pairs, while the kernel methods share an untuned one.
-With the random target, the gradient of the kernel term is a minor share of the total after the first epochs (Figure~\ref{fig:grad}), which is consistent with a small effect on the trained network.
+With the random target, the gradient of the kernel term is a minor share of the total after the first epochs (Section~\ref{sec:results-controls}), which is consistent with a small effect on the trained network.
 
 \paragraph{Variation between pairs.}
 The sign of the difference to the twin changes from pair to pair and with the calibration of $\lambda$, and so does the best method (Section~\ref{sec:results-baselines}).

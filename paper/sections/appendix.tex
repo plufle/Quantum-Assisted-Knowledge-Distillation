@@ -174,7 +174,7 @@ We did not re-run the two seeds, because that would require replacing stored res
 \section{Alignment of the Teacher Kernel with the Labels}
 \label{app:ckta}
 
-Table~\ref{tab:ckta} gives the centered kernel--target alignment (CKTA)~\citep{cortes2012centered} between each target kernel and the label kernel $YY^{\top}$. A value of $1$ means the kernel encodes the class partition exactly.
+Table~\ref{tab:ckta} gives the centered kernel--target alignment (CKTA) between each target kernel and the label kernel $YY^{\top}$. A value of $1$ means the kernel encodes the class partition exactly.
 Each target is the RBF kernel (median heuristic) of the feature map named in the row, applied to the teacher's features after the projection named in the first column.
 Random projections are averaged over five draws, and fitted projections use the training split only.
 The validation columns use the whole validation split. The training-batch columns use $50$ random batches of $128$ training images, which is where the loss is computed. They are computed from the teacher's features of the unaugmented training images, so they approximate the augmented batches seen in training.
