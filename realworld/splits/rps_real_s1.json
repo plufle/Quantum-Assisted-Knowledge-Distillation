@@ -1,0 +1,905 @@
+{
+ "train": [
+  {
+   "path": "s1/paper/paper_s1_0001.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0002.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0003.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0004.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0005.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0006.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0007.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0008.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0009.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0010.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0011.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0012.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0013.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0014.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0015.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0016.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0017.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0018.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0031.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0032.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0033.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0034.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0035.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0036.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0037.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0038.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0051.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0052.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0053.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0054.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0055.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0056.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0057.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0058.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0059.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/rock/rock_s1_0001.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0002.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0003.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0004.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0005.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0006.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0007.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0008.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0009.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0010.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0011.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0012.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0013.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0014.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0015.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0016.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0017.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0018.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0031.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0032.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0033.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0034.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0035.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0036.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0037.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0038.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0051.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0052.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0053.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0054.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0055.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0056.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0057.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0058.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0059.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0001.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0002.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0003.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0004.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0005.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0006.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0007.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0008.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0009.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0010.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0011.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0012.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0013.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0014.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0015.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0016.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0017.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0018.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0031.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0032.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0033.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0036.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0037.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0038.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0051.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0052.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0053.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0054.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0055.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0056.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0057.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0058.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0059.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/none/none_s1_0000.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0001.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0002.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0003.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0004.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0005.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0006.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0007.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0008.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0009.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0010.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0011.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0012.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0013.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0014.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0015.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0016.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0017.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0018.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0031.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0032.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0033.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0034.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0035.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0036.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0037.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0038.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0051.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0052.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0053.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0054.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0055.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0056.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0057.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0058.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0059.jpg",
+   "label": 3
+  }
+ ],
+ "val": [
+  {
+   "path": "s1/paper/paper_s1_0020.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0021.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0022.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0023.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0024.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0025.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0026.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0027.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0028.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0029.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/rock/rock_s1_0020.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0021.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0022.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0023.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0024.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0025.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0026.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0027.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0028.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0029.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0020.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0021.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0022.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0023.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0024.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0025.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0026.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0027.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0028.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0029.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/none/none_s1_0020.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0021.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0022.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0023.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0024.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0025.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0026.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0027.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0028.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0029.jpg",
+   "label": 3
+  }
+ ],
+ "test": [
+  {
+   "path": "s1/paper/paper_s1_0040.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0041.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0042.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0043.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0044.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0045.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0046.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0047.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0048.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/paper/paper_s1_0049.jpg",
+   "label": 0
+  },
+  {
+   "path": "s1/rock/rock_s1_0040.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0041.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0042.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0043.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0044.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0045.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0046.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0047.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0048.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/rock/rock_s1_0049.jpg",
+   "label": 1
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0040.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0042.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0043.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0044.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0045.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0046.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0047.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0048.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/scissors/scissors_s1_0049.jpg",
+   "label": 2
+  },
+  {
+   "path": "s1/none/none_s1_0040.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0041.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0042.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0043.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0044.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0045.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0046.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0047.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0048.jpg",
+   "label": 3
+  },
+  {
+   "path": "s1/none/none_s1_0049.jpg",
+   "label": 3
+  }
+ ],
+ "excluded": [
+  "s1/paper/paper_s1_0000.jpg",
+  "s1/paper/paper_s1_0019.jpg",
+  "s1/paper/paper_s1_0030.jpg",
+  "s1/paper/paper_s1_0039.jpg",
+  "s1/paper/paper_s1_0050.jpg",
+  "s1/rock/rock_s1_0000.jpg",
+  "s1/rock/rock_s1_0019.jpg",
+  "s1/rock/rock_s1_0030.jpg",
+  "s1/rock/rock_s1_0039.jpg",
+  "s1/rock/rock_s1_0050.jpg",
+  "s1/scissors/scissors_s1_0000.jpg",
+  "s1/scissors/scissors_s1_0019.jpg",
+  "s1/scissors/scissors_s1_0030.jpg",
+  "s1/scissors/scissors_s1_0034.jpg",
+  "s1/scissors/scissors_s1_0035.jpg",
+  "s1/scissors/scissors_s1_0039.jpg",
+  "s1/scissors/scissors_s1_0041.jpg",
+  "s1/scissors/scissors_s1_0050.jpg",
+  "s1/none/none_s1_0019.jpg",
+  "s1/none/none_s1_0030.jpg",
+  "s1/none/none_s1_0039.jpg",
+  "s1/none/none_s1_0050.jpg"
+ ],
+ "rule": "blocks of 10 frames; block 2 val, block 4 test, frames adjacent to a held-out block dropped from train"
+}

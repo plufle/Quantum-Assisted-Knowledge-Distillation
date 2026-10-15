@@ -37,8 +37,8 @@ MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 # validation-selected PQK variant per pair (scripts/dashboard.py PQK_CONFIG)
 PQK_REPORTED = {("rps_25", "mobilenetv2_035"): "pqk_adaptive", ("trashnet", "mobilenetv3_small"): "pqk_adaptive"}
-SQUARE_SOURCE = {"trashnet": False, "rps_25": True}
-LABEL = {"trashnet": "TRASH", "rps_25": "RPS"}
+SQUARE_SOURCE = {"trashnet": False, "rps_25": True, "rps_real": False}  # rps_real: whole-frame real-world model
+LABEL = {"trashnet": "TRASH", "rps_25": "RPS", "rps_real": "RPS"}
 # Strongest exported model per dataset, by validation (CLAUDE.md: validation decides): the
 # student x method with the highest mean validation macro-F1 over 3 seeds, then its best-validation
 # seed. Both datasets pick mobilenetv3_small + rbf_control — trashnet s1: val 0.766, test 0.758;
@@ -47,9 +47,10 @@ DEFAULT_MODEL = {"trashnet": ("mobilenetv3_small", "rbf_control", 1),
                  "rps_25": ("mobilenetv3_small", "rbf_control", 0)}
 # Below this top-class probability the prediction is "undefined". Chosen on validation with the
 # default models: trashnet 0.70 keeps 63% of validation images at 90% accuracy (test: 64% at 89%);
-# rps_25 0.90 keeps 88% at 100% (test: 79% at 97%), and turned every frame of an empty-desk webcam
-# scene undefined (no-hand confidence 0.54-0.85).
-THRESHOLD = {"trashnet": 0.70, "rps_25": 0.90}
+# rps_25 0.70 keeps 91% at 100% — every validation error sits below 0.66 (test: 90% at 92%). 0.90
+# (88% at 100%) also turned every empty-desk webcam frame undefined (no-hand confidence 0.54-0.85)
+# where 0.70 catches about a third, but it hid too many real gestures live, so 0.70 is the default.
+THRESHOLD = {"trashnet": 0.70, "rps_25": 0.70}
 UNDEFINED = "undefined"
 
 
@@ -84,12 +85,15 @@ class Student:
     def predict(self, rgb):
         x = cv2.resize(rgb, self.size, interpolation=cv2.INTER_AREA).astype(np.float32) / np.float32(255.0)
         x = (x - MEAN) / STD
-        q = np.clip(np.round(x / self.in_scale + self.in_zp), -128, 127).astype(np.int8)[None]
-        self.interp.set_tensor(self.inp["index"], q)
+        if self.inp["dtype"] == np.int8:  # full-integer model
+            x = np.clip(np.round(x / self.in_scale + self.in_zp), -128, 127).astype(np.int8)
+        self.interp.set_tensor(self.inp["index"], np.ascontiguousarray(x, dtype=self.inp["dtype"])[None])
         t = time.perf_counter()
         self.interp.invoke()
         ms = (time.perf_counter() - t) * 1e3
-        logits = (self.interp.get_tensor(self.out["index"]).astype(np.float32)[0] - self.out_zp) * self.out_scale
+        logits = self.interp.get_tensor(self.out["index"]).astype(np.float32)[0]
+        if self.out["dtype"] == np.int8:
+            logits = (logits - self.out_zp) * self.out_scale
         e = np.exp(logits - logits.max())
         return e / e.sum(), ms
 
@@ -109,7 +113,7 @@ def main():
                                     "rbf_control, scratch")
     p.add_argument("--seed", type=int, choices=[0, 1, 2], help="default: DEFAULT_MODEL")
     p.add_argument("--threshold", type=float, help="below this probability show 'undefined' (default: per dataset, "
-                                                   "trashnet 0.70, rps_25 0.90)")
+                                                   "0.70 for both datasets)")
     p.add_argument("--camera", type=int, default=0)
     p.add_argument("--threads", type=int, default=2, help="TFLite threads per model (2 measured best with the camera)")
     p.add_argument("--hz", type=float, default=1.0, help="predictions (and lines) per second; 0 = every frame")

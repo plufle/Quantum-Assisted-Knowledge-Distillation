@@ -11,7 +11,7 @@ q / Esc (or closing the window) quits.
 
 Same models, thresholds, class names and preprocessing as live.py: by default the strongest
 student per dataset by validation (mobilenetv3_small + rbf_control), "undefined" below the
-per-dataset probability threshold (trashnet 0.70, rps_25 0.90 — see live.THRESHOLD). INT8 TFLite
+per-dataset probability threshold (0.70 for both — see live.THRESHOLD). INT8 TFLite
 from the bundle built by scripts/edge_bundle.py, or with --backend onnx the fp32 ONNX export of the
 same run (no INT8 rounding, so it can disagree with the deployed model on borderline frames). The video
 is drawn at the camera's frame rate while a background thread classifies the most recent frame
@@ -60,6 +60,34 @@ class OnnxStudent:
         return e / e.sum(), ms
 
 
+class TeacherModel:
+    """The ResNet-50 teacher for a dataset (ImageNet-pretrained, fine-tuned on it), fp32 PyTorch on
+    the CPU — shows whether pretraining alone travels better to live scenes than the from-scratch
+    students. Same preprocessing and predict signature as live.Student."""
+
+    def __init__(self, ds, classes, threads, ckpt=None):
+        import torch
+        from qakd.models.teachers.resnet import ResNet50Teacher
+        torch.set_num_threads(threads)
+        self.torch = torch
+        self.model = ResNet50Teacher(num_classes=len(classes), pretrained=False)
+        ckpt = ckpt or os.path.join(REPO, "checkpoints", "teachers", f"resnet50_in1k__{ds}.pt")
+        self.model.load_state_dict(torch.load(ckpt, map_location="cpu"))
+        self.model.eval()
+        self.size = (128, 128)  # the teachers were fine-tuned at the datasets' 128x128
+        self.classes = classes
+
+    def predict(self, rgb):
+        x = cv2.resize(rgb, self.size, interpolation=cv2.INTER_AREA).astype(np.float32) / np.float32(255.0)
+        x = self.torch.from_numpy(np.ascontiguousarray(((x - MEAN) / STD).transpose(2, 0, 1)[None]))
+        t = time.perf_counter()
+        with self.torch.no_grad():
+            logits = self.model(x)[0].numpy()
+        ms = (time.perf_counter() - t) * 1e3
+        e = np.exp(logits - logits.max())
+        return e / e.sum(), ms
+
+
 class Worker(threading.Thread):
     """Classifies the most recent frame at most `rate` times per second (0 = as fast as it can);
     frames in between are skipped."""
@@ -68,7 +96,7 @@ class Worker(threading.Thread):
         super().__init__(daemon=True)
         self.models, self.thresholds = models, thresholds
         self.lock, self.ready = threading.Lock(), threading.Event()
-        self.frame, self.result, self.stop = None, {}, False
+        self.frame, self.result, self.probs, self.stop = None, {}, {}, False
         self.infer_ms, self.rate, self.seq = {}, 0.0, 0
         self.period = 1.0 / rate if rate > 0 else 0.0
 
@@ -92,19 +120,22 @@ class Worker(threading.Thread):
                 self.ready.clear()
             if rgb is None:
                 continue
-            result, infer = {}, {}
+            result, all_probs, infer = {}, {}, {}
             for ds, model in self.models.items():
                 probs, ms = model.predict(centre_square(rgb) if SQUARE_SOURCE[ds] else rgb)
                 result[ds] = decide(model.classes, probs, self.thresholds[ds])[0]
+                all_probs[ds] = (model.classes, probs)
                 infer[ds] = ms
             now = time.perf_counter()
             self.rate = 0.9 * self.rate + 0.1 / max(now - prev, 1e-6) if self.rate else 1.0 / max(now - prev, 1e-6)
             prev = now
-            self.result, self.infer_ms = result, infer
+            self.result, self.probs, self.infer_ms = result, all_probs, infer
             self.seq += 1
 
 
-def draw(frame, result, infer_ms, cam_fps, pred_rate, show_box, mirror):
+def draw(frame, result, probs, thresholds, infer_ms, cam_fps, pred_rate, show_box, mirror):
+    """Video frame with a side panel per dataset: the decided label, every class's probability as a
+    bar, and the "undefined" threshold as an orange line across the bars."""
     h, w = frame.shape[:2]
     if show_box:  # the square the RPS model sees
         s = min(h, w)
@@ -115,17 +146,39 @@ def draw(frame, result, infer_ms, cam_fps, pred_rate, show_box, mirror):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1, cv2.LINE_AA)
     if mirror:
         frame = cv2.flip(frame, 1)
-    lines = [(f"{LABEL[ds]}: {cls}", (0, 165, 255) if cls == UNDEFINED else (80, 255, 120))  # BGR: orange / green
-             for ds, cls in result.items()] or [("warming up...", (220, 220, 220))]
-    stats = (f"infer {'+'.join(f'{v:.0f}' for v in infer_ms.values())} ms | "
-             f"video {cam_fps:.0f} FPS | predictions {pred_rate:.1f}/s")
-    box_h = 18 + 40 * len(lines) + 26
+    font, white, orange, green, grey = cv2.FONT_HERSHEY_SIMPLEX, (235, 235, 235), (0, 165, 255), (80, 255, 120), (110, 110, 110)
+    shown = [ds for ds in result if ds in probs]
+    panel_w, bar_x, bar_w, row = 345, 108, 160, 22
+    panel_h = 12 + sum(36 + row * len(probs[ds][0]) + 22 for ds in shown) + 26 if shown else 70
     overlay = frame.copy()
-    cv2.rectangle(overlay, (0, 0), (w, box_h), (0, 0, 0), -1)
-    frame = cv2.addWeighted(overlay, 0.55, frame, 0.45, 0)
-    for k, (text, colour) in enumerate(lines):
-        cv2.putText(frame, text, (14, 44 + 40 * k), cv2.FONT_HERSHEY_SIMPLEX, 1.1, colour, 2, cv2.LINE_AA)
-    cv2.putText(frame, stats, (14, box_h - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (220, 220, 220), 1, cv2.LINE_AA)
+    cv2.rectangle(overlay, (0, 0), (panel_w, min(panel_h, h)), (0, 0, 0), -1)
+    frame = cv2.addWeighted(overlay, 0.6, frame, 0.4, 0)
+    y = 8
+    if not shown:
+        cv2.putText(frame, "warming up...", (12, 40), font, 0.9, white, 2, cv2.LINE_AA)
+    for ds in shown:
+        classes, p = probs[ds]
+        label, thr = result[ds], thresholds[ds]
+        y += 32
+        cv2.putText(frame, f"{LABEL[ds]}: {label}", (12, y), font, 0.95, orange if label == UNDEFINED else green, 2,
+                    cv2.LINE_AA)
+        top = int(np.argmax(p))
+        bars_top = y + 6
+        for k, (cls, v) in enumerate(zip(classes, p)):
+            y += row
+            cv2.putText(frame, cls, (14, y), font, 0.5, white, 1, cv2.LINE_AA)
+            cv2.rectangle(frame, (bar_x, y - 12), (bar_x + bar_w, y - 1), (60, 60, 60), -1)
+            fill = green if (k == top and v >= thr) else grey
+            cv2.rectangle(frame, (bar_x, y - 12), (bar_x + int(bar_w * float(v)), y - 1), fill, -1)
+            cv2.putText(frame, f"{float(v):4.0%}", (bar_x + bar_w + 8, y - 1), font, 0.5, white, 1, cv2.LINE_AA)
+        tx = bar_x + int(bar_w * thr)  # threshold marker across this dataset's bars
+        cv2.line(frame, (tx, bars_top), (tx, y + 2), orange, 2)
+        y += 18
+        cv2.putText(frame, f"threshold {thr:.0%} (orange line)", (bar_x, y), font, 0.42, orange, 1, cv2.LINE_AA)
+        y += 4
+    stats = (f"infer {'+'.join(f'{v:.0f}' for v in infer_ms.values())} ms | "
+             f"video {cam_fps:.0f} FPS | {pred_rate:.1f} pred/s")
+    cv2.putText(frame, stats, (12, min(panel_h, h) - 8), font, 0.42, (200, 200, 200), 1, cv2.LINE_AA)
     return frame
 
 
@@ -138,9 +191,14 @@ def main():
                                     "rkd, rbf_control, scratch")
     p.add_argument("--seed", type=int, choices=[0, 1, 2], help="default: live.DEFAULT_MODEL")
     p.add_argument("--threshold", type=float, help="below this probability show 'undefined' (default: per dataset, "
-                                                   "trashnet 0.70, rps_25 0.90)")
+                                                   "0.70 for both datasets)")
     p.add_argument("--backend", default="int8", choices=["int8", "onnx"],
                    help="int8 = the deployed TFLite model; onnx = fp32 export of the same run")
+    p.add_argument("--realworld", choices=["teacher", "kd", "pqk_adaptive"],
+                   help="the separate real-world RPS model (realworld/): its teacher (fp32) or an INT8 student; "
+                        "4 classes incl. 'none', whole-frame input")
+    p.add_argument("--teacher", action="store_true",
+                   help="run the ResNet-50 teachers (fp32 PyTorch) instead of the INT8 students")
     p.add_argument("--camera", type=int, default=0)
     p.add_argument("--threads", type=int, default=8)
     p.add_argument("--mirror", action="store_true", help="mirror the displayed video (models see the unmirrored frame)")
@@ -153,7 +211,24 @@ def main():
     available = {m["id"]: m for m in manifest["models"] if m["precision"] == "int8"}
     datasets = ["trashnet", "rps_25"] if args.dataset == "both" else [args.dataset]
     models, thresholds = {}, {}
+    if args.realworld:
+        datasets = []
+        rw_classes = ["paper", "rock", "scissors", "none"]
+        if args.realworld == "teacher":
+            models["rps_real"] = TeacherModel("rps_real", rw_classes, args.threads,
+                                              os.path.join(REPO, "realworld", "runs", "teacher_resnet50", "best.pt"))
+        else:
+            path = os.path.join(REPO, "realworld", "exports", f"student_mnv3s_{args.realworld}_s0", "model_drq.tflite")
+            models["rps_real"] = Student(path, rw_classes, args.threads)
+        thresholds["rps_real"] = 0.70 if args.threshold is None else args.threshold
+        print(f"loaded RPS   real-world {args.realworld} (undefined below {thresholds['rps_real']:.0%})", flush=True)
     for ds in datasets:
+        if args.teacher:
+            models[ds] = TeacherModel(ds, manifest["datasets"][ds]["class_names"], args.threads)
+            thresholds[ds] = THRESHOLD[ds] if args.threshold is None else args.threshold
+            print(f"loaded {LABEL[ds]:5s} teacher resnet50_in1k__{ds} (fp32 PyTorch, undefined below "
+                  f"{thresholds[ds]:.0%})", flush=True)
+            continue
         run_id = resolve_run_id(ds, args.student, args.method, args.seed)
         if run_id not in available:
             student = run_id.split("__")[1]
@@ -190,13 +265,14 @@ def main():
             inst = 1.0 / max(now - prev, 1e-6)
             cam_fps = 0.9 * cam_fps + 0.1 * inst if cam_fps else inst
             prev = now
-            result = dict(worker.result)
-            cv2.imshow(WINDOW, draw(frame, result, dict(worker.infer_ms), cam_fps, worker.rate,
+            result, probs = dict(worker.result), dict(worker.probs)
+            cv2.imshow(WINDOW, draw(frame, result, probs, thresholds, dict(worker.infer_ms), cam_fps, worker.rate,
                                     "rps_25" in models, args.mirror))
             if not args.quiet and result and worker.seq != last_seq:  # each new prediction once
                 last_seq = worker.seq
-                print(f"{time.strftime('%H:%M:%S')}  " + "  |  ".join(f"{LABEL[d]}: {c:<9s}" for d, c in result.items()),
-                      flush=True)
+                print(f"{time.strftime('%H:%M:%S')}  " + "  |  ".join(
+                    f"{LABEL[d]}: {c:<9s} (" + " ".join(f"{n} {float(v):.0%}" for n, v in zip(*probs[d])) + ")"
+                    for d, c in result.items() if d in probs), flush=True)
             key = cv2.waitKey(1) & 0xFF
             if key in (ord("q"), 27) or cv2.getWindowProperty(WINDOW, cv2.WND_PROP_VISIBLE) < 1:
                 break

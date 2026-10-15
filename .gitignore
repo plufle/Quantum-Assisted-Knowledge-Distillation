@@ -193,3 +193,7 @@ paper.rar
 
 # archives (too large for GitHub; the folders they pack are ignored or regenerable)
 *.rar
+
+# real-world side project (out of scope of the paper) — checkpoints and exports
+realworld/runs/
+realworld/exports/
